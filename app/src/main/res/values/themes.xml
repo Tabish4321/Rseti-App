@@ -1,0 +1,116 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+<!-- Base application theme. -->
+<style name="Base.Theme.RsetiApp" parent="Theme.Material3.DayNight.NoActionBar">
+    <!-- Customize your light theme here. -->
+    <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <!-- Primary brand color. -->
+    <item name="colorPrimary">@color/color_green</item>
+    <item name="colorPrimaryVariant">@color/color_green</item>
+    <item name="colorOnPrimary">@color/color_green</item>
+    <!-- Secondary brand color. -->
+    <!-- <item name="colorSecondary">@color/color_dark_green</item>
+     <item name="colorSecondaryVariant">@color/color_dark_green</item>
+     <item name="colorOnSecondary">@color/color_dark_green</item>-->
+    <!-- Status bar color.      -->
+
+    <item name="android:statusBarColor" >@color/color_dark_green</item>
+
+
+    <item name="android:windowSplashScreenBackground">@color/white</item>
+    <!--   <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_splash_white</item>-->
+    <item name="android:windowSplashScreenIconBackgroundColor">@color/white</item>
+
+</style>
+
+<style name="Theme.Splash" parent="Base.Theme.RsetiApp">
+    <item name="windowSplashScreenBackground">@color/white</item>
+    <item name="windowSplashScreenAnimatedIcon">@drawable/gradiant_splash</item>
+    <item name="windowSplashScreenAnimationDuration">1000</item> <!-- Animation duration in ms -->
+    <item name="postSplashScreenTheme">@style/Base.Theme.RsetiApp</item> <!-- Main theme -->
+</style>
+
+
+<style name="CircleImageView" parent="">
+    <item name="cornerFamily">rounded</item>
+    <item name="cornerSize">50%</item>
+</style>
+
+
+<style name="EditText" parent="Base.Theme.RsetiApp">
+    <item name="android:fontFamily">@font/avenir_next_medium</item>
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:background">@drawable/edit_text_bg</item>item
+    <item name="android:padding">@dimen/dp_16</item>
+    <item name="android:paddingHorizontal">@dimen/dp_20</item>
+    <item name="android:textColorHint">@color/color_dark_green</item>
+    <item name="android:textSize">@dimen/sp_16</item>
+    <item name="android:textCursorDrawable">@color/color_green</item>
+    <item name="android:textSelectHandle">@color/color_green</item>
+    <item name="android:textSelectHandleLeft">@color/color_green</item>
+    <item name="android:textSelectHandleRight">@color/color_green</item>
+</style>
+
+
+<style name="OptionCard" parent="Base.Theme.RsetiApp">
+    <item name="android:fontFamily">@font/avenir_next_medium</item>
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:background">@drawable/edit_text_bg</item>item
+    <item name="android:padding">@dimen/dp_16</item>
+    <item name="android:paddingHorizontal">@dimen/dp_20</item>
+    <item name="android:textColorHint">@color/color_dark_green</item>
+    <item name="android:textSize">@dimen/sp_16</item>
+    <item name="android:textCursorDrawable">@color/color_green</item>
+    <item name="android:textSelectHandle">@color/color_green</item>
+    <item name="android:textSelectHandleLeft">@color/color_green</item>
+    <item name="android:textSelectHandleRight">@color/color_green</item>
+</style>
+
+<style name="Button" parent="Base.Theme.RsetiApp">
+
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textColor">@color/white</item>
+    <item name="android:background">@drawable/shape_rectangle_green</item>
+    <item name="android:fontFamily">@font/avenir_next_demi_bold</item>
+    <item name="android:gravity">start|center_vertical</item>
+    <item name="android:layout_marginHorizontal">@dimen/dp_30</item>
+    <item name="android:paddingVertical">@dimen/dp_18</item>
+    <item name="android:paddingStart">@dimen/dp_20</item>
+    <item name="android:paddingEnd">@dimen/dp_12</item>
+</style>
+
+<style name="constrain" parent="Base.Theme.RsetiApp">
+
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textColor">@color/color_dark_green</item>
+    <item name="android:background">@drawable/shape_rectangle_white</item>
+    <item name="android:fontFamily">@font/avenir_next_demi_bold</item>
+    <item name="android:gravity">start|center_vertical</item>
+    <item name="android:layout_marginHorizontal">@dimen/dp_30</item>
+    <item name="android:paddingVertical">@dimen/dp_18</item>
+    <item name="android:paddingStart">@dimen/dp_20</item>
+    <item name="android:paddingEnd">@dimen/dp_12</item>
+</style>
+
+
+<style name="editTextHome" parent="Base.Theme.RsetiApp">
+
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textColor">@color/color_dark_green</item>
+    <item name="android:background">@drawable/shape_rectangle_white</item>
+    <item name="android:fontFamily">@font/avenir_next_demi_bold</item>
+    <item name="android:gravity">start|center_vertical</item>
+    <item name="android:layout_marginHorizontal">@dimen/dp_20</item>
+    <item name="android:paddingVertical">@dimen/dp_10</item>
+    <item name="android:paddingStart">@dimen/dp_10</item>
+    <item name="android:paddingEnd">@dimen/dp_8</item>
+</style>
+
+
+
+</resources>

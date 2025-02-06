@@ -1,0 +1,101 @@
+[versions]
+agp = "8.5.0"
+bcprovJdk16 = "1.45"
+circleimageview = "3.1.0"
+compiler = "4.13.0"
+converterGson = "2.9.0"
+core = "0.9.6.0"
+coreVersion = "3.0.0"
+datastore-preferences = "1.0.0"
+datastorePreferencesCore = "1.1.1"
+fragmentKtx = "1.8.5"
+glide = "4.13.2"
+hiltAndroid = "2.51.1"
+jacksonDataformatXml = "2.17.0"
+jsr105Api = "1.0.1"
+kotlin = "1.9.0"
+coreKtx = "1.15.0"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+appcompat = "1.7.0"
+kotlinxCoroutinesAndroid = "1.7.3"
+lifecycleRuntimeKtx = "2.8.7"
+activity = "1.9.3"
+constraintlayout = "2.2.0"
+materialVersion = "1.12.0"
+navigationRuntimeKtx = "2.8.4"
+okhttp = "4.11.0"
+roomKtx = "2.5.2"
+core-splashscreen = "1.0.1"
+simpleXml = "2.7.1"
+staxApi = "1.0-2"
+viewbinding = "8.7.3"
+logging-interceptor = "4.11.0"
+converter-scalars = "2.5.0"
+chucker-version = "4.0.0"
+playServicesLocation = "21.3.0"
+viewpager2 = "1.1.0"
+
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }
+androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationRuntimeKtx" }
+androidx-navigation-runtime-ktx = { module = "androidx.navigation:navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationRuntimeKtx" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomKtx" }
+androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
+bcprov-jdk16 = { module = "org.bouncycastle:bcprov-jdk16", version.ref = "bcprovJdk16" }
+circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
+compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+core = { module = "com.afollestad.material-dialogs:core", version.ref = "core" }
+core-v300 = { module = "com.afollestad.material-dialogs:core", version.ref = "coreVersion" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
+jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jacksonDataformatXml" }
+jsr105-api = { module = "javax.xml.crypto:jsr105-api", version.ref = "jsr105Api" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+material-v150 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "core-splashscreen" }
+androidx-viewbinding = { group = "androidx.databinding", name = "viewbinding", version.ref = "viewbinding" }
+logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "logging-interceptor" }
+converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterGson" }
+converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "converter-scalars" }
+
+chucker = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker-version" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore-preferences" }
+simple-xml = { module = "org.simpleframework:simple-xml", version.ref = "simpleXml" }
+
+
+
+
+
+
+
+[bundles]
+retrofitBundle = ["retrofit", "okhttp", "converter-gson","logging-interceptor","converter-moshi","converter-scalars"]
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+navigationSafeargsKotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigationRuntimeKtx" }
+
+
