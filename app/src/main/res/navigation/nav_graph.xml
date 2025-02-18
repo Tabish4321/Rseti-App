@@ -14,10 +14,39 @@
         <action
             android:id="@+id/action_loginFragment_to_homeFrahment"
             app:destination="@id/homeFrahment" />
+        <action
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFrahment"
-        android:name="com.rsetiapp.common.fragments.HomeFrahment"
+        android:name="com.rsetiapp.common.fragments.HomeFragment"
         android:label="HomeFrahment"
-        tools:layout="@layout/fragment_home"/>
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFrahment_to_EAPAwarnessFormFragment"
+            app:destination="@id/EAPAwarnessFormFragment" >
+            <argument
+                android:name="formName"
+                app:argType="string" />
+            <argument
+                android:name="formCd"
+                app:argType="string" />
+
+        </action>
+        <action
+            android:id="@+id/action_homeFrahment_to_loginFragment2"
+            app:destination="@id/loginFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/EAPAwarnessFormFragment"
+        android:name="com.rsetiapp.common.fragments.EAPAwarnessFormFragment"
+        android:label="EAPAwarnessFormFragment"
+        tools:layout="@layout/fragment_eap_awarness" />
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.rsetiapp.common.fragments.ForgotPasswordFragment"
+        android:label="ForgotPasswordFragment"
+        tools:layout="@layout/fragment_forgot_password"/>
 </navigation>

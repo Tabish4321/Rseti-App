@@ -30,6 +30,7 @@ import android.provider.Settings
 import com.google.gson.Gson
 import com.rsetiapp.R
 import java.security.MessageDigest
+import java.security.SecureRandom
 
 
 object AppUtil {
@@ -120,17 +121,7 @@ object AppUtil {
 
 
 
-    fun saveStateCode(context: Context, stateCode: String) {
-        val sharedPreferences = context.getSharedPreferences("STATE_CODE", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("STATE_CODE", stateCode)
-        editor.apply()
-    }
 
-    fun getStateCode(context: Context): String {
-        val sharedPreferences = context.getSharedPreferences("STATE_CODE", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("STATE_CODE", "N/A") ?: "N/A" // Default to English
-    }
 
     fun isNetworkAvailable(context: Context?): Boolean {
         if (context == null) return false
@@ -314,7 +305,10 @@ object AppUtil {
         return gson.toJson(model)
     }
 
-
+    fun generateOTP(): Int {
+        val secureRandom = SecureRandom()
+        return secureRandom.nextInt(9000) + 1000 // Ensures a 4-digit number (1000 - 9999)
+    }
 
 
 }

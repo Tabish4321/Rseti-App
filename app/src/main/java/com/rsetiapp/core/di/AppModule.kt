@@ -2,15 +2,12 @@ package com.rsetiapp.core.di
 
 import android.content.Context
 import androidx.room.Room
-import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.rsetiapp.core.data.local.database.AppDatabase
 import com.rsetiapp.core.data.remote.AppLevelApi
 import com.rsetiapp.core.util.ApiConstant
 import com.rsetiapp.core.util.AppConstant
 import com.rsetiapp.core.util.CustomInterceptor
 import com.rsetiapp.core.util.UserPreferences
-import com.rsetiapp.BuildConfig
-
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -58,48 +55,57 @@ object AppModule {
     }
 
     @Provides
+    @Singleton
     @PreLoginOkHttpClient
     fun providesRetrofitForPreLogin(
         userPreferences: UserPreferences,
         @ApplicationContext context: Context
     ): Retrofit {
         return Retrofit.Builder()
-           // .baseUrl(BuildConfig.BASE_URL)
-           .baseUrl(AppConstant.StaticURL.localUrl)
+            .baseUrl(AppConstant.StaticURL.liveUrl) // Ensure this is correct
             .client(
                 getRetrofitClient(
                     null, userPreferences = userPreferences,
                     isPostLogin = false, context = context
                 )
             )
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())   // ✅ Ensure Gson is added
+            .addConverterFactory(MoshiConverterFactory.create())  // Keeping Moshi for compatibility
             .build()
     }
 
     @Provides
+    @Singleton
     @PostLoginOkHttpClient
     fun providesRetrofitForPostLogin(
         userPreferences: UserPreferences,
         @ApplicationContext context: Context
     ): Retrofit {
         return Retrofit.Builder()
-           // .baseUrl(BuildConfig.BASE_URL)
-            .baseUrl(AppConstant.StaticURL.localUrl)
-            .client(getRetrofitClient(null, userPreferences = userPreferences, context = context))
+            .baseUrl(AppConstant.StaticURL.liveUrl)
+            .client(
+                getRetrofitClient(null, userPreferences = userPreferences, context = context)
+            )
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
     private fun getRetrofitClient(
         authenticator: Authenticator? = null,
         userPreferences: UserPreferences,
         isPostLogin: Boolean = true,
         isAuthenticationRequired: Boolean = true,
         context: Context
-    )
-            : OkHttpClient {
-        val cacheSize = (5 * 1024 * 1024).toLong()
+    ): OkHttpClient {
+        val cacheSize = (5 * 1024 * 1024).toLong() // 5MB cache
         val myCache = Cache(context.cacheDir, cacheSize)
+
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY // Logs request & response body
+        }
+
         return OkHttpClient.Builder()
             .cache(myCache)
             .connectTimeout(ApiConstant.CONNECT_TIMEOUT, TimeUnit.SECONDS)
@@ -107,26 +113,23 @@ object AppModule {
             .readTimeout(ApiConstant.READ_TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(
                 CustomInterceptor(isPostLogin, userPreferences, isAuthenticationRequired, context)
-            ).also { client ->
-                authenticator?.let { client.authenticator(it) }
-                if (BuildConfig.DEBUG) {
-                    val logging = HttpLoggingInterceptor()
-                    logging.setLevel(HttpLoggingInterceptor.Level.BODY)
-                    client.addInterceptor(logging)
-                    client.addInterceptor(ChuckerInterceptor(context))
-                }
-            }.build()
+            )
+            .addInterceptor(logging) // ✅ Ensure logging is added here
+            .apply {
+                authenticator?.let { this.authenticator(it) }
+            }
+            .build()
     }
 
     @Provides
+    @Singleton
     @PreLoginAppLevelApi
-    fun providePreLoginAppLevelApi(@PreLoginOkHttpClient retrofit: Retrofit) : AppLevelApi = retrofit.create(
-        AppLevelApi::class.java)
+    fun providePreLoginAppLevelApi(@PreLoginOkHttpClient retrofit: Retrofit): AppLevelApi =
+        retrofit.create(AppLevelApi::class.java)
 
     @Provides
+    @Singleton
     @PostLoginAppLevelApi
-    fun providePostLoginAppLevelApi(@PostLoginOkHttpClient retrofit: Retrofit) : AppLevelApi = retrofit.create(
-        AppLevelApi::class.java)
-
-
+    fun providePostLoginAppLevelApi(@PostLoginOkHttpClient retrofit: Retrofit): AppLevelApi =
+        retrofit.create(AppLevelApi::class.java)
 }

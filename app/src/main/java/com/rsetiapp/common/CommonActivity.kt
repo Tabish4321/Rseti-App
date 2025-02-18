@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.rsetiapp.core.basecomponent.BaseActivity
 import com.rsetiapp.R
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.databinding.CommonActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,11 +39,10 @@ class CommonActivity : BaseActivity<CommonActivityBinding>(CommonActivityBinding
         navGraph.setStartDestination(R.id.loginFragment)
 
 
-/*
         val isLoggedIn = AppUtil.getLoginStatus(this)
 
         if(isLoggedIn){
-          //  navGraph.setStartDestination(R.id.mainHomePage)
+            navGraph.setStartDestination(R.id.homeFrahment)
 
 
         }
@@ -51,7 +51,6 @@ class CommonActivity : BaseActivity<CommonActivityBinding>(CommonActivityBinding
 
 
         }
-*/
 
 
         navController?.let {

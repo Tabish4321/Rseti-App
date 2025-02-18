@@ -1,7 +1,55 @@
 <resources>
     <string name="app_name">Rseti App</string>
     <string name="login_to_your_account">Login to your account</string>
-    <string name="login_id">Login id</string>
+    <string name="login_id">Enter User id</string>
     <string name="password">Password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="enter_password">Enter Password</string>
     <string name="login">Login</string>
+    <string name="please_sign_in_to_your_account">Please sign in to your account</string>
+    <string name="userId">User ID</string>
+    <string name="form_name">Form Name</string>
+    <string name="organisation_name">Organisation Name</string>
+    <string name="institute_name">Institute Name</string>
+    <string name="date">Date<font color='#FF0000'>*</font></string>
+    <string name="select_date">Select Date</string>
+    <string name="total_participants">Total Participants<font color='#FF0000'>*</font></string>
+    <string name="select_total_participants">Enter Total Participants</string>
+    <string name="participating_official">Participating Official</string>
+    <string name="designation">Designation</string>
+    <string name="name_of_org">Enter Name of the organisation</string>
+    <string name="name_of_organization">Name of the organisation /NGOs/Banks Participated <font color='#FF0000'>*</font></string>
+    <string name="program_name">Program Name<font color='#FF0000'>*</font></string>
+    <string name="select_program_name">Select Program Name</string>
+    <string name="state">State <font color='#FF0000'>*</font></string>
+    <string name="select_state">Select State</string>
+    <string name="district">District <font color='#FF0000'>*</font></string>
+    <string name="select_district">Select District</string>
+    <string name="Block">Block <font color='#FF0000'>*</font></string>
+    <string name="select_Block">Select Block</string>
+    <string name="Gp">Gp <font color='#FF0000'>*</font></string>
+    <string name="select_gp">Select GP</string>
+    <string name="Village">Village <font color='#FF0000'>*</font></string>
+    <string name="select_Village">Select Village</string>
+    <string name="no_of_application_expected">No.of applications expected in the next month <font color='#FF0000'>*</font></string>
+    <string name="enter_no_of_application_expected">No.of applications expected in the next month</string>
+    <string name="brief_description">Brief description of the Programme <font color='#FF0000'>*</font></string>
+    <string name="enter_brief_description">Brief description of the Programme</string>
+    <string name="capture_image">Capture Image<font color='#FF0000'>*</font></string>
+    <string name="submit">Submit</string>
+    <string name="location">Location :-  </string>
+    <string name="location_not_found">Location not found</string>
+    <string name="address_not_found">Address not found</string>
+    <string name="address">Address :-  </string>
+    <string name="error_address">Error getting address</string>
+    <string name="send_again">Send again</string>
+    <string name="verify">Verify</string>
+    <string name="not_receive_code">Did\\\'t receive a code!</string>
+    <string name="enter_code_msg">Please enter 4 digit OTP sent to your phone number</string>
+    <string name="enter_code_email_msg">Please enter 4 digit OTP sent to your email address</string>
+    <string name="enter_code">Enter OTP</string>
+    <string name="email">Enter Email</string>
+    <string name="enter_phone">Enter Phone Number</string>
+    <string name="forgot_id_and_password">Forgot id and password</string>
+
 </resources>

@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/color_grey">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/circleImageView"
+        android:layout_width="@dimen/dp_113"
+        android:layout_height="@dimen/dp_113"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CustomCircleShape"
+        app:strokeColor="@color/color_dark_green"
+        app:strokeWidth="1dp"
+        android:layout_marginStart="@dimen/dp_12" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Welcome"
+        android:layout_marginStart="@dimen/dp_30"
+        android:textColor="@color/color_dark_green"
+        android:fontFamily="@font/avenir_next_semi_bold"
+        android:textSize="18sp" />
+</LinearLayout>

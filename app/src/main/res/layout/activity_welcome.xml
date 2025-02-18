@@ -21,8 +21,8 @@
 
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:layout_width="@dimen/dp_100"
-        android:layout_height="@dimen/dp_70"
+        android:layout_width="@dimen/dp_200"
+        android:layout_height="@dimen/dp_200"
         android:id="@+id/ivRSETI"
         android:src="@drawable/ic_rseti"
         android:layout_marginStart="@dimen/dp_20"
@@ -31,18 +31,6 @@
 
 </LinearLayout>
 
-
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_285"
-        android:id="@+id/ivPeople"
-        android:src="@drawable/ic_people"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-
-        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

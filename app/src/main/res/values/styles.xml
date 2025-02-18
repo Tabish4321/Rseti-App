@@ -1,0 +1,30 @@
+<resources>
+
+
+    <style name="CustomCircleShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CustomRectangleShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12%</item>
+    </style>
+
+    <style name="CustomChip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipStrokeColor">@color/color_dark_green</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipBackgroundColor">@color/white</item>
+        <item name="checkedIconVisible">true</item>
+        <item name="chipCornerRadius">8dp</item>
+    </style>
+
+
+    <style name="FullScreenDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+
+
+</resources>
