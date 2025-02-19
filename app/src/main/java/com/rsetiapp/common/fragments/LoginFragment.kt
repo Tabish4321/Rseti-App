@@ -3,9 +3,9 @@ package com.rsetiapp.common.fragments
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
@@ -14,6 +14,8 @@ import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
+import com.rsetiapp.core.util.onRightDrawableClicked
+import com.rsetiapp.core.util.setRightDrawablePassword
 import com.rsetiapp.core.util.toastShort
 import com.rsetiapp.databinding.LoginFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +25,8 @@ import kotlinx.coroutines.launch
 class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding :: inflate ){
     private var userName = ""
     private var password = ""
+    private var showPassword = true
+
 
     private val commonViewModel: CommonViewModel by activityViewModels()
 
@@ -44,6 +48,26 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment())
 
         }
+        binding.etPassword.onRightDrawableClicked {
+
+            if (showPassword) {
+                showPassword = false
+                binding.etPassword.setRightDrawablePassword(
+                    true, null, null,
+                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_open_eye), null
+                )
+            } else {
+                showPassword = true
+
+                binding.etPassword.setRightDrawablePassword(
+                    false, null, null,
+                    ContextCompat.getDrawable(requireContext(), R.drawable.close_eye), null
+                )
+
+            }
+
+        }
+
 
         binding.tvLogin.setOnClickListener {
 

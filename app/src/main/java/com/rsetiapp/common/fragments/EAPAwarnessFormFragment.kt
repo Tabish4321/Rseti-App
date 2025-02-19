@@ -52,8 +52,9 @@ import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.response.Program
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.visible
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(FragmentEapAwarnessBinding::inflate)  {
 
     private var formCd=""

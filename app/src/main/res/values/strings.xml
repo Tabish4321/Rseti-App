@@ -51,5 +51,6 @@
     <string name="email">Enter Email</string>
     <string name="enter_phone">Enter Phone Number</string>
     <string name="forgot_id_and_password">Forgot id and password</string>
+    <string name="enter_id">Enter User Id</string>
 
 </resources>

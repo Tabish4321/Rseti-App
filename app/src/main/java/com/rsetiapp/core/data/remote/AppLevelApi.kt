@@ -6,6 +6,7 @@ import com.rsetiapp.common.model.request.BlockReq
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
+import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.VillageReq
 import com.rsetiapp.common.model.response.BlockResponse
@@ -14,10 +15,13 @@ import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.LoginReq
+import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
+import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
+import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -60,5 +64,12 @@ interface AppLevelApi {
 
     @POST("insertEap")
     suspend fun insertEAPAPI(@Body eapInsertRequest: EAPInsertRequest): EAPInsertResponse
+
+    @POST("verifiyMobile")
+    suspend fun generateOtpAPI(@Body otpGenerateRequest: OtpGenerateRequest): OtpGenerateResponse
+
+    @POST("forgetPassword")
+    suspend fun forgetPasswordAPI(@Body fogotPaasReq: FogotPaasReq): ForgotPassresponse
+
 
 }

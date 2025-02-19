@@ -9,11 +9,15 @@ import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.common.model.request.EAPInsertRequest
+import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.LoginReq
+import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
+import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
+import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.core.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -158,6 +162,33 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
         viewModelScope.launch {
             commonRepository.insertEAPAPI(eapInsertRequest).collectLatest {
                 _insertEAPAPI.emit(it)
+            }
+        }
+
+
+    }
+
+
+    private  var _generateOtpAPI =  MutableStateFlow<Resource<out OtpGenerateResponse>>(Resource.Loading())
+    val generateOtpAPI = _generateOtpAPI.asStateFlow()
+
+    fun generateOtpAPI(otpGenerateRequest: OtpGenerateRequest) {
+        viewModelScope.launch {
+            commonRepository.generateOtpAPI(otpGenerateRequest).collectLatest {
+                _generateOtpAPI.emit(it)
+            }
+        }
+
+
+    }
+
+    private  var _forgetPasswordAPI =  MutableStateFlow<Resource<out ForgotPassresponse>>(Resource.Loading())
+    val forgetPasswordAPI = _forgetPasswordAPI.asStateFlow()
+
+    fun forgetPasswordAPI(fogotPaasReq: FogotPaasReq) {
+        viewModelScope.launch {
+            commonRepository.forgetPasswordAPI(fogotPaasReq).collectLatest {
+                _forgetPasswordAPI.emit(it)
             }
         }
 
