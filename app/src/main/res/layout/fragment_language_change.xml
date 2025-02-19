@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/color_light_grey">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/languageEng"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_50"
+        android:background="@drawable/card_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Circle with Symbol -->
+        <RelativeLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:backgroundTint="#C9ECFF"
+            android:background="@drawable/circle_background">
+
+            <TextView
+                android:id="@+id/languageSymbol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="A"
+                android:textColor="@color/color_dark_green"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <!-- Checkmark Icon -->
+            <ImageView
+                android:id="@+id/checkEnglishIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="4dp"
+                android:src="@drawable/ic_verified"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <!-- Language Name -->
+        <TextView
+            android:id="@+id/languageName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/english"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/languageHindi"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_50"
+        android:background="@drawable/card_background"
+        app:layout_constraintStart_toEndOf="@+id/languageEng"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Circle with Symbol -->
+        <RelativeLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:backgroundTint="#FAD6C1"
+            android:background="@drawable/circle_background">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="अ"
+                android:textColor="@color/color_dark_green"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <!-- Checkmark Icon -->
+            <ImageView
+                android:id="@+id/checkIconHindi"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="4dp"
+                android:src="@drawable/ic_verified"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <!-- Language Name -->
+        <TextView
+            android:id="@+id/languageHindiName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/hindi"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/languageAssamese"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_20"
+        android:background="@drawable/card_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/languageEng">
+
+        <!-- Circle with Symbol -->
+        <RelativeLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:backgroundTint="#D2A2DC"
+            android:background="@drawable/circle_background">
+
+            <TextView
+                android:id="@+id/languageAssameseSymbol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="অ"
+                android:textColor="@color/color_dark_green"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <!-- Checkmark Icon -->
+            <ImageView
+                android:id="@+id/checkAssameseIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="4dp"
+                android:src="@drawable/ic_verified"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <!-- Language Name -->
+        <TextView
+            android:id="@+id/languageAssameseName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="অসমীয়া"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/languageTamil"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_20"
+        android:background="@drawable/card_background"
+        app:layout_constraintStart_toEndOf="@+id/languageAssamese"
+        app:layout_constraintTop_toBottomOf="@+id/languageHindi">
+
+        <!-- Circle with Symbol -->
+        <RelativeLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:backgroundTint="#A8EFAB"
+            android:background="@drawable/circle_background">
+
+            <TextView
+                android:id="@+id/languageTamilSymbol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="ஆ"
+                android:textColor="@color/color_dark_green"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <!-- Checkmark Icon -->
+            <ImageView
+                android:id="@+id/checkTamilIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="4dp"
+                android:src="@drawable/ic_verified"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <!-- Language Name -->
+        <TextView
+            android:id="@+id/languageTamilName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="தமிழ்"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:gravity="center" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
+

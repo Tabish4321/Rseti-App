@@ -37,6 +37,9 @@
         <action
             android:id="@+id/action_homeFrahment_to_loginFragment2"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_homeFrahment_to_languageChangeFragment"
+            app:destination="@id/languageChangeFragment" />
 
     </fragment>
     <fragment
@@ -49,4 +52,9 @@
         android:name="com.rsetiapp.common.fragments.ForgotPasswordFragment"
         android:label="ForgotPasswordFragment"
         tools:layout="@layout/fragment_forgot_password"/>
+    <fragment
+        android:id="@+id/languageChangeFragment"
+        android:name="com.rsetiapp.common.fragments.LanguageChangeFragment"
+        android:label="LanguageChangeFragment"
+        tools:layout="@layout/fragment_language_change"/>
 </navigation>

@@ -35,13 +35,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         collectModulesData()
-        init()
 
 
         binding.profilePic.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
+        binding.changeLanguage.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFrahmentToLanguageChangeFragment())
 
+        }
         // Handle item selection in the navigation menu
         binding.navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -58,9 +60,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
 
-    private fun init(){
-
-    }
     private fun setupRecyclerView() {
         parentAdapter = ParentAdapter(moduleList)
         binding.rvParent.layoutManager = LinearLayoutManager(requireContext())

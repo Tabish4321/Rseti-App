@@ -75,6 +75,16 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                 userName = binding.etEmail.text.toString().uppercase()
                 password = binding.etPassword.text.toString()
                 val shaPass = AppUtil.sha512Hash(password)
+                if (AppUtil.getSavedLanguagePreference(requireContext()).contains("eng")) {
+
+                    AppUtil.saveLanguagePreference(requireContext(), "eng")
+
+
+                } else
+                    AppUtil.changeAppLanguage(
+                        requireContext(),
+                        AppUtil.getSavedLanguagePreference(requireContext())
+                    )
 
 
                 commonViewModel.getLoginAPI(LoginReq(userName,password,AppUtil.getAndroidId(requireContext()),BuildConfig.VERSION_NAME,""))
@@ -108,8 +118,6 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                         it.data?.let { getLoginResponse ->
                             when (getLoginResponse.responseCode) {
                                 200 -> {
-
-                                    showSnackBar(getLoginResponse.responseMsg)
 
                                     userPreferences.updateUserId(null)
                                     userPreferences.updateUserId(userName)
