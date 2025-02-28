@@ -11,6 +11,7 @@
         android:layout_width="@dimen/dp_113"
         android:layout_height="@dimen/dp_113"
         android:scaleType="centerCrop"
+        android:src="@drawable/person"
         app:shapeAppearanceOverlay="@style/CustomCircleShape"
         app:strokeColor="@color/color_dark_green"
         app:strokeWidth="1dp"

@@ -87,7 +87,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                     )
 
 
-                commonViewModel.getLoginAPI(LoginReq(userName,password,AppUtil.getAndroidId(requireContext()),BuildConfig.VERSION_NAME,""))
+                commonViewModel.getLoginAPI(LoginReq(userName,shaPass,AppUtil.getAndroidId(requireContext()),BuildConfig.VERSION_NAME,""))
 
                 collectLoginResponse()
 
