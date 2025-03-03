@@ -31,12 +31,13 @@
     <string name="select_gp">Select GP</string>
     <string name="Village">Village <font color='#FF0000'>*</font></string>
     <string name="select_Village">Select Village</string>
-    <string name="no_of_application_expected">No.of applications expected in the next month <font color='#FF0000'>*</font></string>
-    <string name="enter_no_of_application_expected">No.of applications expected in the next month</string>
+    <string name="no_of_application_expected">No.of applications generated through Kaushal panjee <font color='#FF0000'>*</font></string>
+    <string name="enter_no_of_application_expected">No.of applications generated through Kaushal panjee</string>
     <string name="brief_description">Brief description of the Programme <font color='#FF0000'>*</font></string>
     <string name="enter_brief_description">Brief description of the Programme</string>
     <string name="capture_image">Capture Image<font color='#FF0000'>*</font></string>
     <string name="submit">Submit</string>
+    <string name="add_candidate">Add Candidate</string>
     <string name="location">Location :-  </string>
     <string name="location_not_found">Location not found</string>
     <string name="address_not_found">Address not found</string>
@@ -54,5 +55,21 @@
     <string name="enter_id">Enter User Id</string>
     <string name="hindi">Hindi</string>
     <string name="english">English</string>
+    <string name="candidate_name">Candidate Name</string>
+    <string name="candidate_name_up">Candidate Name<font color='#FF0000'>*</font></string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="mobile_number_man">Mobile Number<font color='#FF0000'>*</font></string>
+    <string name="guardian_name">Guardian Name<font color='#FF0000'>*</font></string>
+    <string name="guardian_name1">Guardian Name</string>
+    <string name="guardian_Mobile">Guardian Mobile Nuber</string>
+    <string name="guardian_Mobile_man">Guardian Mobile Nuber<font color='#FF0000'>*</font></string>
+    <string name="gender">Gender</string>
+    <string name="gender_man">Gender<font color='#FF0000'>*</font></string>
+    <string name="dob">Date Of Birth</string>
+    <string name="dob_man">Date Of Birth<font color='#FF0000'>*</font></string>
+    <string name="full_address">Full Address</string>
+    <string name="full_address_man">Full Address<font color='#FF0000'>*</font></string>
+
+
 
 </resources>

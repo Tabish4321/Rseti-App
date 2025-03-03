@@ -38,6 +38,7 @@
     <string name="capture_image">Capture Image<font color='#FF0000'>*</font></string>
     <string name="submit">Submit</string>
     <string name="location">Location :-  </string>
+    <string name="add_candidate">Add Candidate</string>
     <string name="location_not_found">Location not found</string>
     <string name="address_not_found">Address not found</string>
     <string name="address">Address :-  </string>

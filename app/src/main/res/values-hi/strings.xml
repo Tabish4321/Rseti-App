@@ -31,13 +31,14 @@
     <string name="select_gp">ग्राम पंचायत चुनें</string>
     <string name="Village">गांव <font color='#FF0000'>*</font></string>
     <string name="select_Village">गांव चुनें</string>
-    <string name="no_of_application_expected">अगले महीने में अपेक्षित आवेदनों की संख्या <font color='#FF0000'>*</font></string>
-    <string name="enter_no_of_application_expected">अगले महीने में अपेक्षित आवेदनों की संख्या दर्ज करें</string>
+    <string name="no_of_application_expected">कौशल पंजी के माध्यम से उत्पन्न आवेदनों की संख्या <font color='#FF0000'>*</font></string>
+    <string name="enter_no_of_application_expected">कौशल पंजी के माध्यम से उत्पन्न आवेदनों की संख्या</string>
     <string name="brief_description">कार्यक्रम का संक्षिप्त विवरण <font color='#FF0000'>*</font></string>
     <string name="enter_brief_description">कार्यक्रम का संक्षिप्त विवरण दर्ज करें</string>
     <string name="capture_image">छवि कैप्चर करें <font color='#FF0000'>*</font></string>
     <string name="submit">सबमिट करें</string>
     <string name="location">स्थान :-  </string>
+    <string name="add_candidate">उम्मीदवार जोड़ें</string>
     <string name="location_not_found">स्थान नहीं मिला</string>
     <string name="address_not_found">पता नहीं मिला</string>
     <string name="address">पता :-  </string>

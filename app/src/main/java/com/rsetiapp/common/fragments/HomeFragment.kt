@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -35,6 +36,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         collectModulesData()
+        handleBackPress()
 
 
         binding.profilePic.setOnClickListener {
@@ -93,4 +95,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
         }
     }
+    private fun handleBackPress() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                private var backPressedTime: Long = 0
+                private val exitInterval = 2000 // 2 seconds
+
+                override fun handleOnBackPressed() {
+                    val currentTime = System.currentTimeMillis()
+                    if (currentTime - backPressedTime < exitInterval) {
+                        isEnabled =
+                            false // Disable callback to let the system handle the back press
+                        requireActivity().finish()
+                    } else {
+                        backPressedTime = currentTime
+                        showSnackBar("Press back again to exit")
+                    }
+                }
+            })
+    }
+
 }
