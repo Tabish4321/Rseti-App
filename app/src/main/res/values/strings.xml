@@ -36,7 +36,7 @@
     <string name="brief_description">Brief description of the Programme <font color='#FF0000'>*</font></string>
     <string name="enter_brief_description">Brief description of the Programme</string>
     <string name="capture_image">Capture Image<font color='#FF0000'>*</font></string>
-    <string name="submit">Submit</string>
+    <string name="submit">Submit Details</string>
     <string name="add_candidate">Add Candidate</string>
     <string name="location">Location :-  </string>
     <string name="location_not_found">Location not found</string>
@@ -69,7 +69,7 @@
     <string name="dob_man">Date Of Birth<font color='#FF0000'>*</font></string>
     <string name="full_address">Full Address</string>
     <string name="full_address_man">Full Address<font color='#FF0000'>*</font></string>
-
+    <string name="eap_id">Eap Id</string>
 
 
 </resources>

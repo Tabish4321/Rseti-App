@@ -1,4 +1,5 @@
 package com.rsetiapp.common.fragments
+import Candidate
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -28,6 +29,7 @@ import java.util.Date
 import java.util.Locale
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -41,13 +43,21 @@ import androidx.core.content.FileProvider
 import java.io.ByteArrayOutputStream
 import java.io.File
 import android.util.Base64
+import android.view.KeyEvent
+import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
+import com.rsetiapp.common.adapter.CandidateAdapter
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.response.Program
 import com.rsetiapp.core.util.UserPreferences
@@ -71,6 +81,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private var imageUri: Uri? = null
     private var currentImageView: ImageView? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var adapter: CandidateAdapter
+    private val candidateList = mutableListOf<Candidate>()
     private val commonViewModel: CommonViewModel by activityViewModels()
 
     //State Var
@@ -157,6 +169,26 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
     private fun init(){
 
+        val recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerView)
+        if (recyclerView != null) {
+            recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        }
+
+        adapter = CandidateAdapter(candidateList) { position ->
+            if (position >= 0 && position < candidateList.size) {
+                candidateList.removeAt(position)
+                adapter.notifyItemRemoved(position)
+                adapter.notifyItemRangeChanged(position, candidateList.size)
+            }
+        }
+
+// After setting the adapter, don't forget to attach it to the RecyclerView
+        if (recyclerView != null) {
+            recyclerView.adapter = adapter
+        }
+        if (recyclerView != null) {
+            recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        }
         commonViewModel.getStateListApi()
         commonViewModel.getEapAutoFetchListAPI(userPreferences.getUseID(),BuildConfig.VERSION_NAME)
         commonViewModel.getProgramListAPI()
@@ -214,6 +246,10 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
         }
 
+
+        binding.btnAddCandidate.setOnClickListener {
+            showCustomDialog()
+        }
 
 
         binding.tvFormName.text= formName
@@ -1013,4 +1049,46 @@ private fun getCurrentLocation() {
         }
     }
 
+    private fun showCustomDialog() {
+        val dialog = Dialog(requireContext()).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(R.layout.candidate_details)
+            window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setCanceledOnTouchOutside(false)
+        }
+
+        val etCandidateName = dialog.findViewById<EditText>(R.id.etCandidateName)
+        val etMobileNo = dialog.findViewById<EditText>(R.id.etMobileNo)
+        val etDob = dialog.findViewById<EditText>(R.id.etDob)
+        val etGender = dialog.findViewById<EditText>(R.id.etGender)
+        val etGuardianName = dialog.findViewById<EditText>(R.id.etGuardianName)
+        val etGuardianMobile = dialog.findViewById<EditText>(R.id.etGuardianMobile)
+        val etAddress = dialog.findViewById<EditText>(R.id.etAddress)
+        val btnAdd = dialog.findViewById<Button>(R.id.btnAdd)
+        val btnClose = dialog.findViewById<Button>(R.id.btnClose)
+
+        btnAdd.setOnClickListener {
+            val candidate = Candidate(
+                etCandidateName.text.toString(),
+                etMobileNo.text.toString(),
+                etDob.text.toString(),
+                etGender.text.toString(),
+                etGuardianName.text.toString(),
+                etGuardianMobile.text.toString(),
+                etAddress.text.toString()
+            )
+
+            candidateList.add(candidate)
+            adapter.notifyItemInserted(candidateList.size - 1)
+
+            Toast.makeText(requireContext(), "Candidate Added!", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
 }
