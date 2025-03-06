@@ -33,6 +33,8 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Environment
@@ -55,8 +57,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
+import com.rsetiapp.common.CandidateBottomSheetFragment
 import com.rsetiapp.common.adapter.CandidateAdapter
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.response.Program
@@ -248,7 +253,9 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
 
         binding.btnAddCandidate.setOnClickListener {
-            showCustomDialog()
+           // showBottomSheetDialog()
+            val bottomSheet = CandidateBottomSheetFragment(candidateList, adapter)
+            bottomSheet.show(childFragmentManager, "CandidateBottomSheet")
         }
 
 
@@ -1049,23 +1056,26 @@ private fun getCurrentLocation() {
         }
     }
 
-    private fun showCustomDialog() {
-        val dialog = Dialog(requireContext()).apply {
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.candidate_details)
-            window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setCanceledOnTouchOutside(false)
-        }
+    private fun showBottomSheetDialog() {
+        val dialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
+        val bottomSheetView = layoutInflater.inflate(R.layout.candidate_details, null)
 
-        val etCandidateName = dialog.findViewById<EditText>(R.id.etCandidateName)
-        val etMobileNo = dialog.findViewById<EditText>(R.id.etMobileNo)
-        val etDob = dialog.findViewById<EditText>(R.id.etDob)
-        val etGender = dialog.findViewById<EditText>(R.id.etGender)
-        val etGuardianName = dialog.findViewById<EditText>(R.id.etGuardianName)
-        val etGuardianMobile = dialog.findViewById<EditText>(R.id.etGuardianMobile)
-        val etAddress = dialog.findViewById<EditText>(R.id.etAddress)
-        val btnAdd = dialog.findViewById<Button>(R.id.btnAdd)
-        val btnClose = dialog.findViewById<Button>(R.id.btnClose)
+        dialog.setContentView(bottomSheetView)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCanceledOnTouchOutside(true)
+
+        dialog.show()
+
+
+        val etCandidateName = bottomSheetView.findViewById<EditText>(R.id.etCandidateName)
+        val etMobileNo = bottomSheetView.findViewById<EditText>(R.id.etMobileNo)
+        val etDob = bottomSheetView.findViewById<EditText>(R.id.etDob)
+        val etGender = bottomSheetView.findViewById<EditText>(R.id.etGender)
+        val etGuardianName = bottomSheetView.findViewById<EditText>(R.id.etGuardianName)
+        val etGuardianMobile = bottomSheetView.findViewById<EditText>(R.id.etGuardianMobile)
+        val etAddress = bottomSheetView.findViewById<EditText>(R.id.etAddress)
+        val btnAdd = bottomSheetView.findViewById<Button>(R.id.btnAdd)
+        val btnClose = bottomSheetView.findViewById<Button>(R.id.btnClose)
 
         btnAdd.setOnClickListener {
             val candidate = Candidate(
@@ -1081,6 +1091,7 @@ private fun getCurrentLocation() {
             candidateList.add(candidate)
             adapter.notifyItemInserted(candidateList.size - 1)
 
+            binding.recyclerView.visibility = View.VISIBLE // Show RecyclerView
             Toast.makeText(requireContext(), "Candidate Added!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
@@ -1091,4 +1102,5 @@ private fun getCurrentLocation() {
 
         dialog.show()
     }
+
 }

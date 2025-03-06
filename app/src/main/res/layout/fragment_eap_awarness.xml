@@ -667,9 +667,33 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="16dp"
-                    android:layout_marginTop="16dp"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_30"
+                    android:visibility="gone"
+                    android:layout_marginHorizontal="@dimen/dp_5"
+                    android:layout_marginBottom="@dimen/dp_20"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name"
+                    android:layout_marginStart="@dimen/dp_100"
+                   />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Contact Number"
+                    android:layout_marginStart="@dimen/dp_50"
+                    />
+
+
+
+            </LinearLayout>
 
 
 
@@ -769,42 +793,45 @@
 
 
             </LinearLayout>
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginTop="10dp">
+                android:weightSum="2"
+                android:id="@+id/llMinority"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvMinority">
 
-                <!-- Add Candidate Button (Filled) -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnAddCandidate"
-                    style="@style/FilledButton"
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
                     android:text="Add Candidate"
-                    app:cornerRadius="50dp"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="50dp"
-                    android:drawablePadding="8dp"
-                    app:icon="@drawable/baseline_person_add_24"
-                    app:iconTint="@color/white"
-                    android:layout_marginEnd="10dp" />
+                    android:gravity="center"
+                    android:id="@+id/btnAddCandidate"
+                    android:textColor="@color/white"
+                    android:elevation="4dp"
+                    android:textSize="@dimen/sp_16"
+                    android:background="@drawable/card_background"
+                    android:layout_margin="8dp" />
 
-                <com.google.android.material.button.MaterialButton
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
                     android:id="@+id/btnSubmit"
-                    style="@style/OutlinedButton"
+                    android:elevation="4dp"
                     android:text="Submit Details"
-                    app:cornerRadius="50dp"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="50dp"
-                    android:drawablePadding="8dp"
-                    app:icon="@drawable/ic_right_arrow"
-                    app:iconTint="@color/light_blue"
-                    android:layout_marginStart="10dp" />
+                    android:textColor="@color/light_color"
+                    android:textSize="@dimen/sp_16"
+                    android:background="@drawable/backgroung_overlay"
+                    android:layout_margin="8dp" />
             </LinearLayout>
-
-
 
 
 
