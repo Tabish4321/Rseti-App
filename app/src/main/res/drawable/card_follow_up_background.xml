@@ -1,0 +1,7 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/white" />
+    <corners android:radius="@dimen/dp_8" />
+    <stroke
+        android:width="@dimen/dp_1"
+        android:color="@color/color_follow_up_card_border" /> <!-- Light gray border -->
+</shape>
