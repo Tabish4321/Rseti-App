@@ -1,21 +1,20 @@
 package com.rsetiapp.core.data.remote
 
-import com.rsetiapp.common.model.response.StateDataResponse
-import com.rsetiapp.common.model.request.StateListReq
+import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.request.BlockReq
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
 import com.rsetiapp.common.model.request.FogotPaasReq
-import com.rsetiapp.common.model.request.GramPanchayatReq
-import com.rsetiapp.common.model.request.VillageReq
-import com.rsetiapp.common.model.response.BlockResponse
-import com.rsetiapp.common.model.response.DistrictResponse
-import com.rsetiapp.common.model.response.VillageResponse
-import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.common.model.request.FormRequest
+import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
+import com.rsetiapp.common.model.request.StateListReq
+import com.rsetiapp.common.model.request.VillageReq
+import com.rsetiapp.common.model.response.BatchListResponse
+import com.rsetiapp.common.model.response.BlockResponse
+import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.ForgotPassresponse
@@ -23,6 +22,9 @@ import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
+import com.rsetiapp.common.model.response.StateDataResponse
+import com.rsetiapp.common.model.response.VillageResponse
+import com.rsetiapp.common.model.response.grampanchayatResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -58,7 +60,6 @@ interface AppLevelApi {
     suspend fun getProgramListAPI(@Body stateListReq: StateListReq): ProgramResponse
 
 
-
     @POST("eapautofetch")
     suspend fun getEapAutoFetchListAPI(@Body eapAutofetchReq: EapAutofetchReq): EapAutoFetchRes
 
@@ -70,6 +71,9 @@ interface AppLevelApi {
 
     @POST("forgetPassword")
     suspend fun forgetPasswordAPI(@Body fogotPaasReq: FogotPaasReq): ForgotPassresponse
+
+    @POST("batchList")
+    suspend fun getFollowUpBatchListAPI(@Body batchListReq: BatchListReq): BatchListResponse
 
 
 }

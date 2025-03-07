@@ -41,6 +41,14 @@
             android:id="@+id/action_homeFrahment_to_languageChangeFragment"
             app:destination="@id/languageChangeFragment" />
 
+        <action
+            android:id="@+id/action_homeFragment_to_FollowUpBatchFragment"
+            app:destination="@id/FollowUpBatchFragment">
+            <argument
+                android:name="formName"
+                app:argType="string" />
+        </action>
+
     </fragment>
     <fragment
         android:id="@+id/EAPAwarnessFormFragment"
@@ -57,4 +65,45 @@
         android:name="com.rsetiapp.common.fragments.LanguageChangeFragment"
         android:label="LanguageChangeFragment"
         tools:layout="@layout/fragment_language_change"/>
+
+    <fragment
+        android:id="@+id/FollowUpBatchFragment"
+        android:name="com.rsetiapp.common.fragments.FollowUpBatchFragment"
+        android:label="FollowUpBatchFragment"
+        tools:layout="@layout/fragment_follow_up_batch">
+        <action
+            android:id="@+id/action_FollowUpBatchFragment_to_FollowUpCandidateFragment"
+            app:destination="@id/FollowUpCandidateFragment">
+            <argument
+                android:name="batchId"
+                app:argType="string" />
+            <argument
+                android:name="batchName"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/FollowUpCandidateFragment"
+        android:name="com.rsetiapp.common.fragments.FollowUpCandidateFragment"
+        android:label="FollowUpCandidateFragment"
+        tools:layout="@layout/fragment_follow_up_candidate">
+        <action
+            android:id="@+id/action_FollowUpCandidateFragment_to_FollowUpFormFragment"
+            app:destination="@id/FollowUpFormFragment">
+            <argument
+                android:name="batchId"
+                app:argType="string" />
+            <argument
+                android:name="candidate"
+                app:argType="com.rsetiapp.common.model.response.CandidateDetail" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/FollowUpFormFragment"
+        android:name="com.rsetiapp.common.fragments.FollowUpFormFragment"
+        android:label="FollowUpFormFragment"
+        tools:layout="@layout/fragment_follow_up" />
+
 </navigation>
