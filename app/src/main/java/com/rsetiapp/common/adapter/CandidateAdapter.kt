@@ -1,6 +1,5 @@
 package com.rsetiapp.common.adapter
 
-import Candidate
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.rsetiapp.R
+import com.rsetiapp.common.model.request.Candidate
+
 class CandidateAdapter(
     private var candidateList: MutableList<Candidate>,
     private val onDelete: (Int) -> Unit
@@ -26,8 +27,8 @@ class CandidateAdapter(
 
     override fun onBindViewHolder(holder: CandidateViewHolder, position: Int) {
         val candidate = candidateList[position]
-        holder.name.text = candidate.name
-        holder.mobile.text = candidate.mobile
+        holder.name.text = candidate.candidateName
+        holder.mobile.text = candidate.mobileNo
         holder.deleteButton.setOnClickListener {
             onDelete(holder.adapterPosition) // Ensure proper position is used
         }

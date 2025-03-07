@@ -1,5 +1,4 @@
 package com.rsetiapp.common.fragments
-import Candidate
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -29,7 +28,6 @@ import java.util.Date
 import java.util.Locale
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -45,9 +43,6 @@ import androidx.core.content.FileProvider
 import java.io.ByteArrayOutputStream
 import java.io.File
 import android.util.Base64
-import android.view.KeyEvent
-import android.view.ViewGroup
-import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -57,12 +52,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CandidateBottomSheetFragment
 import com.rsetiapp.common.adapter.CandidateAdapter
+import com.rsetiapp.common.model.request.Candidate
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.response.Program
 import com.rsetiapp.core.util.UserPreferences
@@ -235,11 +230,11 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                 image2Base64.isNotEmpty()){
 
 
-                commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
+                commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,"",instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
                     selectedprogramNameCodeItem,selectedStateCodeItem,selectedDistrictCodeItem,selectedBlockCodeItem,selectedGpCodeItem,selectedVillageCodeItem,
                     selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
                     latitude.toString(),
-                    longitude.toString(),locationAddress))
+                    longitude.toString(),candidateList))
                 collectInsertResponse()
 
 
@@ -1056,51 +1051,5 @@ private fun getCurrentLocation() {
         }
     }
 
-    private fun showBottomSheetDialog() {
-        val dialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
-        val bottomSheetView = layoutInflater.inflate(R.layout.candidate_details, null)
-
-        dialog.setContentView(bottomSheetView)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.setCanceledOnTouchOutside(true)
-
-        dialog.show()
-
-
-        val etCandidateName = bottomSheetView.findViewById<EditText>(R.id.etCandidateName)
-        val etMobileNo = bottomSheetView.findViewById<EditText>(R.id.etMobileNo)
-        val etDob = bottomSheetView.findViewById<EditText>(R.id.etDob)
-        val etGender = bottomSheetView.findViewById<EditText>(R.id.etGender)
-        val etGuardianName = bottomSheetView.findViewById<EditText>(R.id.etGuardianName)
-        val etGuardianMobile = bottomSheetView.findViewById<EditText>(R.id.etGuardianMobile)
-        val etAddress = bottomSheetView.findViewById<EditText>(R.id.etAddress)
-        val btnAdd = bottomSheetView.findViewById<Button>(R.id.btnAdd)
-        val btnClose = bottomSheetView.findViewById<Button>(R.id.btnClose)
-
-        btnAdd.setOnClickListener {
-            val candidate = Candidate(
-                etCandidateName.text.toString(),
-                etMobileNo.text.toString(),
-                etDob.text.toString(),
-                etGender.text.toString(),
-                etGuardianName.text.toString(),
-                etGuardianMobile.text.toString(),
-                etAddress.text.toString()
-            )
-
-            candidateList.add(candidate)
-            adapter.notifyItemInserted(candidateList.size - 1)
-
-            binding.recyclerView.visibility = View.VISIBLE // Show RecyclerView
-            Toast.makeText(requireContext(), "Candidate Added!", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-        }
-
-        btnClose.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
-    }
 
 }

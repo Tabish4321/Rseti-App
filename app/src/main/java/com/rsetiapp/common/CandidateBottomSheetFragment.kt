@@ -1,18 +1,18 @@
 package com.rsetiapp.common
 
-import Candidate
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rsetiapp.R
+import com.rsetiapp.common.model.request.Candidate
 
 class CandidateBottomSheetFragment(private val candidateList: MutableList<Candidate>, private val adapter: RecyclerView.Adapter<*>) :
     BottomSheetDialogFragment() {
@@ -27,7 +27,6 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Apply transparent background to allow rounded corners
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val etCandidateName = view.findViewById<EditText>(R.id.etCandidateName)
@@ -37,24 +36,25 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         val etGuardianName = view.findViewById<EditText>(R.id.etGuardianName)
         val etGuardianMobile = view.findViewById<EditText>(R.id.etGuardianMobile)
         val etAddress = view.findViewById<EditText>(R.id.etAddress)
-        val btnAdd = view.findViewById<Button>(R.id.btnAdd)
-        val btnClose = view.findViewById<Button>(R.id.btnClose)
+        val btnAdd = view.findViewById<TextView>(R.id.btnAdd)
+        val btnClose = view.findViewById<TextView>(R.id.btnClose)
 
         btnAdd.setOnClickListener {
-            val candidate = Candidate(
+            val candidate = Candidate("",
                 etCandidateName.text.toString(),
-                etMobileNo.text.toString(),
-                etDob.text.toString(),
                 etGender.text.toString(),
                 etGuardianName.text.toString(),
                 etGuardianMobile.text.toString(),
-                etAddress.text.toString()
+                etAddress.text.toString(),
+                etMobileNo.text.toString(),
+                etDob.text.toString(),""
+
             )
 
             candidateList.add(candidate)
             adapter.notifyItemInserted(candidateList.size - 1)
 
-            Toast.makeText(requireContext(), "Candidate Added!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
             dismiss()
         }
 

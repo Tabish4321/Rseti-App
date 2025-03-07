@@ -660,40 +660,14 @@
                 android:imeOptions="actionNext"
                 android:paddingHorizontal="@dimen/dp_20" />
 
-
-
-
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_30"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:layout_marginHorizontal="@dimen/dp_5"
                     android:layout_marginBottom="@dimen/dp_20"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Name"
-                    android:layout_marginStart="@dimen/dp_100"
-                   />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Contact Number"
-                    android:layout_marginStart="@dimen/dp_50"
-                    />
-
-
-
-            </LinearLayout>
 
 
 
