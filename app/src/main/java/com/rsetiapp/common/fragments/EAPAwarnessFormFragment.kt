@@ -67,8 +67,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(FragmentEapAwarnessBinding::inflate)  {
 
-    private var formCd=""
     private var formName=""
+    private var eapId=""
     private var selectedDate=""
     private var selectedTotalParticipants=""
     private var selectedNameOfNGO=""
@@ -159,8 +159,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-         formCd = arguments?.getString("formCd").toString()
          formName = arguments?.getString("formName").toString()
+         eapId = arguments?.getString("eapId").toString()
         userPreferences = UserPreferences(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         init()
@@ -204,33 +204,25 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private fun listener(){
 
 
+        binding.eapIdName.text= eapId
         //Submit Button
 
         binding.btnSubmit.setOnClickListener {
 
-         //   selectedDate
             selectedTotalParticipants =binding.etTotalParticipant.text.toString()
             selectedNameOfNGO =binding.etNameOfOrgt.text.toString()
-         /*   selectedprogramNameCodeItem
-            selectedStateCodeItem
-            selectedDistrictCodeItem
-            selectedBlockCodeItem
-            selectedGpCodeItem
-            selectedVillageCodeItem*/
+
             selectedNoOfAppExpectedNextMonth =binding.etNoOfAppExpec.text.toString()
             selectedBrief =binding.etBrief.text.toString()
-         /*   image1Base64
-            image2Base64
-            locationLatLang
-            locationAddress*/
 
-            if (selectedDate.isNotEmpty()&& selectedTotalParticipants.isNotEmpty()&& selectedNameOfNGO.isNotEmpty() && selectedprogramNameCodeItem.isNotEmpty() &&
+
+           /* if (selectedDate.isNotEmpty()&& selectedTotalParticipants.isNotEmpty()&& selectedNameOfNGO.isNotEmpty() && selectedprogramNameCodeItem.isNotEmpty() &&
                 selectedStateCodeItem.isNotEmpty() &&  selectedDistrictCodeItem.isNotEmpty() &&  selectedBlockCodeItem.isNotEmpty() && selectedGpCodeItem.isNotEmpty()&&
                 selectedVillageCodeItem.isNotEmpty() && selectedNoOfAppExpectedNextMonth.isNotEmpty() && selectedBrief.isNotEmpty()&& image1Base64.isNotEmpty()&&
                 image2Base64.isNotEmpty()){
 
 
-                commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,"",instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
+                commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,"SEP010",instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
                     selectedprogramNameCodeItem,selectedStateCodeItem,selectedDistrictCodeItem,selectedBlockCodeItem,selectedGpCodeItem,selectedVillageCodeItem,
                     selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
                     latitude.toString(),
@@ -242,13 +234,21 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
             else
                 toastShort("Kindly fill all the fields first")
-
+*/
+            commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
+                selectedprogramNameCodeItem,selectedStateCodeItem,selectedDistrictCodeItem,selectedBlockCodeItem,"34534543","56456456",
+                selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
+                latitude.toString(),
+                longitude.toString(),candidateList))
+            collectInsertResponse()
 
         }
 
 
-        binding.btnAddCandidate.setOnClickListener {
-           // showBottomSheetDialog()
+
+
+
+            binding.btnAddCandidate.setOnClickListener {
             val bottomSheet = CandidateBottomSheetFragment(candidateList, adapter)
             bottomSheet.show(childFragmentManager, "CandidateBottomSheet")
         }

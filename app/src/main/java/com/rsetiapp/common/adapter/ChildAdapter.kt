@@ -31,9 +31,8 @@ class ChildAdapter(
             // Click to navigate to another fragment
             binding.root.setOnClickListener {
                 if (form.formCd.equals("ADD_EAP")) {
-                    val action = HomeFragmentDirections.actionHomeFrahmentToEAPAwarnessFormFragment(
-                        form.formName,
-                        form.formCd
+                    val action = HomeFragmentDirections.actionHomeFrahmentToEapListFragment(
+                        form.formName
                     )
                     binding.root.findNavController().navigate(action)
                 }

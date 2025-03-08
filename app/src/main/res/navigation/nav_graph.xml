@@ -23,23 +23,20 @@
         android:name="com.rsetiapp.common.fragments.HomeFragment"
         android:label="HomeFrahment"
         tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_homeFrahment_to_EAPAwarnessFormFragment"
-            app:destination="@id/EAPAwarnessFormFragment" >
-            <argument
-                android:name="formName"
-                app:argType="string" />
-            <argument
-                android:name="formCd"
-                app:argType="string" />
 
-        </action>
         <action
             android:id="@+id/action_homeFrahment_to_loginFragment2"
             app:destination="@id/loginFragment" />
         <action
             android:id="@+id/action_homeFrahment_to_languageChangeFragment"
             app:destination="@id/languageChangeFragment" />
+        <action
+            android:id="@+id/action_homeFrahment_to_eapListFragment"
+            app:destination="@id/eapListFragment" >
+            <argument
+                android:name="formName"
+                app:argType="string" />
+        </action>
 
     </fragment>
     <fragment
@@ -57,4 +54,20 @@
         android:name="com.rsetiapp.common.fragments.LanguageChangeFragment"
         android:label="LanguageChangeFragment"
         tools:layout="@layout/fragment_language_change"/>
+    <fragment
+        android:id="@+id/eapListFragment"
+        android:name="com.rsetiapp.common.fragments.EapListFragment"
+        android:label="EapListFragment"
+        tools:layout="@layout/eap_list_fragment">
+        <action
+            android:id="@+id/action_eapListFragment_to_EAPAwarnessFormFragment"
+            app:destination="@id/EAPAwarnessFormFragment" >
+            <argument
+                android:name="formName"
+                app:argType="string" />
+            <argument
+                android:name="eapId"
+                app:argType="string" />
+        </action>
+    </fragment>
 </navigation>

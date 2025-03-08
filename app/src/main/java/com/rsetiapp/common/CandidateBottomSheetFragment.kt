@@ -38,6 +38,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         val etAddress = view.findViewById<EditText>(R.id.etAddress)
         val btnAdd = view.findViewById<TextView>(R.id.btnAdd)
         val btnClose = view.findViewById<TextView>(R.id.btnClose)
+        val llRecycler = requireActivity().findViewById<View>(R.id.llRecycler) // Get the layout
 
         btnAdd.setOnClickListener {
             val candidate = Candidate("",
@@ -53,6 +54,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
 
             candidateList.add(candidate)
             adapter.notifyItemInserted(candidateList.size - 1)
+            llRecycler.visibility = View.VISIBLE
 
             Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
             dismiss()

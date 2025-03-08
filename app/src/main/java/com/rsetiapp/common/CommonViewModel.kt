@@ -8,12 +8,18 @@ import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.BuildConfig
+import com.rsetiapp.common.model.request.CandidateDetailsReq
+import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
+import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
+import com.rsetiapp.common.model.response.CandidateDetailsRes
+import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
+import com.rsetiapp.common.model.response.EapListResponse
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
@@ -194,6 +200,49 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
 
 
     }
+
+
+    private  var _candidateSearchListAPI =  MutableStateFlow<Resource<out CandidateSearchResp>>(Resource.Loading())
+    val candidateSearchListAPI = _candidateSearchListAPI.asStateFlow()
+
+    fun candidateSearchListAPI(candidateSearchReq: CandidateSearchReq) {
+        viewModelScope.launch {
+            commonRepository.candidateSearchListAPI(candidateSearchReq).collectLatest {
+                _candidateSearchListAPI.emit(it)
+            }
+        }
+
+
+    }
+
+
+    private  var _candidateDetailsAPI =  MutableStateFlow<Resource<out CandidateDetailsRes>>(Resource.Loading())
+    val candidateDetailsAPI = _candidateDetailsAPI.asStateFlow()
+
+    fun candidateDetailsAPI(candidateDetailsReq: CandidateDetailsReq) {
+        viewModelScope.launch {
+            commonRepository.candidateDetailsAPI(candidateDetailsReq).collectLatest {
+                _candidateDetailsAPI.emit(it)
+            }
+        }
+
+
+    }
+
+
+    private  var _eapDetailsAPI =  MutableStateFlow<Resource<out EapListResponse>>(Resource.Loading())
+    val eapDetailsAPI = _eapDetailsAPI.asStateFlow()
+
+    fun eapDetailsAPI(eapListReq: EapListReq) {
+        viewModelScope.launch {
+            commonRepository.eapDetailsAPI(eapListReq).collectLatest {
+                _eapDetailsAPI.emit(it)
+            }
+        }
+
+
+    }
+
 
 
 }
