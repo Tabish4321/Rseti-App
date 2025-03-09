@@ -216,13 +216,13 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             selectedBrief =binding.etBrief.text.toString()
 
 
-           /* if (selectedDate.isNotEmpty()&& selectedTotalParticipants.isNotEmpty()&& selectedNameOfNGO.isNotEmpty() && selectedprogramNameCodeItem.isNotEmpty() &&
+            if (selectedDate.isNotEmpty()&& selectedTotalParticipants.isNotEmpty()&& selectedNameOfNGO.isNotEmpty() && selectedprogramNameCodeItem.isNotEmpty() &&
                 selectedStateCodeItem.isNotEmpty() &&  selectedDistrictCodeItem.isNotEmpty() &&  selectedBlockCodeItem.isNotEmpty() && selectedGpCodeItem.isNotEmpty()&&
                 selectedVillageCodeItem.isNotEmpty() && selectedNoOfAppExpectedNextMonth.isNotEmpty() && selectedBrief.isNotEmpty()&& image1Base64.isNotEmpty()&&
                 image2Base64.isNotEmpty()){
 
 
-                commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,"SEP010",instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
+                commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
                     selectedprogramNameCodeItem,selectedStateCodeItem,selectedDistrictCodeItem,selectedBlockCodeItem,selectedGpCodeItem,selectedVillageCodeItem,
                     selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
                     latitude.toString(),
@@ -234,13 +234,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
             else
                 toastShort("Kindly fill all the fields first")
-*/
-            commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
-                selectedprogramNameCodeItem,selectedStateCodeItem,selectedDistrictCodeItem,selectedBlockCodeItem,"34534543","56456456",
-                selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
-                latitude.toString(),
-                longitude.toString(),candidateList))
-            collectInsertResponse()
+
 
         }
 
