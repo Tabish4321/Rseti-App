@@ -71,4 +71,8 @@ class CircularProgressView @JvmOverloads constructor(
         }
         animator.start()
     }
+    private fun isValidMobileNumber(mobileNumber: String): Boolean {
+        val regex = "^[6789]\\d{9}$".toRegex()
+        return mobileNumber.matches(regex)
+    }
 }

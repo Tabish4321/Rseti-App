@@ -310,5 +310,8 @@ object AppUtil {
         return secureRandom.nextInt(9000) + 1000 // Ensures a 4-digit number (1000 - 9999)
     }
 
-
+   fun isValidMobileNumber(mobileNumber: String): Boolean {
+        val regex = "^[6789]\\d{9}$".toRegex()
+        return mobileNumber.matches(regex)
+    }
 }

@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.CalendarConstraints
@@ -16,13 +18,22 @@ import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.rsetiapp.R
 import com.rsetiapp.common.model.request.Candidate
+import com.rsetiapp.core.util.AppUtil
+import com.rsetiapp.core.util.Resource
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+@AndroidEntryPoint
 class CandidateBottomSheetFragment(private val candidateList: MutableList<Candidate>, private val adapter: RecyclerView.Adapter<*>) :
     BottomSheetDialogFragment() {
     var selectedDate=""
+    private val commonViewModel: CommonViewModel by activityViewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,28 +66,42 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         }
         btnAdd.setOnClickListener {
 
+
+
+
             if (etCandidateName.text.toString().isNotEmpty()&& etGender.text.toString().isNotEmpty()&&
             etGuardianName.text.toString().isNotEmpty()&& etGuardianMobile.text.toString().isNotEmpty()&&
             etAddress.text.toString().isNotEmpty()&& etMobileNo.text.toString().isNotEmpty()&&
             etDob.text.toString().isNotEmpty()){
 
-                val candidate = Candidate("",
-                    etCandidateName.text.toString(),
-                    etGender.text.toString(),
-                    etGuardianName.text.toString(),
-                    etGuardianMobile.text.toString(),
-                    etAddress.text.toString(),
-                    etMobileNo.text.toString(),
-                    etDob.text.toString(),""
 
-                )
+                if ( AppUtil.isValidMobileNumber(etMobileNo.text.toString()) && AppUtil.isValidMobileNumber(etGuardianMobile.text.toString()) ){
 
-                candidateList.add(candidate)
-                adapter.notifyItemInserted(candidateList.size - 1)
-                llRecycler.visibility = View.VISIBLE
 
-                Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
-                dismiss()
+
+
+                    val candidate = Candidate("",
+                        etCandidateName.text.toString(),
+                        etGender.text.toString(),
+                        etGuardianName.text.toString(),
+                        etGuardianMobile.text.toString(),
+                        etAddress.text.toString(),
+                        etMobileNo.text.toString(),
+                        etDob.text.toString(),""
+
+                    )
+
+                    candidateList.add(candidate)
+                    adapter.notifyItemInserted(candidateList.size - 1)
+                    llRecycler.visibility = View.VISIBLE
+
+                    Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
+                    dismiss()
+
+
+                }
+                else
+                    Toast.makeText(requireContext(), "Mobile number is invalid", Toast.LENGTH_SHORT).show()
 
             }
             else
@@ -122,5 +147,31 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
             selectedDate= formattedDate
         }
     }
-
+/*
+    private fun collectCandidateSearchResponse() {
+        lifecycleScope.launch {
+            commonViewModel.eapDetailsAPI.collectLatest { it ->
+                when (it) {
+                    is Resource.Loading -> showProgressBar()
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        showSnackBar("Internal Server Error")
+                    }
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        it.data?.let { getEapResponse ->
+                            if (getEapResponse.responseCode == 200) {
+                                eapList.clear()  // Clear old data
+                                eapList.addAll(getEapResponse.wrappedList)  // Add new data
+                                eapAdapter.notifyDataSetChanged()  // Notify RecyclerView
+                            } else {
+                                showSnackBar(getEapResponse.responseDesc ?: "Error")
+                            }
+                        } ?: showSnackBar("Internal Server Error")
+                    }
+                }
+            }
+        }
+    }
+*/
 }
