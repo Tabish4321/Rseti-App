@@ -80,6 +80,7 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="delete_candidate">Delete Candidate?</string>
+    <string name="submit_details">Submit Details</string>
 
 
 </resources>

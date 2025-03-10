@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
@@ -25,14 +26,48 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import androidx.lifecycle.lifecycleScope
+import com.google.android.material.imageview.ShapeableImageView
+import com.rsetiapp.core.util.visible
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Base64
+import android.widget.ImageView
+import com.rsetiapp.BuildConfig
+import com.rsetiapp.common.model.request.CandidateDetailsReq
+import com.rsetiapp.common.model.request.CandidateSearchReq
+import com.rsetiapp.common.model.response.CandidateData
+import com.rsetiapp.common.model.response.CandidateSearchData
+import com.rsetiapp.core.util.gone
+
 @AndroidEntryPoint
 class CandidateBottomSheetFragment(private val candidateList: MutableList<Candidate>, private val adapter: RecyclerView.Adapter<*>) :
     BottomSheetDialogFragment() {
     var selectedDate=""
     private val commonViewModel: CommonViewModel by activityViewModels()
+    private lateinit var progressBar: View
+    private var candidateId= ""
+    private lateinit var candidateNameSearch: TextView
+    private lateinit var candidatePicSearch: ShapeableImageView
+    private lateinit var llCandidateSearch: LinearLayout
+    private lateinit var etCandidateName: EditText
+    private lateinit var etGender: EditText
+    private lateinit var etGuardianName: EditText
+    private lateinit var etGuardianMobile: EditText
+    private lateinit var etAddress: EditText
+    private lateinit var etMobileNo: EditText
+    private lateinit var etDob: TextView
+
+
+
+    private var candidateSearchList: List<CandidateSearchData> = listOf()
+    private var candidateDetailsList: List<CandidateData> = listOf()
+
+
+
+
 
 
     override fun onCreateView(
@@ -48,22 +83,69 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
 
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        val etCandidateName = view.findViewById<EditText>(R.id.etCandidateName)
-        val etMobileNo = view.findViewById<EditText>(R.id.etMobileNo)
-        val etDob = view.findViewById<TextView>(R.id.etDob)
-        val etGender = view.findViewById<EditText>(R.id.etGender)
-        val etGuardianName = view.findViewById<EditText>(R.id.etGuardianName)
-        val etGuardianMobile = view.findViewById<EditText>(R.id.etGuardianMobile)
-        val etAddress = view.findViewById<EditText>(R.id.etAddress)
+        progressBar = view.findViewById(R.id.progressBar)
+         etCandidateName = view.findViewById(R.id.etCandidateName)
+         etMobileNo = view.findViewById(R.id.etMobileNo)
+         etDob = view.findViewById(R.id.etDob)
+         etGender = view.findViewById(R.id.etGender)
+         etGuardianName = view.findViewById(R.id.etGuardianName)
+         etGuardianMobile = view.findViewById(R.id.etGuardianMobile)
+         etAddress = view.findViewById(R.id.etAddress)
         val btnAdd = view.findViewById<TextView>(R.id.btnAdd)
         val btnClose = view.findViewById<TextView>(R.id.btnClose)
-        val llRecycler = requireActivity().findViewById<View>(R.id.llRecycler) // Get the layout
+        val llRecycler = view.findViewById<LinearLayout>(R.id.llRecycler)
+        candidateNameSearch = view.findViewById(R.id.candidateNameSearch)
+        candidatePicSearch = view.findViewById(R.id.candidatePicSearch)
+        llCandidateSearch = view.findViewById(R.id.llSearch)
+
+
+
+
+
+        val etSearch = view.findViewById<EditText>(R.id.etSearch)
+
+        etSearch.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+
+                val getCandidateId = s.toString()
+                if (getCandidateId.length == 10) {
+                    commonViewModel.candidateSearchListAPI(
+                        CandidateSearchReq(
+                            BuildConfig.VERSION_NAME,
+                            getCandidateId
+                        )
+                    )
+                    collectCandidateSearchResponse()
+
+                }
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+
+
 
 
         etDob.setOnClickListener {
 
             showDatePicker(etDob)
         }
+
+
+        llCandidateSearch.setOnClickListener {
+            llCandidateSearch.gone()
+
+            commonViewModel.candidateDetailsAPI(CandidateDetailsReq(BuildConfig.VERSION_NAME,candidateId))
+            collectCandidateDataResponse()
+
+        }
+
+
+
+
         btnAdd.setOnClickListener {
 
 
@@ -93,7 +175,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
 
                     candidateList.add(candidate)
                     adapter.notifyItemInserted(candidateList.size - 1)
-                    llRecycler.visibility = View.VISIBLE
+                    llRecycler.visible()
 
                     Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
                     dismiss()
@@ -147,31 +229,120 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
             selectedDate= formattedDate
         }
     }
-/*
     private fun collectCandidateSearchResponse() {
         lifecycleScope.launch {
-            commonViewModel.eapDetailsAPI.collectLatest { it ->
+            commonViewModel.candidateSearchListAPI.collectLatest { it ->
                 when (it) {
                     is Resource.Loading -> showProgressBar()
                     is Resource.Error -> {
                         hideProgressBar()
-                        showSnackBar("Internal Server Error")
+                        Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
+
                     }
                     is Resource.Success -> {
                         hideProgressBar()
-                        it.data?.let { getEapResponse ->
-                            if (getEapResponse.responseCode == 200) {
-                                eapList.clear()  // Clear old data
-                                eapList.addAll(getEapResponse.wrappedList)  // Add new data
-                                eapAdapter.notifyDataSetChanged()  // Notify RecyclerView
-                            } else {
-                                showSnackBar(getEapResponse.responseDesc ?: "Error")
+                        it.data?.let { getSearchRes ->
+                            if (getSearchRes.responseCode == 200) {
+
+                                candidateSearchList= getSearchRes.wrappedList
+
+                                llCandidateSearch.visible()
+
+                                for (x in candidateSearchList) {
+                                    candidateId= x.candidateId
+                                    candidateNameSearch.text = x.candidateName
+                                    setBase64ToImageView(x.candidateProfilePic,candidatePicSearch)
+                                }
+                                Toast.makeText(requireContext(), getSearchRes.responseDesc ?: "Error", Toast.LENGTH_SHORT).show()
+
+
                             }
-                        } ?: showSnackBar("Internal Server Error")
+                            else if (getSearchRes.responseCode == 301) {
+                                Toast.makeText(requireContext(), "Please Update from PlayStore", Toast.LENGTH_SHORT).show()
+
+
+                            }
+                            else {
+                                Toast.makeText(requireContext(), getSearchRes.responseDesc ?: "Error", Toast.LENGTH_SHORT).show()
+
+                            }
+                        } ?:   Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
+
                     }
                 }
             }
         }
     }
-*/
+
+    private fun collectCandidateDataResponse() {
+        lifecycleScope.launch {
+            commonViewModel.candidateDetailsAPI.collectLatest { it ->
+                when (it) {
+                    is Resource.Loading -> showProgressBar()
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
+
+                    }
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        it.data?.let { getcandidateDetailsRes ->
+                            if (getcandidateDetailsRes.responseCode == 200) {
+
+                                candidateDetailsList= getcandidateDetailsRes.wrappedList
+
+                                for (x in candidateDetailsList) {
+
+                                    etCandidateName.setText(x.candidateName)
+                                    etGender.setText(x.gender)
+                                    etGuardianName.setText(x.guardianName)
+                                    etGuardianMobile.setText(x.guardianMobileNo)
+                                    etAddress.setText(x.candidateAddress)
+                                    etMobileNo.setText(x.mobileNo)
+                                    etDob.text = x.emailId
+
+                                }
+                                Toast.makeText(requireContext(), getcandidateDetailsRes.responseDesc ?: "Error", Toast.LENGTH_SHORT).show()
+
+
+                            }
+                            else if (getcandidateDetailsRes.responseCode == 301) {
+                                Toast.makeText(requireContext(), "Please Update from PlayStore", Toast.LENGTH_SHORT).show()
+
+
+                            }
+                            else {
+                                Toast.makeText(requireContext(), getcandidateDetailsRes.responseDesc ?: "Error", Toast.LENGTH_SHORT).show()
+
+                            }
+                        } ?:   Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
+
+                    }
+                }
+            }
+        }
+    }
+
+
+    private fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBar() {
+        progressBar.visibility = View.GONE
+    }
+    private fun setBase64ToImageView(base64String: String?, imageView: ImageView) {
+        if (base64String.isNullOrEmpty()) {
+            imageView.setImageResource(R.drawable.person) // Default placeholder
+            return
+        }
+        try {
+            val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+            val bitmap: Bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+            imageView.setImageBitmap(bitmap)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            imageView.setImageResource(R.drawable.person) // Fallback image
+        }
+    }
 }
