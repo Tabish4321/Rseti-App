@@ -2,6 +2,7 @@ package com.rsetiapp.core.data.remote
 
 import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.request.BlockReq
+import com.rsetiapp.common.model.request.CandidateListReq
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
@@ -14,6 +15,7 @@ import com.rsetiapp.common.model.request.StateListReq
 import com.rsetiapp.common.model.request.VillageReq
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.BlockResponse
+import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
@@ -75,5 +77,7 @@ interface AppLevelApi {
     @POST("batchList")
     suspend fun getFollowUpBatchListAPI(@Body batchListReq: BatchListReq): BatchListResponse
 
+    @POST("batchCandidateList")
+    suspend fun getFollowUpCandidateListAPI(@Body candidateListReq: CandidateListReq): CandidateListResponse
 
 }

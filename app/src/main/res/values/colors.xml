@@ -27,6 +27,7 @@
     <color name="color_follow_up_toolbar">#10A69F</color>
     <color name="color_follow_up_card_border">#EAEAEA</color>
     <color name="color_follow_up_title">#50555C</color>
+    <color name="color_follow_up_status">#038D4D</color>
 
     <color name="grey_400">#BDBDBD</color>
 

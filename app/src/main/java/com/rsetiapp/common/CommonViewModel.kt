@@ -15,6 +15,7 @@ import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.response.Batch
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.CandidateDetail
+import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.ForgotPassresponse
@@ -209,12 +210,12 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
         }
     }
 
-    private var _getCandidateAPI = MutableStateFlow<Resource<out List<CandidateDetail>>>(Resource.Loading())
+    private var _getCandidateAPI = MutableStateFlow<Resource<out CandidateListResponse>>(Resource.Loading())
     val getCandidateAPI = _getCandidateAPI.asStateFlow()
 
-    fun getCandidateAPI(appVersion:String , login:String, batchId: String){
+    fun getCandidateAPI(appVersion:String , batchId: String){
         viewModelScope.launch {
-            commonRepository.getCandidateAPI(appVersion,login, batchId).collectLatest {
+            commonRepository.getCandidateAPI(appVersion, batchId).collectLatest {
                 _getCandidateAPI.emit(it)
             }
         }

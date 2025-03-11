@@ -5,6 +5,7 @@ import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.request.StateListReq
 import com.rsetiapp.common.model.request.BlockReq
+import com.rsetiapp.common.model.request.CandidateListReq
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
@@ -21,6 +22,7 @@ import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.response.Batch
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.CandidateDetail
+import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.FollowUpStatus
@@ -123,33 +125,11 @@ class CommonRepository @Inject constructor(
         }
     }
 
-    suspend fun getCandidateAPI(appVersion : String, login :String, batchId: String): Flow<Resource<out List<CandidateDetail>>> {
-        val status  = ArrayList<FollowUpStatus>().apply {
-            add(FollowUpStatus("S1", "Settled"))
-            add(FollowUpStatus("S2", "Settled"))
-            add(FollowUpStatus("S3", "Settled"))
-            add(FollowUpStatus("S4", "Settled"))
-            add(FollowUpStatus("S5", "Not Settled"))
-            add(FollowUpStatus("S6", "Not Settled"))
-            add(FollowUpStatus("S7", "Not Settled"))
-            add(FollowUpStatus("S8", "Not Settled"))
+    suspend fun getCandidateAPI(
+        appVersion: String, batchId: String
+    ): Flow<Resource<out CandidateListResponse>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getFollowUpCandidateListAPI(CandidateListReq(appVersion, batchId))
         }
-
-        val candidateList = listOf(
-            CandidateDetail("1", "Candidate 1","1", "7895185107", "Father 1", R.drawable.person, status),
-            CandidateDetail("2", "Candidate 2","2", "7895185107", "Father 2", R.drawable.person, status),
-            CandidateDetail("3", "Candidate 3","3", "7895185107", "Father 3", R.drawable.person, status),
-            CandidateDetail("4", "Candidate 4","4", "7895185107", "Father 4", R.drawable.person, status),
-            CandidateDetail("5", "Candidate 5","5", "7895185107", "Father 5", R.drawable.person, status),
-            CandidateDetail("6", "Candidate 6","6", "7895185107", "Father 6", R.drawable.person, status),
-            CandidateDetail("7", "Candidate 7","7", "7895185107", "Father 7", R.drawable.person, status),
-            CandidateDetail("8", "Candidate 8","8", "7895185107", "Father 8", R.drawable.person, status),
-            CandidateDetail("9", "Candidate 9","9", "7895185107", "Father 9", R.drawable.person, status),
-            CandidateDetail("10", "Candidate 10","10", "7895185107", "Father 10", R.drawable.person, status),
-            CandidateDetail("11", "Candidate 11","11", "7895185107", "Father 11", R.drawable.person, status),
-            CandidateDetail("12", "Candidate 12","12", "7895185107", "Father 12", R.drawable.person, status)
-        )
-
-        return MutableStateFlow<Resource<out List<CandidateDetail>>>(Resource.Success(candidateList))
     }
 }

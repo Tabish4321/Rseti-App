@@ -13,7 +13,6 @@ import com.rsetiapp.common.adapter.CandidateDetailsAdapter
 import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.util.Resource
-import com.rsetiapp.core.util.toastShort
 import com.rsetiapp.databinding.FragmentFollowUpCandidateBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -48,7 +47,7 @@ class FollowUpCandidateFragment :
     }
 
     private fun setupRecyclerView() {
-        candidateAdapter = CandidateDetailsAdapter(candidateList, batchId)
+        candidateAdapter = CandidateDetailsAdapter(candidateList)
         binding.rvCandidate.layoutManager = LinearLayoutManager(requireContext())
         binding.rvCandidate.adapter = candidateAdapter
     }
@@ -57,7 +56,6 @@ class FollowUpCandidateFragment :
     private fun collectCandidatesData() {
         commonViewModel.getCandidateAPI(
             BuildConfig.VERSION_NAME,
-            userPreferences.getUseID(),
             batchId
         )
         lifecycleScope.launch {
@@ -66,16 +64,24 @@ class FollowUpCandidateFragment :
                     is Resource.Loading -> showProgressBar()
                     is Resource.Error -> {
                         hideProgressBar()
-                        resource.error?.message?.let { toastShort(it) }
+                        resource.error?.let { baseErrorResponse ->
+                            showSnackBar("Internal Server Error111")
+                        }
                     }
 
                     is Resource.Success -> {
                         hideProgressBar()
-                        resource.data?.let { response ->
-                            candidateList.clear()
-                            candidateList.addAll(response)
-                            candidateAdapter.notifyDataSetChanged()
-                        }
+                        resource.data?.let { getCandidateResponse ->
+                            if (getCandidateResponse.responseCode == 200) {
+                                candidateList.clear()
+                                candidateList.addAll(getCandidateResponse.wrappedList)
+                                candidateAdapter.notifyDataSetChanged()
+                            } else if (getCandidateResponse.responseCode == 301) {
+                                showSnackBar("Please Update from PlayStore")
+                            } else {
+                                showSnackBar(getCandidateResponse.responseDesc)
+                            }
+                        } ?: showSnackBar("Internal Server Error")
                     }
                 }
             }

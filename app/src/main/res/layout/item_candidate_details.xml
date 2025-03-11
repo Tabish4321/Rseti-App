@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/dp_20"
     android:layout_marginTop="@dimen/dp_10"
-    android:background="@color/color_background_light_grey"
+    android:background="@drawable/card_follow_up_background"
     android:elevation="@dimen/dp_1"
     android:padding="@dimen/dp_10">
 
@@ -17,75 +17,97 @@
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/CustomCircleShape"
-        app:strokeColor="@color/color_dark_green"
-        app:strokeWidth="1dp" />
+        app:shapeAppearanceOverlay="@style/CustomCircleShape" />
 
     <TextView
-        android:id="@+id/tvCandidateName"
-        android:layout_width="@dimen/dp_0"
+        android:id="@+id/tvCandidate"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_10"
-        android:fontFamily="@font/avenir_next_bold"
-        android:textColor="@color/color_dark_green"
+        android:layout_marginStart="@dimen/dp_5"
+        android:fontFamily="@font/avenir_next_regular"
+        android:text="Name"
+        android:textColor="@color/color_follow_up_title"
         android:textSize="@dimen/sp_14"
-        app:drawableEndCompat="@drawable/ic_right_arrow"
-        app:drawableTint="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/candidateImage"
         app:layout_constraintTop_toTopOf="@+id/candidateImage" />
 
     <TextView
-        android:id="@+id/tvCandidateRollNumber"
-        android:layout_width="@dimen/dp_0"
+        android:id="@+id/tvCandidateName"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginStart="@dimen/dp_5"
         android:fontFamily="@font/avenir_next_bold"
-        android:textColor="@color/color_dark_green"
-        android:textSize="@dimen/sp_12"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/color_text"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintStart_toEndOf="@+id/tvCandidate"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvRollNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/avenir_next_regular"
+        android:text="Roll No."
+        android:layout_marginStart="@dimen/dp_5"
+        android:textColor="@color/color_follow_up_title"
+        android:textSize="@dimen/sp_14"
         app:layout_constraintStart_toEndOf="@id/candidateImage"
+        app:layout_constraintTop_toBottomOf="@+id/tvCandidate" />
+
+    <TextView
+        android:id="@+id/tvRollNumberValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_5"
+        android:fontFamily="@font/avenir_next_bold"
+        android:textColor="@color/color_text"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintStart_toEndOf="@+id/tvRollNumber"
         app:layout_constraintTop_toBottomOf="@+id/tvCandidateName" />
 
     <TextView
-        android:id="@+id/tvCandidateContactNumber"
-        android:layout_width="@dimen/dp_0"
+        android:id="@+id/tvContact"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_10"
-        android:fontFamily="@font/avenir_next_bold"
-        android:textColor="@color/color_dark_green"
-        android:textSize="@dimen/sp_12"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/candidateImage"
-        app:layout_constraintTop_toBottomOf="@+id/tvCandidateRollNumber" />
-
-    <View
-        android:id="@+id/viewLine"
-        android:layout_width="@dimen/dp_0"
-        android:layout_height="@dimen/dp_1"
-        android:layout_margin="@dimen/dp_15"
-        android:background="@color/grey_400"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/dp_5"
+        android:fontFamily="@font/avenir_next_regular"
+        android:text="Contact Number"
+        android:textColor="@color/color_follow_up_title"
+        android:textSize="@dimen/sp_14"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvCandidateContactNumber" />
+        app:layout_constraintTop_toBottomOf="@+id/candidateImage" />
+
+    <TextView
+        android:id="@+id/tvContactNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_5"
+        android:fontFamily="@font/avenir_next_bold"
+        android:textColor="@color/color_text"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintStart_toEndOf="@+id/tvContact"
+        app:layout_constraintTop_toTopOf="@+id/tvContact" />
+
+    <TextView
+        android:id="@+id/tvFollowUpStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/avenir_next_regular"
+        android:text="Follow Up status"
+        android:textColor="@color/color_follow_up_title"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvContact" />
 
     <LinearLayout
         android:layout_width="@dimen/dp_0"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_5"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewLine">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/avenir_next_bold"
-            android:text="Status :   "
-            android:textColor="@color/color_dark_green"
-            android:textSize="@dimen/sp_14" />
+        app:layout_constraintTop_toBottomOf="@id/tvFollowUpStatus">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvStatus"

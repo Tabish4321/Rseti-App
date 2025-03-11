@@ -1,8 +1,6 @@
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.rsetiapp.R
 import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.databinding.ItemFollowUpStatusBinding
 
@@ -29,13 +27,12 @@ class FollowUpStatusAdapter(
         fun bind(followUpStatus: FollowUpStatus) {
             binding.tvFollowUpStatus.text = followUpStatus.type
 
-            Glide.with(binding.root.context).load(
+            binding.followUpStatus.isChecked =
                 when (followUpStatus.status) {
-                    "Settled" -> R.drawable.ic_settled
-                    "Not Settled" -> R.drawable.ic_not_settled
-                    else -> R.drawable.ic_not_settled
+                    "Settled" -> true
+                    "Not Settled" -> false
+                    else -> false
                 }
-            ).into(binding.followUpStatusImage)
         }
     }
 }

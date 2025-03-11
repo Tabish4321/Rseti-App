@@ -12,6 +12,7 @@
         android:background="@drawable/top_home"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:backgroundTint="@color/color_follow_up_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -25,7 +26,8 @@
             android:layout_marginStart="@dimen/dp_20"
             android:padding="@dimen/dp_5"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_arrow_back_ios_new" />
+            android:src="@drawable/ic_arrow_back_ios_new"
+            android:tint="@color/white"/>
 
         <TextView
             android:id="@+id/tvBatchName"
