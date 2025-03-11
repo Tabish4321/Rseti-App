@@ -1,8 +1,11 @@
 package com.rsetiapp.common
 
+import com.rsetiapp.R
+import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.request.StateListReq
 import com.rsetiapp.common.model.request.BlockReq
+import com.rsetiapp.common.model.request.CandidateListReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.DistrictReq
@@ -19,10 +22,15 @@ import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
-import com.rsetiapp.common.model.response.CandidateDetailsRes
-import com.rsetiapp.common.model.response.CandidateSearchResp
+import com.rsetiapp.common.model.response.Batch
+import com.rsetiapp.common.model.response.BatchListResponse
+import com.rsetiapp.common.model.response.CandidateDetail
+import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
+import com.rsetiapp.common.model.response.FollowUpStatus
+import com.rsetiapp.common.model.response.CandidateDetailsRes
+import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EapListResponse
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
@@ -35,6 +43,7 @@ import com.rsetiapp.core.di.AppModule
 import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.networkBoundResourceWithoutDb
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 
@@ -116,6 +125,12 @@ class CommonRepository @Inject constructor(
         }
     }
 
+    suspend fun getBatchAPI(appVersion : String): Flow<Resource<out BatchListResponse>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getFollowUpBatchListAPI(BatchListReq(appVersion))
+        }
+    }
+
     suspend fun candidateSearchListAPI(candidateSearchReq: CandidateSearchReq): Flow<Resource<out CandidateSearchResp>>{
         return networkBoundResourceWithoutDb {
             appLevelApi.candidateSearchListAPI(candidateSearchReq)
@@ -133,4 +148,11 @@ class CommonRepository @Inject constructor(
         }
     }
 
+    suspend fun getCandidateAPI(
+        appVersion: String, batchId: String
+    ): Flow<Resource<out CandidateListResponse>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getFollowUpCandidateListAPI(CandidateListReq(appVersion, batchId))
+        }
+    }
 }
