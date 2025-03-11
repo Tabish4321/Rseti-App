@@ -32,10 +32,9 @@ class ChildAdapter(
             binding.root.setOnClickListener {
                 when (form.formCd) {
                     "ADD_EAP" -> {
-                        val action =
-                            HomeFragmentDirections.actionHomeFrahmentToEAPAwarnessFormFragment(
-                                form.formName, form.formCd
-                            )
+                        val action = HomeFragmentDirections.actionHomeFrahmentToEapListFragment(
+                            form.formName
+                        )
                         binding.root.findNavController().navigate(action)
                     }
 

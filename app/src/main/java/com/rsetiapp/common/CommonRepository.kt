@@ -6,9 +6,12 @@ import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.request.StateListReq
 import com.rsetiapp.common.model.request.BlockReq
 import com.rsetiapp.common.model.request.CandidateListReq
+import com.rsetiapp.common.model.request.CandidateDetailsReq
+import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
+import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.VillageReq
@@ -26,6 +29,9 @@ import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.FollowUpStatus
+import com.rsetiapp.common.model.response.CandidateDetailsRes
+import com.rsetiapp.common.model.response.CandidateSearchResp
+import com.rsetiapp.common.model.response.EapListResponse
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
@@ -121,7 +127,24 @@ class CommonRepository @Inject constructor(
 
     suspend fun getBatchAPI(appVersion : String): Flow<Resource<out BatchListResponse>> {
         return networkBoundResourceWithoutDb {
-            appLevelApi.getFollowUpBatchListAPI(BatchListReq(appVersion) )
+            appLevelApi.getFollowUpBatchListAPI(BatchListReq(appVersion))
+        }
+    }
+
+    suspend fun candidateSearchListAPI(candidateSearchReq: CandidateSearchReq): Flow<Resource<out CandidateSearchResp>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.candidateSearchListAPI(candidateSearchReq)
+        }
+    }
+
+    suspend fun candidateDetailsAPI(candidateDetailsReq: CandidateDetailsReq): Flow<Resource<out CandidateDetailsRes>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.candidateDetailsAPI(candidateDetailsReq)
+        }
+    }
+    suspend fun eapDetailsAPI(eapListReq: EapListReq): Flow<Resource<out EapListResponse>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.eapDetailsAPI(eapListReq)
         }
     }
 

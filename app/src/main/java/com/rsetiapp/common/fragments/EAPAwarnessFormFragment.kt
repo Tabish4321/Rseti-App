@@ -1,5 +1,4 @@
 package com.rsetiapp.common.fragments
-import Candidate
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -29,10 +28,11 @@ import java.util.Date
 import java.util.Locale
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Environment
@@ -43,9 +43,6 @@ import androidx.core.content.FileProvider
 import java.io.ByteArrayOutputStream
 import java.io.File
 import android.util.Base64
-import android.view.KeyEvent
-import android.view.ViewGroup
-import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -55,9 +52,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
+import com.rsetiapp.common.CandidateBottomSheetFragment
 import com.rsetiapp.common.adapter.CandidateAdapter
+import com.rsetiapp.common.model.request.Candidate
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.response.Program
 import com.rsetiapp.core.util.UserPreferences
@@ -67,8 +67,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(FragmentEapAwarnessBinding::inflate)  {
 
-    private var formCd=""
     private var formName=""
+    private var eapId=""
     private var selectedDate=""
     private var selectedTotalParticipants=""
     private var selectedNameOfNGO=""
@@ -159,8 +159,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-         formCd = arguments?.getString("formCd").toString()
          formName = arguments?.getString("formName").toString()
+         eapId = arguments?.getString("eapId").toString()
         userPreferences = UserPreferences(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         init()
@@ -204,25 +204,17 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private fun listener(){
 
 
+        binding.eapIdName.text= eapId
         //Submit Button
 
         binding.btnSubmit.setOnClickListener {
 
-         //   selectedDate
             selectedTotalParticipants =binding.etTotalParticipant.text.toString()
             selectedNameOfNGO =binding.etNameOfOrgt.text.toString()
-         /*   selectedprogramNameCodeItem
-            selectedStateCodeItem
-            selectedDistrictCodeItem
-            selectedBlockCodeItem
-            selectedGpCodeItem
-            selectedVillageCodeItem*/
+
             selectedNoOfAppExpectedNextMonth =binding.etNoOfAppExpec.text.toString()
             selectedBrief =binding.etBrief.text.toString()
-         /*   image1Base64
-            image2Base64
-            locationLatLang
-            locationAddress*/
+
 
             if (selectedDate.isNotEmpty()&& selectedTotalParticipants.isNotEmpty()&& selectedNameOfNGO.isNotEmpty() && selectedprogramNameCodeItem.isNotEmpty() &&
                 selectedStateCodeItem.isNotEmpty() &&  selectedDistrictCodeItem.isNotEmpty() &&  selectedBlockCodeItem.isNotEmpty() && selectedGpCodeItem.isNotEmpty()&&
@@ -230,11 +222,11 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                 image2Base64.isNotEmpty()){
 
 
-                commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
+                commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
                     selectedprogramNameCodeItem,selectedStateCodeItem,selectedDistrictCodeItem,selectedBlockCodeItem,selectedGpCodeItem,selectedVillageCodeItem,
                     selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
                     latitude.toString(),
-                    longitude.toString(),locationAddress))
+                    longitude.toString(),candidateList))
                 collectInsertResponse()
 
 
@@ -247,8 +239,12 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         }
 
 
-        binding.btnAddCandidate.setOnClickListener {
-            showCustomDialog()
+
+
+
+            binding.btnAddCandidate.setOnClickListener {
+            val bottomSheet = CandidateBottomSheetFragment(candidateList, adapter)
+            bottomSheet.show(childFragmentManager, "CandidateBottomSheet")
         }
 
 
@@ -1049,46 +1045,5 @@ private fun getCurrentLocation() {
         }
     }
 
-    private fun showCustomDialog() {
-        val dialog = Dialog(requireContext()).apply {
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.candidate_details)
-            window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setCanceledOnTouchOutside(false)
-        }
 
-        val etCandidateName = dialog.findViewById<EditText>(R.id.etCandidateName)
-        val etMobileNo = dialog.findViewById<EditText>(R.id.etMobileNo)
-        val etDob = dialog.findViewById<EditText>(R.id.etDob)
-        val etGender = dialog.findViewById<EditText>(R.id.etGender)
-        val etGuardianName = dialog.findViewById<EditText>(R.id.etGuardianName)
-        val etGuardianMobile = dialog.findViewById<EditText>(R.id.etGuardianMobile)
-        val etAddress = dialog.findViewById<EditText>(R.id.etAddress)
-        val btnAdd = dialog.findViewById<Button>(R.id.btnAdd)
-        val btnClose = dialog.findViewById<Button>(R.id.btnClose)
-
-        btnAdd.setOnClickListener {
-            val candidate = Candidate(
-                etCandidateName.text.toString(),
-                etMobileNo.text.toString(),
-                etDob.text.toString(),
-                etGender.text.toString(),
-                etGuardianName.text.toString(),
-                etGuardianMobile.text.toString(),
-                etAddress.text.toString()
-            )
-
-            candidateList.add(candidate)
-            adapter.notifyItemInserted(candidateList.size - 1)
-
-            Toast.makeText(requireContext(), "Candidate Added!", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-        }
-
-        btnClose.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
-    }
 }

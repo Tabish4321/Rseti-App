@@ -1,13 +1,16 @@
 package com.rsetiapp.common.adapter
 
-import Candidate
+import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.rsetiapp.R
+import com.rsetiapp.common.model.request.Candidate
+
 class CandidateAdapter(
     private var candidateList: MutableList<Candidate>,
     private val onDelete: (Int) -> Unit
@@ -24,14 +27,46 @@ class CandidateAdapter(
         return CandidateViewHolder(view)
     }
 
+/*
     override fun onBindViewHolder(holder: CandidateViewHolder, position: Int) {
         val candidate = candidateList[position]
-        holder.name.text = candidate.name
-        holder.mobile.text = candidate.mobile
+        holder.name.text = candidate.candidateName
+        holder.mobile.text = candidate.mobileNo
         holder.deleteButton.setOnClickListener {
             onDelete(holder.adapterPosition) // Ensure proper position is used
         }
     }
+*/
+override fun onBindViewHolder(holder: CandidateViewHolder, position: Int) {
+    val candidate = candidateList[position]
+    holder.name.text = candidate.candidateName
+    holder.mobile.text = candidate.mobileNo
+
+    holder.deleteButton.setOnClickListener {
+        val dialogView = LayoutInflater.from(holder.itemView.context).inflate(R.layout.dialog_delete_confirmation, null)
+        val dialog = AlertDialog.Builder(holder.itemView.context)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnDelete = dialogView.findViewById<Button>(R.id.btnDelete)
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss() // Close dialog
+        }
+
+        btnDelete.setOnClickListener {
+            onDelete(holder.adapterPosition) // Delete candidate
+            dialog.dismiss() // Close dialog
+        }
+
+        dialog.show()
+    }
+}
+
+
+
 
     override fun getItemCount(): Int = candidateList.size
 }
