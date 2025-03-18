@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -17,8 +18,11 @@ import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
 
 import com.rsetiapp.common.model.response.CandidateDetail
+import com.rsetiapp.common.model.response.FollowUpType
+import com.rsetiapp.common.model.response.Program
 import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.util.Resource
+import com.rsetiapp.core.util.toastShort
 import com.rsetiapp.databinding.FragmentFollowUpBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -33,6 +37,12 @@ class FollowUpFormFragment :
     private val commonViewModel: CommonViewModel by activityViewModels()
     private var selectedDate: String = ""
     private lateinit var candidate: CandidateDetail
+
+    //Follow Up Type var
+    private var followUpTypeList: List<FollowUpType> = mutableListOf()
+    private var followUpTypeName = ArrayList<String>()
+    private var followUpTypeCode = ArrayList<String>()
+    private lateinit var followUpTypeAdapter: ArrayAdapter<String>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -61,7 +71,47 @@ class FollowUpFormFragment :
         binding.tvCareOfName.text = candidate.guardianName
         binding.tvContactName.text = candidate.mobileNo
 
+        commonViewModel.getFollowTypeListAPI()
+        collectFollowTypeResponse()
+
         listener()
+    }
+
+    private fun collectFollowTypeResponse() {
+        lifecycleScope.launch {
+            collectLatestLifecycleFlow(commonViewModel.getFollowTypeList) {
+                when (it) {
+                    is Resource.Loading -> showProgressBar()
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        it.error?.let { baseErrorResponse ->
+                            toastShort(baseErrorResponse.message)
+                        }
+                    }
+
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        it.data?.let { getFollowUpTypeList ->
+                            if (getFollowUpTypeList.responseCode == 200) {
+                                followUpTypeList = getFollowUpTypeList.wrappedList
+
+
+                                for (x in followUpTypeList) {
+                                    followUpTypeName.add(x.followUpTypeName)
+                                    followUpTypeCode.add(x.followupTypeId)
+                                }
+
+                                followUpTypeAdapter.notifyDataSetChanged()
+                            } else if (getFollowUpTypeList.responseCode == 301) {
+                                showSnackBar("Please Update from PlayStore")
+                            } else {
+                                showSnackBar(getFollowUpTypeList.responseDesc)
+                            }
+                        } ?: showSnackBar("Internal Server Error")
+                    }
+                }
+            }
+        }
     }
 
     private fun listener() {
@@ -69,6 +119,15 @@ class FollowUpFormFragment :
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
+
+        //Adapter Follow Up Type
+        followUpTypeAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            followUpTypeName
+        )
+
+        binding.spinnerFollowType.setAdapter(followUpTypeAdapter)
 
         //Submit Button
         /*binding.btnSubmit.setOnClickListener {

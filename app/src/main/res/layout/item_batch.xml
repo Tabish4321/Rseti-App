@@ -54,34 +54,4 @@
         app:layout_constraintStart_toEndOf="@+id/tvBatch"
         app:layout_constraintTop_toBottomOf="@+id/tvBatchIdName" />
 
-    <TextView
-        android:id="@+id/tvFollowUpStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/avenir_next_regular"
-        android:text="Follow Up status"
-        android:textColor="@color/color_follow_up_title"
-        android:textSize="@dimen/sp_14"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
-
-    <LinearLayout
-        android:layout_width="@dimen/dp_0"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_5"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvFollowUpStatus">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-    </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

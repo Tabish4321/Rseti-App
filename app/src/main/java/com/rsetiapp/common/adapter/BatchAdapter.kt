@@ -34,18 +34,6 @@ class BatchAdapter(
         fun bind(batch: Batch) {
             binding.tvBatchIdName.text = batch.batchCode
             binding.tvBatchName.text = batch.batchName  // Show Batch Name
-            binding.rvStatus.apply {
-                adapter = FollowUpStatusAdapter(batch.followUpStatus ?: ArrayList<FollowUpStatus>().apply {
-                    add(FollowUpStatus("S1", "Settled"))
-                    add(FollowUpStatus("S2", "Settled"))
-                    add(FollowUpStatus("S3", "Settled"))
-                    add(FollowUpStatus("S4", "Settled"))
-                    add(FollowUpStatus("S5", "Not Settled"))
-                    add(FollowUpStatus("S6", "Not Settled"))
-                    add(FollowUpStatus("S7", "Not Settled"))
-                    add(FollowUpStatus("S8", "Not Settled"))
-                })
-            }
 
             // Handle Click
             binding.root.setOnClickListener {

@@ -13,6 +13,7 @@ import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
+import com.rsetiapp.common.model.request.FollowUpTypeReq
 import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.VillageReq
 import com.rsetiapp.common.model.response.BlockResponse
@@ -32,6 +33,7 @@ import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
@@ -153,6 +155,12 @@ class CommonRepository @Inject constructor(
     ): Flow<Resource<out CandidateListResponse>> {
         return networkBoundResourceWithoutDb {
             appLevelApi.getFollowUpCandidateListAPI(CandidateListReq(appVersion, batchId))
+        }
+    }
+
+    suspend fun getFollowTypeListAPI(appVersion: String): Flow<Resource<out FollowUpTypeResp>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getFollowTypeListAPI(FollowUpTypeReq( appVersion))
         }
     }
 }
