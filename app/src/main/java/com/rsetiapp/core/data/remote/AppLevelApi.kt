@@ -26,6 +26,7 @@ import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
@@ -100,5 +101,8 @@ interface AppLevelApi {
 
     @POST("followUpType")
     suspend fun getFollowTypeListAPI(@Body followUpTypeReq: FollowUpTypeReq): FollowUpTypeResp
+
+    @POST("followUpStatus")
+    suspend fun getFollowStatusListAPI(@Body followUpTypeReq: FollowUpTypeReq): FollowUpStatusResp
 
 }

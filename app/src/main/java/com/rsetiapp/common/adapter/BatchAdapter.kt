@@ -1,6 +1,5 @@
 package com.rsetiapp.common.adapter
 
-import FollowUpStatusAdapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -9,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 import com.rsetiapp.common.fragments.FollowUpBatchFragmentDirections
 import com.rsetiapp.common.model.response.Batch
-import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.databinding.ItemBatchBinding
 
 class BatchAdapter(

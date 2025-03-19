@@ -40,7 +40,7 @@ class FollowUpCandidateFragment :
     }
 
     private fun init() {
-        binding.tvBatchName.text = batchName
+        binding.tvTitleName.text = batchName
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }

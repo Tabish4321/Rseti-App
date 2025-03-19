@@ -1,18 +1,18 @@
 package com.rsetiapp.common.adapter
 
-import FollowUpStatusAdapter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rsetiapp.R
 import com.rsetiapp.common.fragments.FollowUpCandidateFragmentDirections
 import com.rsetiapp.common.model.response.CandidateDetail
-import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.databinding.ItemCandidateDetailsBinding
 
 
@@ -52,19 +52,15 @@ class CandidateDetailsAdapter(
             binding.tvCandidateName.text = candidate.candidateName
             binding.tvRollNumberValue.text = candidate.rollNo.toString()
             binding.tvContactNumber.text = candidate.mobileNo
-            binding.rvStatus.apply {
-                adapter = FollowUpStatusAdapter(
-                    candidate.followUpStatus ?: ArrayList<FollowUpStatus>().apply {
-                        add(FollowUpStatus("S1", "Settled"))
-                        add(FollowUpStatus("S2", "Settled"))
-                        add(FollowUpStatus("S3", "Settled"))
-                        add(FollowUpStatus("S4", "Settled"))
-                        add(FollowUpStatus("S5", "Not Settled"))
-                        add(FollowUpStatus("S6", "Not Settled"))
-                        add(FollowUpStatus("S7", "Not Settled"))
-                        add(FollowUpStatus("S8", "Not Settled"))
-                    })
-            }
+            binding.tvSettlementStatus.text = decodeFollowUpStatus(candidate.sattleStatus ?: "1")
+            displayStatus(binding.followUp1Status, candidate.quarter1 ?: "1")
+            displayStatus(binding.followUp2Status, candidate.quarter2 ?: "1")
+            displayStatus(binding.followUp3Status, candidate.quarter3 ?: "1")
+            displayStatus(binding.followUp4Status, candidate.quarter4 ?: "1")
+            displayStatus(binding.followUp5Status, candidate.quarter5 ?: "1")
+            displayStatus(binding.followUp6Status, candidate.quarter6 ?: "1")
+            displayStatus(binding.followUp7Status, candidate.quarter7 ?: "1")
+            displayStatus(binding.followUp8Status, candidate.quarter8 ?: "1")
 
             // Handle Click
             binding.root.setOnClickListener {
@@ -76,6 +72,26 @@ class CandidateDetailsAdapter(
                     )
                 binding.root.findNavController().navigate(action)
             }
+        }
+
+        private fun decodeFollowUpStatus(status: String): String = when (status) {
+            "1" -> "Settlement In Progress"
+            "2" -> "Settled"
+            "3" -> "Unsettled"
+            else -> "N/A"
+        }
+
+        private fun displayStatus(statusView: ImageView, status: String) {
+            statusView.setColorFilter(
+                ContextCompat.getColor(
+                    statusView.context, when (status) {
+                        "2" -> R.color.color_follow_up_status
+                        "3" -> R.color.yellow
+                        "4" -> R.color.color_red
+                        else -> R.color.color_grey
+                    }
+                )
+            )
         }
     }
 }

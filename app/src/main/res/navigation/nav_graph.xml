@@ -90,7 +90,7 @@
             app:destination="@id/FollowUpFormFragment">
             <argument
                 android:name="candidate"
-                app:argType="com.rsetiapp.common.model.response.CandidateDetail" />
+                app:argType="java.io.Serializable" />
         </action>
     </fragment>
 

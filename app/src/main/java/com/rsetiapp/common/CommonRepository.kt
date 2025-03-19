@@ -29,10 +29,10 @@ import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
-import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
@@ -161,6 +161,12 @@ class CommonRepository @Inject constructor(
     suspend fun getFollowTypeListAPI(appVersion: String): Flow<Resource<out FollowUpTypeResp>>{
         return networkBoundResourceWithoutDb {
             appLevelApi.getFollowTypeListAPI(FollowUpTypeReq( appVersion))
+        }
+    }
+
+    suspend fun getFollowStatusListAPI(appVersion: String): Flow<Resource<out FollowUpStatusResp>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getFollowStatusListAPI(FollowUpTypeReq( appVersion))
         }
     }
 }

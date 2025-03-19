@@ -24,6 +24,7 @@ import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
@@ -275,8 +276,19 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
 
     fun getFollowTypeListAPI() {
         viewModelScope.launch {
-            commonRepository.getFollowTypeListAPI( BuildConfig.VERSION_NAME).collectLatest {
+            commonRepository.getFollowTypeListAPI(BuildConfig.VERSION_NAME).collectLatest {
                 _getFollowTypeList.emit(it)
+            }
+        }
+    }
+
+    private  var _getFollowStatusList =  MutableStateFlow<Resource<out FollowUpStatusResp>>(Resource.Loading())
+    val getFollowStatusList = _getFollowStatusList.asStateFlow()
+
+    fun getFollowStatusListAPI() {
+        viewModelScope.launch {
+            commonRepository.getFollowStatusListAPI(BuildConfig.VERSION_NAME).collectLatest {
+                _getFollowStatusList.emit(it)
             }
         }
     }
