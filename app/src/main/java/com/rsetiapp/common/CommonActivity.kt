@@ -35,7 +35,6 @@ class CommonActivity : BaseActivity<CommonActivityBinding>(CommonActivityBinding
         val graphInflater = navHostFragment.navController.navInflater
         val navGraph = graphInflater.inflate(R.navigation.nav_graph)
 
-
         navGraph.setStartDestination(R.id.loginFragment)
 
 

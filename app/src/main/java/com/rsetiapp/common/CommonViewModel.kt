@@ -270,5 +270,21 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
     }
 
 
+    private  var bankIfscCodeAPI =  MutableStateFlow<Resource<out BankDetailsResponse>>(Resource.Loading())
+    val bankIfscCodeAPI = bankIfscCodeAPI.asStateFlow()
+
+    fun bankIfscCodeAPI(eapListReq: EapListReq) {
+        viewModelScope.launch {
+            commonRepository.eapDetailsAPI(eapListReq).collectLatest {
+                bankIfscCodeAPI.emit(it)
+            }
+        }
+
+
+    }
+
+
+
+
 
 }

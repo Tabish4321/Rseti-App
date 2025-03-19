@@ -5,16 +5,20 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
+import com.rsetiapp.common.MySattelementBottomSheet
 
 import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.core.basecomponent.BaseFragment
@@ -31,14 +35,21 @@ class FollowUpFormFragment :
     BaseFragment<FragmentFollowUpBinding>(FragmentFollowUpBinding::inflate) {
 
     private val commonViewModel: CommonViewModel by activityViewModels()
+    private lateinit var sattelmentStatusAdapter: ArrayAdapter<String>
+
     private var selectedDate: String = ""
+    private var selectedSettlemenItem: String = ""
+    private val settalmentNameList = listOf("Settled", "Settlement InProgress", "UnSettled")
+
     private lateinit var candidate: CandidateDetail
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        init()
+        //init()
 
+        listener()
     }
 
     private fun init() {
@@ -68,6 +79,28 @@ class FollowUpFormFragment :
         // Back Button
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
+        }
+
+
+        sattelmentStatusAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            settalmentNameList
+        )
+
+        binding.spinnerStatus.setAdapter(sattelmentStatusAdapter)
+
+
+        binding.spinnerStatus.setOnItemClickListener { parent, view, position, id ->
+            selectedSettlemenItem = parent.getItemAtPosition(position).toString()
+            if (selectedSettlemenItem== "Settled") {
+
+
+                val bottomSheet = MySattelementBottomSheet()
+                bottomSheet.show(parentFragmentManager, "MyBottomSheet")
+
+
+            }
         }
 
         //Submit Button

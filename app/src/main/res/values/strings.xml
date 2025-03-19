@@ -81,6 +81,20 @@
     <string name="delete">Delete</string>
     <string name="delete_candidate">Delete Candidate?</string>
     <string name="submit_details">Submit Details</string>
+    <string name="status">Status<font color='#FF0000'>*</font></string>
+    <string name="statush">Status</string>
+    <string name="selectForInvestment">Select For Investment Type</string>
+    <string name="SelfInvestment">Self Investment</string>
+    <string name="credit_linkage_bank_actuals">(Credit Linkage) Bank (Actuals)</string>
+    <string name="Total">Total</string>
+    <string name="bank_name">Bank name</string>
+    <string name="ifsc_code">IFSC Code</string>
+    <string name="enter_ifsc_code">Enter Ifsc Code</string>
+    <string name="branch_name">branch name</string>
+    <string name="bank_account_number">Loan account number</string>
+    <string name="city">City</string>
+    <string name="Reason">Reason</string>
+    <string name="account_status">Account Status</string>
 
 
 </resources>

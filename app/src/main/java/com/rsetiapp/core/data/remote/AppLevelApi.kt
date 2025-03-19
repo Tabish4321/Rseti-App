@@ -96,4 +96,6 @@ interface AppLevelApi {
     @POST("eapDetails")
     suspend fun eapDetailsAPI(@Body eapListReq: EapListReq): EapListResponse
 
+
+
 }

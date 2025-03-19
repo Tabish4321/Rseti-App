@@ -70,11 +70,9 @@ class CandidateDetailsAdapter(
             binding.root.setOnClickListener {
                 val data = candidateList[adapterPosition]
 
-                val action =
-                    FollowUpCandidateFragmentDirections.actionFollowUpCandidateFragmentToFollowUpFormFragment(
-                        data
-                    )
-                binding.root.findNavController().navigate(action)
+                /*val action =
+                    FollowUpCandidateFragmentDirections.actionFollowUpCandidateFragmentToFollowUpFormFragment(data)*/
+                binding.root.findNavController().navigate(R.id.action_FollowUpCandidateFragment_to_FollowUpFormFragment)
             }
         }
     }

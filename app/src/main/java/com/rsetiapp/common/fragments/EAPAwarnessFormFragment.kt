@@ -52,7 +52,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CandidateBottomSheetFragment
@@ -190,7 +189,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
         }
         commonViewModel.getStateListApi()
-        commonViewModel.getEapAutoFetchListAPI(userPreferences.getUseID(),BuildConfig.VERSION_NAME)
+        commonViewModel.getEapAutoFetchListAPI(userPreferences.getUseID(), BuildConfig.VERSION_NAME)
         commonViewModel.getProgramListAPI()
         collectProgramNameResponse()
         collectEapAutoFetchResponse()
