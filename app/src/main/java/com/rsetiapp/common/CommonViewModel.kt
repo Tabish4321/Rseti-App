@@ -26,6 +26,8 @@ import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FollowUpStatusResp
+import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
@@ -267,9 +269,10 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
                 _eapDetailsAPI.emit(it)
             }
         }
-
-
     }
+
+    private  var _getFollowTypeList =  MutableStateFlow<Resource<out FollowUpTypeResp>>(Resource.Loading())
+    val getFollowTypeList = _getFollowTypeList.asStateFlow()
 
     private  var _getAttendanceBatchAPI =  MutableStateFlow<Resource<out AttendanceBatchRes>>(Resource.Loading())
     val getAttendanceBatchAPI = _getAttendanceBatchAPI.asStateFlow()
@@ -295,10 +298,25 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
                 _getAttendanceCandidate.emit(it)
             }
         }
-
-
     }
 
+    fun getFollowTypeListAPI() {
+        viewModelScope.launch {
+            commonRepository.getFollowTypeListAPI(BuildConfig.VERSION_NAME).collectLatest {
+                _getFollowTypeList.emit(it)
+            }
+        }
+    }
 
+    private  var _getFollowStatusList =  MutableStateFlow<Resource<out FollowUpStatusResp>>(Resource.Loading())
+    val getFollowStatusList = _getFollowStatusList.asStateFlow()
+
+    fun getFollowStatusListAPI() {
+        viewModelScope.launch {
+            commonRepository.getFollowStatusListAPI(BuildConfig.VERSION_NAME).collectLatest {
+                _getFollowStatusList.emit(it)
+            }
+        }
+    }
 
 }

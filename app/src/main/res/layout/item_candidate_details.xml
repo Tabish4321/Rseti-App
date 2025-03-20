@@ -15,6 +15,8 @@
         android:layout_width="@dimen/dp_55"
         android:layout_height="@dimen/dp_55"
         android:scaleType="centerCrop"
+        app:strokeWidth="@dimen/dp_1"
+        app:strokeColor="@color/color_dark_green"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/CustomCircleShape" />
@@ -24,6 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_5"
+        android:layout_marginTop="@dimen/dp_5"
         android:fontFamily="@font/avenir_next_regular"
         android:text="Name"
         android:textColor="@color/color_follow_up_title"
@@ -36,6 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_5"
+        android:layout_marginTop="@dimen/dp_5"
         android:fontFamily="@font/avenir_next_bold"
         android:textColor="@color/color_text"
         android:textSize="@dimen/sp_14"
@@ -89,6 +93,29 @@
         app:layout_constraintTop_toTopOf="@+id/tvContact" />
 
     <TextView
+        android:id="@+id/tvSettlement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:fontFamily="@font/avenir_next_regular"
+        android:text="Settlement Status"
+        android:textColor="@color/color_follow_up_title"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvContact" />
+
+    <TextView
+        android:id="@+id/tvSettlementStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_5"
+        android:fontFamily="@font/avenir_next_bold"
+        android:textColor="@color/color_text"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintStart_toEndOf="@+id/tvSettlement"
+        app:layout_constraintTop_toTopOf="@+id/tvSettlement" />
+
+    <TextView
         android:id="@+id/tvFollowUpStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -97,24 +124,256 @@
         android:textColor="@color/color_follow_up_title"
         android:textSize="@dimen/sp_14"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvContact" />
+        app:layout_constraintTop_toBottomOf="@+id/tvSettlement" />
 
     <LinearLayout
         android:layout_width="@dimen/dp_0"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_5"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:weightSum="8"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvFollowUpStatus">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvStatus"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            android:background="@color/color_background_light_grey"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/avenir_next_medium"
+                android:text="S1"
+                android:textColor="@color/color_follow_up_title"
+                android:textSize="@dimen/sp_12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
+
+            <ImageView
+                android:id="@+id/followUp1Status"
+                android:layout_width="@dimen/dp_25"
+                android:layout_height="@dimen/dp_25"
+                android:padding="@dimen/dp_3"
+                android:src="@drawable/baseline_circle_24"
+                app:layout_constraintStart_toEndOf="@+id/candidateImage"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:tint="@color/color_grey" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@color/color_background_light_grey"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/avenir_next_medium"
+                android:text="S2"
+                android:textColor="@color/color_follow_up_title"
+                android:textSize="@dimen/sp_12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
+
+            <ImageView
+                android:id="@+id/followUp2Status"
+                android:layout_width="@dimen/dp_25"
+                android:layout_height="@dimen/dp_25"
+                android:padding="@dimen/dp_3"
+                android:src="@drawable/baseline_circle_24"
+                app:layout_constraintStart_toEndOf="@+id/candidateImage"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:tint="@color/color_grey" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@color/color_background_light_grey"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/avenir_next_medium"
+                android:text="S3"
+                android:textColor="@color/color_follow_up_title"
+                android:textSize="@dimen/sp_12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
+
+            <ImageView
+                android:id="@+id/followUp3Status"
+                android:layout_width="@dimen/dp_25"
+                android:layout_height="@dimen/dp_25"
+                android:padding="@dimen/dp_3"
+                android:src="@drawable/baseline_circle_24"
+                app:layout_constraintStart_toEndOf="@+id/candidateImage"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:tint="@color/color_grey" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@color/color_background_light_grey"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/avenir_next_medium"
+                android:text="S4"
+                android:textColor="@color/color_follow_up_title"
+                android:textSize="@dimen/sp_12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
+
+            <ImageView
+                android:id="@+id/followUp4Status"
+                android:layout_width="@dimen/dp_25"
+                android:layout_height="@dimen/dp_25"
+                android:padding="@dimen/dp_3"
+                android:src="@drawable/baseline_circle_24"
+                app:layout_constraintStart_toEndOf="@+id/candidateImage"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:tint="@color/color_grey" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@color/color_background_light_grey"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/avenir_next_medium"
+                android:text="S5"
+                android:textColor="@color/color_follow_up_title"
+                android:textSize="@dimen/sp_12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
+
+            <ImageView
+                android:id="@+id/followUp5Status"
+                android:layout_width="@dimen/dp_25"
+                android:layout_height="@dimen/dp_25"
+                android:padding="@dimen/dp_3"
+                android:src="@drawable/baseline_circle_24"
+                app:layout_constraintStart_toEndOf="@+id/candidateImage"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:tint="@color/color_grey" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@color/color_background_light_grey"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/avenir_next_medium"
+                android:text="S6"
+                android:textColor="@color/color_follow_up_title"
+                android:textSize="@dimen/sp_12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
+
+            <ImageView
+                android:id="@+id/followUp6Status"
+                android:layout_width="@dimen/dp_25"
+                android:layout_height="@dimen/dp_25"
+                android:padding="@dimen/dp_3"
+                android:src="@drawable/baseline_circle_24"
+                app:layout_constraintStart_toEndOf="@+id/candidateImage"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:tint="@color/color_grey" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@color/color_background_light_grey"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/avenir_next_medium"
+                android:text="S7"
+                android:textColor="@color/color_follow_up_title"
+                android:textSize="@dimen/sp_12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
+
+            <ImageView
+                android:id="@+id/followUp7Status"
+                android:layout_width="@dimen/dp_25"
+                android:layout_height="@dimen/dp_25"
+                android:padding="@dimen/dp_3"
+                android:src="@drawable/baseline_circle_24"
+                app:layout_constraintStart_toEndOf="@+id/candidateImage"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:tint="@color/color_grey" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@color/color_background_light_grey"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/avenir_next_medium"
+                android:text="S8"
+                android:textColor="@color/color_follow_up_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
+
+            <ImageView
+                android:id="@+id/followUp8Status"
+                android:layout_width="@dimen/dp_25"
+                android:layout_height="@dimen/dp_25"
+                android:padding="@dimen/dp_3"
+                android:src="@drawable/baseline_circle_24"
+                app:layout_constraintStart_toEndOf="@+id/candidateImage"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:tint="@color/color_grey" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
