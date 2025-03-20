@@ -52,6 +52,9 @@
                 android:name="formName"
                 app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_homeFrahment_to_attendanceFragment"
+            app:destination="@id/attendanceFragment" />
 
     </fragment>
     <fragment
@@ -144,4 +147,10 @@
         android:name="com.rsetiapp.common.fragments.AttendanceCandidateFragment"
         android:label="AttendanceCandidateFragment"
         tools:layout="@layout/attendance_candidate_fragment"/>
+    <fragment
+        android:id="@+id/attendanceFragment"
+        android:name="com.rsetiapp.common.fragments.AttendanceFragment"
+        android:label="AttendanceFragment"
+        tools:layout="@layout/fragment_verify_user_attendance"
+        />
 </navigation>

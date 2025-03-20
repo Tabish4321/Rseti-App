@@ -1,5 +1,7 @@
 package com.rsetiapp.core.data.remote
 
+import com.rsetiapp.core.uidai.ekyc.UidaiKycRequest
+import com.rsetiapp.core.uidai.ekyc.UidaiResp
 import com.rsetiapp.common.model.request.AttendanceBatchReq
 import com.rsetiapp.common.model.request.AttendanceCandidateReq
 import com.rsetiapp.common.model.request.BatchListReq
@@ -40,8 +42,10 @@ import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.Url
 
 interface AppLevelApi {
 
@@ -114,4 +118,10 @@ interface AppLevelApi {
 
     @POST("onGoingBatchCandidateList")
     suspend fun getAttendanceCandidate( @Body attendanceCandidateReq: AttendanceCandidateReq): AttendanceCandidateRes
+
+    @POST
+    suspend fun postOnAUAFaceAuthNREGA(
+        @Url url: String,
+        @Body request: UidaiKycRequest
+    ): Response<UidaiResp>
 }

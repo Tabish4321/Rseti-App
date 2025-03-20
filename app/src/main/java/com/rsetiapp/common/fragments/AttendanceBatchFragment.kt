@@ -27,15 +27,15 @@ class AttendanceBatchFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         init()
         setupRecyclerView()
 
     }
 
     private fun init(){
-        commonViewModel.getAttendanceBatchAPI(BuildConfig.VERSION_NAME)
+
         collectAttendanceBatchResponse()
+        commonViewModel.getAttendanceBatchAPI(BuildConfig.VERSION_NAME)
         listener()
 
     }
@@ -44,8 +44,6 @@ class AttendanceBatchFragment :
             binding.backButton.setOnClickListener {
                 findNavController().navigateUp()
             }
-
-
 
         }
 

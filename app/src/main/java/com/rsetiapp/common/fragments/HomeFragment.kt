@@ -59,6 +59,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
             true
         }
+
+        binding.ivAttendance.setOnClickListener {
+
+            findNavController().navigate(HomeFragmentDirections.actionHomeFrahmentToAttendanceFragment())
+        }
     }
 
 

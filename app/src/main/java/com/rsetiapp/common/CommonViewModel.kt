@@ -2,6 +2,8 @@ package com.rsetiapp.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rsetiapp.core.uidai.ekyc.UidaiKycRequest
+import com.rsetiapp.core.uidai.ekyc.UidaiResp
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.response.BlockResponse
 import com.rsetiapp.common.model.response.DistrictResponse
@@ -17,9 +19,7 @@ import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
-import com.rsetiapp.common.model.response.Batch
 import com.rsetiapp.common.model.response.BatchListResponse
-import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
@@ -35,10 +35,13 @@ import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.core.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import retrofit2.Response
 import javax.inject.Inject
 
 
@@ -315,6 +318,17 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
         viewModelScope.launch {
             commonRepository.getFollowStatusListAPI(BuildConfig.VERSION_NAME).collectLatest {
                 _getFollowStatusList.emit(it)
+            }
+        }
+    }
+
+    private var _postOnAUAFaceAuthNREGA = MutableSharedFlow<Resource<out Response<UidaiResp>>>()
+    val postOnAUAFaceAuthNREGA = _postOnAUAFaceAuthNREGA.asSharedFlow()
+
+    fun postOnAUAFaceAuthNREGA(url:String, uidaiKycRequest: UidaiKycRequest){
+        viewModelScope.launch {
+            commonRepository.postOnAUAFaceAuthNREGA(url, uidaiKycRequest).collectLatest {
+                _postOnAUAFaceAuthNREGA.emit(it)
             }
         }
     }
