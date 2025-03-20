@@ -12,31 +12,35 @@
         android:background="@drawable/top_home"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:backgroundTint="@color/color_follow_up_toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="">
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/backButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/backButton"
             android:layout_marginStart="@dimen/dp_20"
             android:padding="@dimen/dp_5"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_arrow_back_ios_new"
-            android:tint="@color/white"/>
-
+            android:src="@drawable/ic_arrow_back_ios_new"/>
         <TextView
-            android:id="@+id/tvBatchName"
+            android:id="@+id/tvTitleName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/form_name"
             android:textColor="@color/white"
-            android:textSize="@dimen/sp_16" />
+            android:textSize="@dimen/sp_16"/>
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="150dp"
+            android:layout_height="@dimen/dp_60"
+            android:layout_marginStart="@dimen/dp_100"
+            android:background="@color/white"
+            android:padding="@dimen/dp_5"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_rseti"
+            app:shapeAppearanceOverlay="@style/CustomRectangleShape" />
 
     </androidx.appcompat.widget.Toolbar>
 

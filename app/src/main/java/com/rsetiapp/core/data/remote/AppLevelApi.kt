@@ -12,6 +12,7 @@ import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
+import com.rsetiapp.common.model.request.FollowUpTypeReq
 import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.LoginReq
@@ -29,6 +30,8 @@ import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FollowUpStatusResp
+import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
@@ -100,12 +103,15 @@ interface AppLevelApi {
     @POST("eapDetails")
     suspend fun eapDetailsAPI(@Body eapListReq: EapListReq): EapListResponse
 
+    @POST("followUpType")
+    suspend fun getFollowTypeListAPI(@Body followUpTypeReq: FollowUpTypeReq): FollowUpTypeResp
+
+    @POST("followUpStatus")
+    suspend fun getFollowStatusListAPI(@Body followUpTypeReq: FollowUpTypeReq): FollowUpStatusResp
+
     @POST("onGoingBatchList")
     suspend fun getAttendanceBatch( @Body attendanceBatchReq: AttendanceBatchReq): AttendanceBatchRes
 
-
     @POST("onGoingBatchCandidateList")
     suspend fun getAttendanceCandidate( @Body attendanceCandidateReq: AttendanceCandidateReq): AttendanceCandidateRes
-
-
 }
