@@ -85,8 +85,8 @@ class CandidateDetailsAdapter(
             statusView.setColorFilter(
                 ContextCompat.getColor(
                     statusView.context, when (status) {
-                        "2" -> R.color.color_follow_up_status
-                        "3" -> R.color.yellow
+                        "2" -> R.color.yellow
+                        "3" -> R.color.color_follow_up_status
                         "4" -> R.color.color_red
                         else -> R.color.color_grey
                     }
