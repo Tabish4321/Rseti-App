@@ -61,8 +61,8 @@ class FollowUpFormFragment :
     //Follow Up Status var
     private var followUpStatusList: List<FollowUpStatus> = mutableListOf()
     private var followUpStatusName = ArrayList<String>()
-    private var followUpStatusCode = ArrayList<String>()
     private lateinit var followUpStatusAdapter: ArrayAdapter<String>
+    private lateinit var selectedFollowUpStatus: FollowUpStatus
 
     private var image1Base64 = ""
     private var latitude: Double? = null
@@ -166,7 +166,6 @@ class FollowUpFormFragment :
 
                                 for (x in followUpStatusList) {
                                     followUpStatusName.add(x.status)
-                                    followUpStatusCode.add(x.statusId.toString())
                                 }
 
                                 followUpStatusAdapter.notifyDataSetChanged()
@@ -199,7 +198,30 @@ class FollowUpFormFragment :
             requireContext(), android.R.layout.simple_spinner_dropdown_item, followUpStatusName
         )
         binding.spinnerStatus.setAdapter(followUpStatusAdapter)
+        binding.spinnerStatus.setOnItemClickListener { parent, view, position, id ->
+            selectedFollowUpStatus = followUpStatusList[position]
 
+            when (selectedFollowUpStatus.statusId) {
+                1 -> {
+                    binding.tvReason.text = getString(R.string.reason_nm)
+                    binding.tvReason.visibility = View.VISIBLE
+                    binding.etReason.visibility = View.VISIBLE
+                }
+
+                3 -> {
+                    binding.tvReason.text = getString(R.string.reason)
+                    binding.tvReason.visibility = View.VISIBLE
+                    binding.etReason.visibility = View.VISIBLE
+                }
+
+                else -> {
+                    binding.tvReason.visibility = View.GONE
+                    binding.etReason.visibility = View.GONE
+                }
+            }
+        }
+
+        // Capture Image
         binding.image1.setOnClickListener {
             openCamera(binding.image1)
         }
@@ -208,24 +230,6 @@ class FollowUpFormFragment :
         /*binding.btnSubmit.setOnClickListener {
 
             collectInsertResponse()
-        }*/
-
-
-        //Adapter Program
-
-        /* programNameAdapter = ArrayAdapter(
-             requireContext(),
-             android.R.layout.simple_spinner_dropdown_item,
-             programName
-         )
-
-         binding.spinnerProgramName.setAdapter(programNameAdapter)*/
-
-
-        /*binding.tvDate.setOnClickListener {
-
-            showDatePicker(binding.tvDate)
-
         }*/
     }
 
@@ -289,9 +293,7 @@ class FollowUpFormFragment :
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile("IMG_${System.currentTimeMillis()}", ".jpg", storageDir).apply {
             imageUri = FileProvider.getUriForFile(
-                requireContext(),
-                "${requireContext().packageName}.provider",
-                this
+                requireContext(), "${requireContext().packageName}.provider", this
             )
         }
     }

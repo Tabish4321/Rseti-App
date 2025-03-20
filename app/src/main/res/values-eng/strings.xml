@@ -81,5 +81,29 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="delete_candidate">Delete Candidate?</string>
+    <string name="name">Name</string>
+    <string name="candidate_follow_up">Candidate Follow Up</string>
+    <string name="care_of">Care Of</string>
+    <string name="follow_type">Follow Type</string>
+    <string name="select_follow_type">Select follow type</string>
+    <string name="date_nm">Date</string>
+    <string name="status">Status</string>
+    <string name="select_status">Select status</string>
+    <string name="reason">Reason<font color='#FF0000'>*</font></string>
+    <string name="reason_nm">Reason</string>
+    <string name="enter_reason">Enter Reason</string>
+    <string name="follow_up_done_by">Follow up done by</string>
+    <string name="select_year">Select Year</string>
+    <string name="select_month">Select Month</string>
+    <string name="settlement_status">Settlement Status</string>
+    <string name="follow_up_status">Follow Up status</string>
+    <string name="status_quarter_1">S1</string>
+    <string name="status_quarter_2">S2</string>
+    <string name="status_quarter_3">S3</string>
+    <string name="status_quarter_4">S4</string>
+    <string name="status_quarter_5">S5</string>
+    <string name="status_quarter_6">S6</string>
+    <string name="status_quarter_7">S7</string>
+    <string name="status_quarter_8">S8</string>
 
 </resources>
