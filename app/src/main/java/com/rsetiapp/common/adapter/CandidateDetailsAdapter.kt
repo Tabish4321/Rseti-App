@@ -36,17 +36,32 @@ class CandidateDetailsAdapter(
     inner class CandidateViewHolder(private val binding: ItemCandidateDetailsBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(candidate: CandidateDetail) {
-            if (candidate.candidateProfilePic == "NA") {
-                Glide.with(binding.root.context).load(R.drawable.person)
+        fun bind(candidate: CandidateDetail?) {
+            if (candidate == null) {
+                return // Prevents NullPointerException
+            }
+
+            val context = binding.root.context
+
+            // Handle Profile Picture
+            val profilePic = candidate.candidateProfilePic
+            if (profilePic.isNullOrEmpty() || profilePic == "NA") {
+                Glide.with(context)
+                    .load(R.drawable.person)
                     .into(binding.candidateImage)
             } else {
-                val decodedString: ByteArray =
-                    Base64.decode(candidate.candidateProfilePic, Base64.DEFAULT)
-                val profileBitmap: Bitmap =
-                    BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+                try {
+                    val decodedString: ByteArray = Base64.decode(profilePic, Base64.DEFAULT)
+                    val profileBitmap: Bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
 
-                Glide.with(binding.root.context).load(profileBitmap).into(binding.candidateImage)
+                    Glide.with(context)
+                        .load(profileBitmap)
+                        .into(binding.candidateImage)
+                } catch (e: Exception) {
+                    Glide.with(context)
+                        .load(R.drawable.person) // Load default image if decoding fails
+                        .into(binding.candidateImage)
+                }
             }
 
             binding.tvCandidateName.text = candidate.candidateName
@@ -62,15 +77,18 @@ class CandidateDetailsAdapter(
             displayStatus(binding.followUp7Status, candidate.quarter7 ?: "1")
             displayStatus(binding.followUp8Status, candidate.quarter8 ?: "1")
 
-            // Handle Click
-            binding.root.setOnClickListener {
-                val data = candidateList[adapterPosition]
 
-                val action =
-                    FollowUpCandidateFragmentDirections.actionFollowUpCandidateFragmentToFollowUpFormFragment(
-                        data
-                    )
-                binding.root.findNavController().navigate(action)
+            // Handle Click Navigation (Ensure safe `adapterPosition`)
+            binding.root.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION && position < candidateList.size) {
+                    val data = candidateList[position]
+
+                    val action = FollowUpCandidateFragmentDirections
+                        .actionFollowUpCandidateFragmentToFollowUpFormFragment(data)
+
+                    binding.root.findNavController().navigate(action)
+                }
             }
         }
 

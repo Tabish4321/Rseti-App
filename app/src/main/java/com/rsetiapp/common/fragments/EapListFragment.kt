@@ -1,5 +1,8 @@
 package com.rsetiapp.common.fragments
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -12,10 +15,12 @@ import com.rsetiapp.common.adapter.EapAdapter
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.response.EapList
 import com.rsetiapp.core.basecomponent.BaseFragment
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.databinding.EapListFragmentBinding
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBinding::inflate) {
     private val commonViewModel: CommonViewModel by activityViewModels()
@@ -56,19 +61,50 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
         collectEapListResponse()
     }
 
+    @SuppressLint("SuspiciousIndentation", "DefaultLocale")
     private fun getValue(eapItem: EapList) {
 
-      eapIdValue =  eapItem.eapID
-      eapDateValue =  eapItem.monthYear
-      eapStatusValue = eapItem.status
+        eapIdValue = eapItem.eapID
+        eapDateValue = eapItem.monthYear // Example: "08/2025"
+        eapStatusValue = eapItem.status
 
-        findNavController().navigate(EapListFragmentDirections.actionEapListFragmentToEAPAwarnessFormFragment(formName,eapIdValue))
+        // Get current month and year
+        val calendar = Calendar.getInstance()
+        val currentMonth = String.format("%02d", calendar.get(Calendar.MONTH) + 1) // Ensure two digits (01, 02, ..., 12)
+        val currentYear = calendar.get(Calendar.YEAR).toString()
 
+        // Extract month and year from eapDateValue
+        val parts = eapDateValue.split("/")
+        val eapMonth = parts[0]  // "08"
+        val eapYear = parts[1]   // "2025"
 
+        // Check both conditions: status must be Active & date must match current month/year
+        if (eapStatusValue == "Active" && eapMonth == currentMonth && eapYear == currentYear) {
+            findNavController().navigate(
+                EapListFragmentDirections.actionEapListFragmentToEAPAwarnessFormFragment(
+                    formName,
+                    eapIdValue
+                )
+            )
+        }
+        else if (eapStatusValue == "Expired"){
+
+            AppUtil.showAlertDialog(requireContext(),"Alert","Eap Expired")
+
+        }
+        else if (eapStatusValue == "Completed"){
+
+            AppUtil.showAlertDialog(requireContext(),"Alert","Eap Completed")
+
+        }
+
+        else {
+            showMismatchAlert(requireContext(), eapMonth, eapYear, currentMonth, currentYear)
+        }
     }
 
 
-
+    @SuppressLint("NotifyDataSetChanged")
     private fun collectEapListResponse() {
         lifecycleScope.launch {
             collectLatestLifecycleFlow(commonViewModel.eapDetailsAPI) {
@@ -94,5 +130,12 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
             }
         }
     }
-
+    private fun showMismatchAlert(context: Context, eapMonth: String, eapYear: String, currentMonth: String, currentYear: String) {
+        AlertDialog.Builder(context)
+            .setTitle("Alert")
+            .setMessage("You can only proceed in the month: $eapMonth/$eapYear.\nCurrent date: $currentMonth/$currentYear.")
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .create()
+            .show()
+    }
 }

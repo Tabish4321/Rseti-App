@@ -123,6 +123,15 @@ object AppUtil {
 
 
 
+    fun showAlertDialog(context: Context, title: String, message: String) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
+    }
 
 
     fun isNetworkAvailable(context: Context?): Boolean {
