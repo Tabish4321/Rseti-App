@@ -1,6 +1,8 @@
 package com.rsetiapp.common
 
 import com.rsetiapp.R
+import com.rsetiapp.common.model.request.AttendanceBatchReq
+import com.rsetiapp.common.model.request.AttendanceCandidateReq
 import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.request.StateListReq
@@ -13,6 +15,7 @@ import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
+import com.rsetiapp.common.model.request.FollowUpTypeReq
 import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.VillageReq
 import com.rsetiapp.common.model.response.BlockResponse
@@ -22,16 +25,19 @@ import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
+import com.rsetiapp.common.model.response.AttendanceBatchRes
+import com.rsetiapp.common.model.response.AttendanceCandidateRes
 import com.rsetiapp.common.model.response.Batch
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
-import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FollowUpStatusResp
+import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
@@ -153,6 +159,34 @@ class CommonRepository @Inject constructor(
     ): Flow<Resource<out CandidateListResponse>> {
         return networkBoundResourceWithoutDb {
             appLevelApi.getFollowUpCandidateListAPI(CandidateListReq(appVersion, batchId))
+        }
+    }
+
+    suspend fun getFollowTypeListAPI(appVersion: String): Flow<Resource<out FollowUpTypeResp>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getFollowTypeListAPI(FollowUpTypeReq( appVersion))
+        }
+    }
+
+    suspend fun getFollowStatusListAPI(appVersion: String): Flow<Resource<out FollowUpStatusResp>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getFollowStatusListAPI(FollowUpTypeReq( appVersion))
+        }
+    }
+
+    suspend fun getAttendanceBatchAPI(
+        appVersion: String
+    ): Flow<Resource<out AttendanceBatchRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getAttendanceBatch(AttendanceBatchReq(appVersion))
+        }
+    }
+
+    suspend fun getAttendanceCandidate(
+        appVersion: String, batchId:String
+    ): Flow<Resource<out AttendanceCandidateRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getAttendanceCandidate(AttendanceCandidateReq(appVersion,batchId))
         }
     }
 }

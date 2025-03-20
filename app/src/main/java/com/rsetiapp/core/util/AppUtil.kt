@@ -31,6 +31,8 @@ import com.google.gson.Gson
 import com.rsetiapp.R
 import java.security.MessageDigest
 import java.security.SecureRandom
+import java.time.Month
+import java.time.format.TextStyle
 
 
 object AppUtil {
@@ -121,6 +123,15 @@ object AppUtil {
 
 
 
+    fun showAlertDialog(context: Context, title: String, message: String) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
+    }
 
 
     fun isNetworkAvailable(context: Context?): Boolean {
@@ -278,7 +289,33 @@ object AppUtil {
 
     }
 
+    fun getCurrentDate():String {
+        val calendar = Calendar.getInstance();
+        val dateFormat =  SimpleDateFormat("dd-MM-yyyy");
+        return dateFormat.format(calendar.getTime());
 
+    }
+
+    fun getCurrentYear(): Int {
+        return LocalDate.now().year
+    }
+
+    fun convertMonthNumberToFullName(monthNumber: Int): String {
+        val month = Month.of(monthNumber) // Convert MM to Month Enum
+        return month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) // Get full month name (MMMM)
+    }
+
+    fun extractYearFromDate(completionDate: String): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val date = LocalDate.parse(completionDate, formatter)
+        return date.year.toString()
+    }
+
+    fun extractMonthFromDate(completionDate: String): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val date = LocalDate.parse(completionDate, formatter)
+        return date.month.toString()
+    }
 
     fun saveLanguagePreference(context: Context, languageCode: String) {
         val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)

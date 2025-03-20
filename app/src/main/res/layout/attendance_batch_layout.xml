@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/avenir_next_regular"
-        android:text="Batch ID"
+        android:text="@string/batch_id"
         android:textColor="@color/color_follow_up_title"
         android:textSize="@dimen/sp_14"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,22 +37,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/avenir_next_regular"
-        android:text="Batch Name"
+        android:text="@string/batch_name"
         android:textColor="@color/color_follow_up_title"
         android:textSize="@dimen/sp_14"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvBatchId" />
-
     <TextView
         android:id="@+id/tvBatchName"
-        android:layout_width="@dimen/dp_0"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_5"
         android:fontFamily="@font/avenir_next_bold"
         android:textColor="@color/color_text"
         android:textSize="@dimen/sp_14"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:maxLines="2"
         app:layout_constraintStart_toEndOf="@+id/tvBatch"
-        app:layout_constraintTop_toBottomOf="@+id/tvBatchIdName" />
+        app:layout_constraintTop_toBottomOf="@+id/tvBatchIdName"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

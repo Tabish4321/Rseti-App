@@ -15,6 +15,8 @@ import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
+import com.rsetiapp.common.model.response.AttendanceBatchRes
+import com.rsetiapp.common.model.response.AttendanceCandidateRes
 import com.rsetiapp.common.model.response.Batch
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.CandidateDetail
@@ -24,6 +26,8 @@ import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FollowUpStatusResp
+import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
@@ -265,6 +269,20 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
                 _eapDetailsAPI.emit(it)
             }
         }
+    }
+
+    private  var _getFollowTypeList =  MutableStateFlow<Resource<out FollowUpTypeResp>>(Resource.Loading())
+    val getFollowTypeList = _getFollowTypeList.asStateFlow()
+
+    private  var _getAttendanceBatchAPI =  MutableStateFlow<Resource<out AttendanceBatchRes>>(Resource.Loading())
+    val getAttendanceBatchAPI = _getAttendanceBatchAPI.asStateFlow()
+
+    fun getAttendanceBatchAPI(appVersion: String) {
+        viewModelScope.launch {
+            commonRepository.getAttendanceBatchAPI(appVersion).collectLatest {
+                _getAttendanceBatchAPI.emit(it)
+            }
+        }
 
 
     }
@@ -286,5 +304,35 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
 
 
 
+
+    private  var _getAttendanceCandidate =  MutableStateFlow<Resource<out AttendanceCandidateRes>>(Resource.Loading())
+    val getAttendanceCandidate = _getAttendanceCandidate.asStateFlow()
+
+    fun getAttendanceCandidate(appVersion: String,batchId :String) {
+        viewModelScope.launch {
+            commonRepository.getAttendanceCandidate(appVersion,batchId).collectLatest {
+                _getAttendanceCandidate.emit(it)
+            }
+        }
+    }
+
+    fun getFollowTypeListAPI() {
+        viewModelScope.launch {
+            commonRepository.getFollowTypeListAPI(BuildConfig.VERSION_NAME).collectLatest {
+                _getFollowTypeList.emit(it)
+            }
+        }
+    }
+
+    private  var _getFollowStatusList =  MutableStateFlow<Resource<out FollowUpStatusResp>>(Resource.Loading())
+    val getFollowStatusList = _getFollowStatusList.asStateFlow()
+
+    fun getFollowStatusListAPI() {
+        viewModelScope.launch {
+            commonRepository.getFollowStatusListAPI(BuildConfig.VERSION_NAME).collectLatest {
+                _getFollowStatusList.emit(it)
+            }
+        }
+    }
 
 }

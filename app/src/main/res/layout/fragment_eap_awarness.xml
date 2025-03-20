@@ -765,7 +765,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:id="@+id/llRecycler"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_marginTop="@dimen/dp_30"
             android:weightSum="2">
 
@@ -773,6 +773,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"
+                android:id="@+id/candidteCount"
                 android:fontFamily="@font/avenir_next_demi_bold"
                 android:padding="@dimen/dp_4"
                 android:text="@string/added_candidates"

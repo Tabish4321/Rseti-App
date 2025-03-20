@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="@dimen/dp_20">
@@ -10,14 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_100"
         android:background="@drawable/top_home"
-        android:backgroundTint="@color/color_follow_up_toolbar"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="">
-
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/backButton"
@@ -26,29 +24,88 @@
             android:layout_marginStart="@dimen/dp_20"
             android:padding="@dimen/dp_5"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_arrow_back_ios_new"
-            android:tint="@color/white" />
+            android:src="@drawable/ic_arrow_back_ios_new" />
 
         <TextView
-            android:id="@+id/tvFormName"
+            android:id="@+id/tvTitleName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/form_name"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_16" />
 
-
     </androidx.appcompat.widget.Toolbar>
+
+    <!-- Spinner for Year -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tvYear"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="@dimen/dp_0"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:fontFamily="@font/avenir_next_demi_bold"
+        android:hint="Select Year"
+        android:background="@color/white"
+        android:textColorHint="@color/color_dark_green"
+        app:boxStrokeColor="@color/color_dark_green"
+        app:layout_constraintEnd_toStartOf="@id/tvMonth"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <AutoCompleteTextView
+            android:id="@+id/spinnerYear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:inputType="none"
+            android:textColor="@color/color_dark_green"
+            android:textSize="15sp"
+            tools:ignore="LabelFor" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Spinner for Month -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tvMonth"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="@dimen/dp_0"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:fontFamily="@font/avenir_next_demi_bold"
+        android:hint="Select Month"
+        android:background="@color/white"
+        android:textColorHint="@color/color_dark_green"
+        app:boxStrokeColor="@color/color_dark_green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvYear"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <AutoCompleteTextView
+            android:id="@+id/spinnerMonth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:inputType="none"
+            android:textColor="@color/color_dark_green"
+            android:textSize="15sp"
+            tools:ignore="LabelFor" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvBatch"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_0"
+        android:layout_marginTop="@dimen/dp_10"
         android:padding="@dimen/dp_10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/tvYear" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

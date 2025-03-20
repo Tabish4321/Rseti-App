@@ -40,7 +40,7 @@ class FollowUpCandidateFragment :
     }
 
     private fun init() {
-        binding.tvBatchName.text = batchName
+        binding.tvTitleName.text = batchName
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -79,7 +79,7 @@ class FollowUpCandidateFragment :
                             } else if (getCandidateResponse.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
                             } else {
-                                showSnackBar(getCandidateResponse.responseDesc)
+                                showSnackBar(getCandidateResponse.responseDesc ?: "Internal Server Error")
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }

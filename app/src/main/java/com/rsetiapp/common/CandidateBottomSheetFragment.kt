@@ -1,5 +1,6 @@
 package com.rsetiapp.common
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -43,12 +44,20 @@ import com.rsetiapp.common.model.response.CandidateSearchData
 import com.rsetiapp.core.util.gone
 
 @AndroidEntryPoint
-class CandidateBottomSheetFragment(private val candidateList: MutableList<Candidate>, private val adapter: RecyclerView.Adapter<*>) :
+class CandidateBottomSheetFragment(private val candidateList: MutableList<Candidate>, private val adapter: RecyclerView.Adapter<*>,
+                                   private val updateCandidateCount: (Int) -> Unit) :
     BottomSheetDialogFragment() {
     var selectedDate=""
     private val commonViewModel: CommonViewModel by activityViewModels()
     private lateinit var progressBar: View
     private var candidateId= ""
+    private var candidateName= ""
+    private var candidateGender= ""
+    private var candidateGuardianName= ""
+    private var candidateGuardianMobile= ""
+    private var candidateAddress= ""
+    private var candidateMobileNo= ""
+    private var candidateDob= ""
     private lateinit var candidateNameSearch: TextView
     private lateinit var candidatePicSearch: ShapeableImageView
     private lateinit var llCandidateSearch: LinearLayout
@@ -84,16 +93,15 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         progressBar = view.findViewById(R.id.progressBar)
-         etCandidateName = view.findViewById(R.id.etCandidateName)
-         etMobileNo = view.findViewById(R.id.etMobileNo)
-         etDob = view.findViewById(R.id.etDob)
-         etGender = view.findViewById(R.id.etGender)
-         etGuardianName = view.findViewById(R.id.etGuardianName)
-         etGuardianMobile = view.findViewById(R.id.etGuardianMobile)
-         etAddress = view.findViewById(R.id.etAddress)
+        etCandidateName = view.findViewById(R.id.etCandidateName)
+        etMobileNo = view.findViewById(R.id.etMobileNo)
+        etDob = view.findViewById(R.id.etDob)
+        etGender = view.findViewById(R.id.etGender)
+        etGuardianName = view.findViewById(R.id.etGuardianName)
+        etGuardianMobile = view.findViewById(R.id.etGuardianMobile)
+        etAddress = view.findViewById(R.id.etAddress)
         val btnAdd = view.findViewById<TextView>(R.id.btnAdd)
         val btnClose = view.findViewById<TextView>(R.id.btnClose)
-        val llRecycler = view.findViewById<LinearLayout>(R.id.llRecycler)
         candidateNameSearch = view.findViewById(R.id.candidateNameSearch)
         candidatePicSearch = view.findViewById(R.id.candidatePicSearch)
         llCandidateSearch = view.findViewById(R.id.llSearch)
@@ -118,6 +126,8 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
                     collectCandidateSearchResponse()
 
                 }
+                else   llCandidateSearch.gone()
+
 
             }
 
@@ -147,49 +157,48 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
 
 
         btnAdd.setOnClickListener {
+            candidateName = etCandidateName.text.toString()
+            candidateGender = etGender.text.toString()
+            candidateGuardianName = etGuardianName.text.toString()
+            candidateGuardianMobile = etGuardianMobile.text.toString()
+            candidateAddress = etAddress.text.toString()
+            candidateMobileNo = etMobileNo.text.toString()
+            candidateDob = etDob.text.toString()
 
-
-
-
-            if (etCandidateName.text.toString().isNotEmpty()&& etGender.text.toString().isNotEmpty()&&
-            etGuardianName.text.toString().isNotEmpty()&& etGuardianMobile.text.toString().isNotEmpty()&&
-            etAddress.text.toString().isNotEmpty()&& etMobileNo.text.toString().isNotEmpty()&&
-            etDob.text.toString().isNotEmpty()){
-
-
-                if ( AppUtil.isValidMobileNumber(etMobileNo.text.toString()) && AppUtil.isValidMobileNumber(etGuardianMobile.text.toString()) ){
-
-
-
-
-                    val candidate = Candidate("",
-                        etCandidateName.text.toString(),
-                        etGender.text.toString(),
-                        etGuardianName.text.toString(),
-                        etGuardianMobile.text.toString(),
-                        etAddress.text.toString(),
-                        etMobileNo.text.toString(),
-                        etDob.text.toString(),""
-
+            if (candidateName.isNotEmpty() && candidateGender.isNotEmpty() &&
+                candidateGuardianName.isNotEmpty() && candidateGuardianMobile.isNotEmpty() &&
+                candidateAddress.isNotEmpty() && candidateMobileNo.isNotEmpty() &&
+                candidateDob.isNotEmpty()
+            ) {
+                if (AppUtil.isValidMobileNumber(etMobileNo.text.toString()) &&
+                    AppUtil.isValidMobileNumber(etGuardianMobile.text.toString())
+                ) {
+                    val candidate = Candidate(
+                        candidateId,
+                        candidateName,
+                        candidateGender,
+                        candidateGuardianName,
+                        candidateGuardianMobile,
+                        candidateAddress,
+                        candidateMobileNo,
+                        candidateDob,
+                        ""
                     )
 
                     candidateList.add(candidate)
                     adapter.notifyItemInserted(candidateList.size - 1)
-                    llRecycler.visible()
+
+                    // Update the candidate count in the parent fragment
+                    updateCandidateCount(candidateList.size)
 
                     Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
                     dismiss()
-
-
-                }
-                else
+                } else {
                     Toast.makeText(requireContext(), "Mobile number is invalid", Toast.LENGTH_SHORT).show()
-
-            }
-            else
+                }
+            } else {
                 Toast.makeText(requireContext(), "Kindly fill all details first", Toast.LENGTH_SHORT).show()
-
-
+            }
         }
 
         btnClose.setOnClickListener {
@@ -244,17 +253,15 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
                         it.data?.let { getSearchRes ->
                             if (getSearchRes.responseCode == 200) {
 
+                                llCandidateSearch.visible()
                                 candidateSearchList= getSearchRes.wrappedList
 
-                                llCandidateSearch.visible()
 
                                 for (x in candidateSearchList) {
                                     candidateId= x.candidateId
                                     candidateNameSearch.text = x.candidateName
                                     setBase64ToImageView(x.candidateProfilePic,candidatePicSearch)
                                 }
-                                Toast.makeText(requireContext(), getSearchRes.responseDesc ?: "Error", Toast.LENGTH_SHORT).show()
-
 
                             }
                             else if (getSearchRes.responseCode == 301) {
@@ -262,10 +269,12 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
 
 
                             }
-                            else {
-                                Toast.makeText(requireContext(), getSearchRes.responseDesc ?: "Error", Toast.LENGTH_SHORT).show()
+                            else if (getSearchRes.responseCode == 201) {
+                                Toast.makeText(requireContext(), getSearchRes.responseDesc, Toast.LENGTH_SHORT).show()
+
 
                             }
+
                         } ?:   Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
 
                     }
@@ -299,10 +308,19 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
                                     etGuardianMobile.setText(x.guardianMobileNo)
                                     etAddress.setText(x.candidateAddress)
                                     etMobileNo.setText(x.mobileNo)
-                                    etDob.text = x.emailId
+                                    etDob.text = x.dob
+
+
+                                    candidateName= x.candidateName
+                                    candidateGender =x.gender
+                                    candidateGuardianName =x.guardianName
+                                    candidateGuardianMobile = x.guardianMobileNo
+                                    candidateAddress= x.candidateAddress
+                                    candidateMobileNo= x.mobileNo
+                                    candidateDob = x.dob
+                                    candidateId= x.candidateId
 
                                 }
-                                Toast.makeText(requireContext(), getcandidateDetailsRes.responseDesc ?: "Error", Toast.LENGTH_SHORT).show()
 
 
                             }
@@ -342,7 +360,11 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
             imageView.setImageBitmap(bitmap)
         } catch (e: Exception) {
             e.printStackTrace()
-            imageView.setImageResource(R.drawable.person) // Fallback image
+            imageView.setImageResource(R.drawable.person)
         }
     }
+
+
 }
+
+

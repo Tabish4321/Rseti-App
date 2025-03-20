@@ -45,6 +45,15 @@ class ChildAdapter(
                             )
                         binding.root.findNavController().navigate(action)
                     }
+
+                    "CANDIDATEATTENDANCE" -> {
+
+                        val action = HomeFragmentDirections.actionHomeFrahmentToAttendanceBatchFragment(
+                            form.formName
+                        )
+                        binding.root.findNavController().navigate(action)
+
+                    }
                 }
             }
         }

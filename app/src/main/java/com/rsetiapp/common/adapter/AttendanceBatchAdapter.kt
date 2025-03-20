@@ -3,19 +3,16 @@ package com.rsetiapp.common.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
-
 import androidx.recyclerview.widget.RecyclerView
+import com.rsetiapp.common.fragments.AttendanceBatchFragmentDirections
+import com.rsetiapp.common.model.response.AttendanceBatch
+import com.rsetiapp.databinding.AttendanceBatchLayoutBinding
 
-import com.rsetiapp.common.fragments.FollowUpBatchFragmentDirections
-import com.rsetiapp.common.model.response.Batch
-import com.rsetiapp.databinding.ItemBatchBinding
-
-class BatchAdapter(
-    private val batchList: List<Batch>
-) : RecyclerView.Adapter<BatchAdapter.BatchViewHolder>() {
+class AttendanceBatchAdapter ( private val batchList: List<AttendanceBatch>
+) : RecyclerView.Adapter<AttendanceBatchAdapter.BatchViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BatchViewHolder {
-        val binding = ItemBatchBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = AttendanceBatchLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return BatchViewHolder(binding)
     }
 
@@ -26,20 +23,21 @@ class BatchAdapter(
 
     override fun getItemCount(): Int = batchList.size
 
-    inner class BatchViewHolder(private val binding: ItemBatchBinding) :
+    inner class BatchViewHolder(private val binding: AttendanceBatchLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(batch: Batch) {
-            binding.tvBatchIdName.text = batch.batchCode
+        fun bind(batch: AttendanceBatch) {
+            binding.tvBatchIdName.text = batch.batchCode.toString()
             binding.tvBatchName.text = batch.batchName  // Show Batch Name
+
 
             // Handle Click
             binding.root.setOnClickListener {
                 val data = batchList[adapterPosition]
 
                 val action =
-                    FollowUpBatchFragmentDirections.actionFollowUpBatchFragmentToFollowUpCandidateFragment(
-                        data.batchCode ?: "0", data.batchName ?: "Batch Name"
+                    AttendanceBatchFragmentDirections.actionAttendanceBatchFragmentToAttendanceCandidateFragment(
+                        (data.batchCode ?: "0").toString(), data.batchName ?: "Batch Name"
                     )
                 binding.root.findNavController().navigate(action)
             }

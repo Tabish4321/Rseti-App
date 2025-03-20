@@ -95,6 +95,12 @@
     <string name="city">City</string>
     <string name="Reason">Reason</string>
     <string name="account_status">Account Status</string>
+    <string name="batchList">Batches</string>
+    <string name="batch_name">Batch Name</string>
+    <string name="batch_id">Batch ID</string>
+    <string name="candidate_attendance">Candidate List</string>
+    <string name="contact_number">Contact Number</string>
+    <string name="roll_no">Roll No.</string>
 
 
 </resources>

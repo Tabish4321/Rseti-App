@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/dp_20">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -25,34 +24,26 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_arrow_back_ios_new"/>
         <TextView
-            android:id="@+id/tvTitleName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/form_name"
+            android:text="@string/candidate_attendance"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_16"/>
 
         <com.google.android.material.imageview.ShapeableImageView
             android:layout_width="150dp"
             android:layout_height="@dimen/dp_60"
-            android:layout_marginStart="@dimen/dp_100"
+            android:layout_marginStart="@dimen/dp_60"
             android:background="@color/white"
             android:padding="@dimen/dp_5"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_rseti"
             app:shapeAppearanceOverlay="@style/CustomRectangleShape" />
-
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCandidate"
+        android:id="@+id/recyclerViewCandidates"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_0"
-        android:padding="@dimen/dp_10"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        android:layout_height="wrap_content" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
-
+</LinearLayout>
