@@ -1,28 +1,23 @@
 package com.rsetiapp.common.adapter
 
-import FollowUpStatusAdapter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rsetiapp.R
-import com.rsetiapp.common.fragments.FollowUpCandidateFragmentDirections
-import com.rsetiapp.common.model.response.CandidateDetail
-import com.rsetiapp.common.model.response.FollowUpStatus
-import com.rsetiapp.databinding.ItemCandidateDetailsBinding
+import com.rsetiapp.common.model.response.Candidate
+import com.rsetiapp.databinding.AttendanceCandidateListAyoutBinding
 
-
-class CandidateDetailsAdapter(
-    private val candidateList: List<CandidateDetail>
-) : RecyclerView.Adapter<CandidateDetailsAdapter.CandidateViewHolder>() {
+class AttendanceCandidateAdapter(
+    private val candidateList: List<Candidate>
+) : RecyclerView.Adapter<AttendanceCandidateAdapter.CandidateViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CandidateViewHolder {
         val binding =
-            ItemCandidateDetailsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            AttendanceCandidateListAyoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CandidateViewHolder(binding)
     }
 
@@ -33,10 +28,10 @@ class CandidateDetailsAdapter(
 
     override fun getItemCount(): Int = candidateList.size
 
-    inner class CandidateViewHolder(private val binding: ItemCandidateDetailsBinding) :
+    inner class CandidateViewHolder(private val binding: AttendanceCandidateListAyoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(candidate: CandidateDetail?) {
+        fun bind(candidate: Candidate) {
             if (candidate == null) {
                 return // Prevents NullPointerException
             }
@@ -69,30 +64,18 @@ class CandidateDetailsAdapter(
             binding.tvRollNumberValue.text = candidate.rollNo?.toString() ?: "N/A"
             binding.tvContactNumber.text = candidate.mobileNo ?: "N/A"
 
-            // Handle Follow-Up Status Adapter
-            binding.rvStatus.adapter = FollowUpStatusAdapter(
-                candidate.followUpStatus ?: listOf(
-                    FollowUpStatus("S1", "Settled"),
-                    FollowUpStatus("S2", "Settled"),
-                    FollowUpStatus("S3", "Settled"),
-                    FollowUpStatus("S4", "Settled"),
-                    FollowUpStatus("S5", "Not Settled"),
-                    FollowUpStatus("S6", "Not Settled"),
-                    FollowUpStatus("S7", "Not Settled"),
-                    FollowUpStatus("S8", "Not Settled")
-                )
-            )
+
 
             // Handle Click Navigation (Ensure safe `adapterPosition`)
             binding.root.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION && position < candidateList.size) {
                     val data = candidateList[position]
-
+/*
                     val action = FollowUpCandidateFragmentDirections
                         .actionFollowUpCandidateFragmentToFollowUpFormFragment(data)
 
-                    binding.root.findNavController().navigate(action)
+                    binding.root.findNavController().navigate(action)*/
                 }
             }
         }

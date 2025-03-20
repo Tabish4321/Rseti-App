@@ -15,7 +15,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_100"
-        android:background="@drawable/top"
+
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
         <ImageView

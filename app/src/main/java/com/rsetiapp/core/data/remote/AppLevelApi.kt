@@ -1,5 +1,7 @@
 package com.rsetiapp.core.data.remote
 
+import com.rsetiapp.common.model.request.AttendanceBatchReq
+import com.rsetiapp.common.model.request.AttendanceCandidateReq
 import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.request.BlockReq
 import com.rsetiapp.common.model.request.CandidateListReq
@@ -16,6 +18,8 @@ import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.StateListReq
 import com.rsetiapp.common.model.request.VillageReq
+import com.rsetiapp.common.model.response.AttendanceBatchRes
+import com.rsetiapp.common.model.response.AttendanceCandidateRes
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.BlockResponse
 import com.rsetiapp.common.model.response.CandidateListResponse
@@ -95,5 +99,13 @@ interface AppLevelApi {
 
     @POST("eapDetails")
     suspend fun eapDetailsAPI(@Body eapListReq: EapListReq): EapListResponse
+
+    @POST("onGoingBatchList")
+    suspend fun getAttendanceBatch( @Body attendanceBatchReq: AttendanceBatchReq): AttendanceBatchRes
+
+
+    @POST("onGoingBatchCandidateList")
+    suspend fun getAttendanceCandidate( @Body attendanceCandidateReq: AttendanceCandidateReq): AttendanceCandidateRes
+
 
 }

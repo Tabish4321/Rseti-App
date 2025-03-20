@@ -74,8 +74,6 @@ class FollowUpBatchFragment :
                                 batchAdapter.notifyDataSetChanged()
                             } else if (getBatchResponse.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar(getBatchResponse.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }

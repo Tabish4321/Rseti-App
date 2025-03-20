@@ -15,6 +15,8 @@ import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
+import com.rsetiapp.common.model.response.AttendanceBatchRes
+import com.rsetiapp.common.model.response.AttendanceCandidateRes
 import com.rsetiapp.common.model.response.Batch
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.CandidateDetail
@@ -263,6 +265,34 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
         viewModelScope.launch {
             commonRepository.eapDetailsAPI(eapListReq).collectLatest {
                 _eapDetailsAPI.emit(it)
+            }
+        }
+
+
+    }
+
+    private  var _getAttendanceBatchAPI =  MutableStateFlow<Resource<out AttendanceBatchRes>>(Resource.Loading())
+    val getAttendanceBatchAPI = _getAttendanceBatchAPI.asStateFlow()
+
+    fun getAttendanceBatchAPI(appVersion: String) {
+        viewModelScope.launch {
+            commonRepository.getAttendanceBatchAPI(appVersion).collectLatest {
+                _getAttendanceBatchAPI.emit(it)
+            }
+        }
+
+
+    }
+
+
+
+    private  var _getAttendanceCandidate =  MutableStateFlow<Resource<out AttendanceCandidateRes>>(Resource.Loading())
+    val getAttendanceCandidate = _getAttendanceCandidate.asStateFlow()
+
+    fun getAttendanceCandidate(appVersion: String,batchId :String) {
+        viewModelScope.launch {
+            commonRepository.getAttendanceCandidate(appVersion,batchId).collectLatest {
+                _getAttendanceCandidate.emit(it)
             }
         }
 

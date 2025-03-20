@@ -45,6 +45,13 @@
                 android:name="formName"
                 app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_homeFrahment_to_attendanceBatchFragment"
+            app:destination="@id/attendanceBatchFragment" >
+            <argument
+                android:name="formName"
+                app:argType="string" />
+        </action>
 
     </fragment>
     <fragment
@@ -116,4 +123,25 @@
                 app:argType="string" />
         </action>
     </fragment>
+    <fragment
+        android:id="@+id/attendanceBatchFragment"
+        android:name="com.rsetiapp.common.fragments.AttendanceBatchFragment"
+        android:label="AttendanceBatchFragment"
+        tools:layout="@layout/attendance_batch_fragment">
+        <action
+            android:id="@+id/action_attendanceBatchFragment_to_attendanceCandidateFragment"
+            app:destination="@id/attendanceCandidateFragment">
+            <argument
+            android:name="batchId"
+            app:argType="string" />
+            <argument
+                android:name="batchName"
+                app:argType="string" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/attendanceCandidateFragment"
+        android:name="com.rsetiapp.common.fragments.AttendanceCandidateFragment"
+        android:label="AttendanceCandidateFragment"
+        tools:layout="@layout/attendance_candidate_fragment"/>
 </navigation>

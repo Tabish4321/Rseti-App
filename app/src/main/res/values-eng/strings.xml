@@ -55,5 +55,31 @@
     <string name="enter_id">Enter User Id</string>
     <string name="hindi">Hindi</string>
     <string name="english">English</string>
+    <string name="submit_details">Submit Details</string>
+    <string name="candidate_name">Candidate Name</string>
+    <string name="candidate_name_up">Candidate Name<font color='#FF0000'>*</font></string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="mobile_number_man">Mobile Number<font color='#FF0000'>*</font></string>
+    <string name="guardian_name">Guardian Name<font color='#FF0000'>*</font></string>
+    <string name="guardian_name1">Guardian Name</string>
+    <string name="guardian_Mobile">Guardian Mobile Nuber</string>
+    <string name="guardian_Mobile_man">Guardian Mobile Nuber<font color='#FF0000'>*</font></string>
+    <string name="gender">Gender</string>
+    <string name="gender_man">Gender<font color='#FF0000'>*</font></string>
+    <string name="dob">Date Of Birth</string>
+    <string name="dob_man">Date Of Birth<font color='#FF0000'>*</font></string>
+    <string name="full_address">Full Address</string>
+    <string name="full_address_man">Full Address<font color='#FF0000'>*</font></string>
+    <string name="eap_id">Eap Id</string>
+    <string name="close">Close</string>
+    <string name="add">Add</string>
+    <string name="search_candidate_via_kaushal_panjee">Search candidate via kaushal panjee ID</string>
+    <string name="enter_kaushal_panjee_id">Enter kaushal panjee ID</string>
+    <string name="eapName">Eap List</string>
+    <string name="added_candidates">Added Candidates</string>
+    <string name="are_you_sure_you_want_to_delete_this_candidate">Are you sure you want to delete this candidate?</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="delete_candidate">Delete Candidate?</string>
 
 </resources>

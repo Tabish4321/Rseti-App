@@ -31,8 +31,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Environment
@@ -43,8 +41,7 @@ import androidx.core.content.FileProvider
 import java.io.ByteArrayOutputStream
 import java.io.File
 import android.util.Base64
-import android.widget.Button
-import android.widget.EditText
+
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -52,20 +49,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CandidateBottomSheetFragment
+import com.rsetiapp.common.CandidateUpdateListener
 import com.rsetiapp.common.adapter.CandidateAdapter
 import com.rsetiapp.common.model.request.Candidate
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.response.Program
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.visible
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(FragmentEapAwarnessBinding::inflate)  {
+class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(FragmentEapAwarnessBinding::inflate),
+    CandidateUpdateListener {
 
     private var formName=""
     private var eapId=""
@@ -94,6 +93,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private var selectedStateCodeItem = ""
     private var selectedStateLgdCodeItem = ""
     private var selectedStateItem = ""
+    private var counts = ""
     private var latitude : Double? = null
     private var longitude : Double? = null
 
@@ -159,8 +159,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-         formName = arguments?.getString("formName").toString()
-         eapId = arguments?.getString("eapId").toString()
+        formName = arguments?.getString("formName").toString()
+        eapId = arguments?.getString("eapId").toString()
         userPreferences = UserPreferences(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         init()
@@ -168,29 +168,44 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     }
 
     private fun init(){
-
         val recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerView)
+        val candidateCountTextView = view?.findViewById<TextView>(R.id.candidteCount)
+
+        @SuppressLint("SetTextI18n")
+        fun updateCandidateCount(count: Int) {
+            candidateCountTextView?.text = count.toString()
+
+
+
+        }
+
         if (recyclerView != null) {
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
         }
 
-        adapter = CandidateAdapter(candidateList) { position ->
-            if (position >= 0 && position < candidateList.size) {
-                candidateList.removeAt(position)
-                adapter.notifyItemRemoved(position)
-                adapter.notifyItemRangeChanged(position, candidateList.size)
+        adapter = CandidateAdapter(
+            candidateList,
+            onDelete = { position ->
+                if (position in candidateList.indices) {
+                    candidateList.removeAt(position)
+                    adapter.notifyItemRemoved(position)
+                    adapter.notifyItemRangeChanged(position, candidateList.size)
+                    updateCandidateCount(candidateList.size)
+                }
+            },
+            onUpdateCount = { count ->
+                updateCandidateCount(count)
             }
-        }
+        )
 
-// After setting the adapter, don't forget to attach it to the RecyclerView
-        if (recyclerView != null) {
-            recyclerView.adapter = adapter
-        }
-        if (recyclerView != null) {
-            recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        }
+// Set adapter after initializing RecyclerView
+        recyclerView?.adapter = adapter
+
+// Set initial count after adapter is set
+        updateCandidateCount(candidateList.size)
+
         commonViewModel.getStateListApi()
-        commonViewModel.getEapAutoFetchListAPI(userPreferences.getUseID(),BuildConfig.VERSION_NAME)
+        commonViewModel.getEapAutoFetchListAPI(userPreferences.getUseID(), BuildConfig.VERSION_NAME)
         commonViewModel.getProgramListAPI()
         collectProgramNameResponse()
         collectEapAutoFetchResponse()
@@ -201,6 +216,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         collectVillageResponse()
         listener()
     }
+    @SuppressLint("SetTextI18n")
     private fun listener(){
 
 
@@ -242,9 +258,22 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
 
 
-            binding.btnAddCandidate.setOnClickListener {
-            val bottomSheet = CandidateBottomSheetFragment(candidateList, adapter)
-            bottomSheet.show(childFragmentManager, "CandidateBottomSheet")
+        binding.btnAddCandidate.setOnClickListener {
+            val bottomSheet = CandidateBottomSheetFragment(candidateList, adapter) { count ->
+
+                 counts = count.toString()
+                view?.findViewById<TextView>(R.id.candidteCount)?.text = "Candidates: $count"
+            }
+            val totalParticipant = binding.etTotalParticipant.text.toString()
+
+            if (counts != totalParticipant) {
+                bottomSheet.show(parentFragmentManager, "CandidateBottomSheet")
+            }
+            else
+
+
+           AppUtil.showAlertDialog(requireContext(),"Limit Reached","You cannot add more candidates as the maximum number of participants has been reached.")
+
         }
 
 
@@ -601,7 +630,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
 
 
-                        else if (insertApiResp.responseCode == 301) {
+                            else if (insertApiResp.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
                             } else {
                                 showSnackBar("Internal Server Error 1111")
@@ -642,7 +671,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                                     stateLgdCode.add(x.lgdStateCode)
                                 }
 
-                                     stateAdapter.notifyDataSetChanged()
+                                stateAdapter.notifyDataSetChanged()
                             } else if (getStateResponse.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
                             } else {
@@ -967,28 +996,28 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             ""
         }
     }
-@SuppressLint("MissingPermission")
-private fun getCurrentLocation() {
-    fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-        if (location != null) {
-             latitude = location.latitude
-             longitude = location.longitude
+    @SuppressLint("MissingPermission")
+    private fun getCurrentLocation() {
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                latitude = location.latitude
+                longitude = location.longitude
 
-             locationLatLang = "Lat: $latitude, Lng: $longitude"
-            binding.location.text = locationLatLang
+                locationLatLang = "Lat: $latitude, Lng: $longitude"
+                binding.location.text = locationLatLang
 
-            // Fetch and update address
-            getAddressFromLocation(latitude!!, longitude!!)
-        } else {
-            // If last known location is null, request a fresh location update
-            requestNewLocation()
+                // Fetch and update address
+                getAddressFromLocation(latitude!!, longitude!!)
+            } else {
+                // If last known location is null, request a fresh location update
+                requestNewLocation()
+            }
+        }.addOnFailureListener {
+            binding.location.text = getString(R.string.location_not_found)
+            binding.address.text = getString(R.string.address_not_found)
+            Log.e("LocationError", "Failed to get location: ${it.message}")
         }
-    }.addOnFailureListener {
-        binding.location.text = getString(R.string.location_not_found)
-        binding.address.text = getString(R.string.address_not_found)
-        Log.e("LocationError", "Failed to get location: ${it.message}")
     }
-}
     @SuppressLint("MissingPermission")
     private fun requestNewLocation() {
         val locationRequest = com.google.android.gms.location.LocationRequest.Builder(
@@ -1003,8 +1032,8 @@ private fun getCurrentLocation() {
         val locationCallback = object : com.google.android.gms.location.LocationCallback() {
             override fun onLocationResult(locationResult: com.google.android.gms.location.LocationResult) {
                 locationResult.lastLocation?.let { location ->
-                     latitude = location.latitude
-                     longitude = location.longitude
+                    latitude = location.latitude
+                    longitude = location.longitude
 
                     locationLatLang = "Lat: $latitude, Lng: $longitude"
                     binding.location.text = locationLatLang
@@ -1043,6 +1072,15 @@ private fun getCurrentLocation() {
             e.printStackTrace()
             binding.address.text = getString(R.string.error_address)
         }
+    }
+
+
+    override fun onCandidateAdded(count: Int) {
+        updateCandidateCount(count)    }
+
+    @SuppressLint("SetTextI18n")
+    fun updateCandidateCount(count: Int) {
+        binding.candidteCount.text = "$count"
     }
 
 
