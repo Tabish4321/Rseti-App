@@ -5,15 +5,20 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rsetiapp.R
+import com.rsetiapp.common.fragments.AttendanceCandidateFragmentDirections
 import com.rsetiapp.common.model.response.Candidate
 import com.rsetiapp.databinding.AttendanceCandidateListAyoutBinding
 
 class AttendanceCandidateAdapter(
     private val candidateList: List<Candidate>
 ) : RecyclerView.Adapter<AttendanceCandidateAdapter.CandidateViewHolder>() {
+
+    var candidateId=""
+    var rollNo=""
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CandidateViewHolder {
         val binding =
@@ -61,21 +66,18 @@ class AttendanceCandidateAdapter(
 
             // Ensure non-null values for UI fields
             binding.tvCandidateName.text = candidate.candidateName ?: "Unknown"
-            binding.tvRollNumberValue.text = candidate.rollNo?.toString() ?: "N/A"
+            binding.tvRollNumberValue.text = candidate.rollNo.toString() ?: "N/A"
             binding.tvContactNumber.text = candidate.mobileNo ?: "N/A"
-
+           candidateId= candidate.candidateId
+           rollNo= candidate.rollNo.toString()
 
 
             // Handle Click Navigation (Ensure safe `adapterPosition`)
             binding.root.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION && position < candidateList.size) {
-                    val data = candidateList[position]
-/*
-                    val action = FollowUpCandidateFragmentDirections
-                        .actionFollowUpCandidateFragmentToFollowUpFormFragment(data)
-
-                    binding.root.findNavController().navigate(action)*/
+                    val action = AttendanceCandidateFragmentDirections.actionAttendanceCandidateFragmentToAttendanceFragment(candidateId,rollNo)
+                    binding.root.findNavController().navigate(action)
                 }
             }
         }

@@ -1,6 +1,8 @@
 package com.rsetiapp.core.util
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -350,5 +352,25 @@ object AppUtil {
    fun isValidMobileNumber(mobileNumber: String): Boolean {
         val regex = "^[6789]\\d{9}$".toRegex()
         return mobileNumber.matches(regex)
+    }
+
+    fun decodeBase64(base64String: String): String? {
+        return try {
+            // Decode the Base64 string to a byte array
+            val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+
+            // Convert the byte array to a string
+            String(decodedBytes, Charsets.UTF_8)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+            null // Return null if decoding fails
+        }
+    }
+
+    fun copyToClipboard(context: Context, text: String) {
+        val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("Copied Text", text)
+        clipboardManager.setPrimaryClip(clipData)
+
     }
 }

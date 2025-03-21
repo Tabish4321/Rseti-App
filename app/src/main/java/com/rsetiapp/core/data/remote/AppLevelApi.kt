@@ -4,8 +4,8 @@ import com.rsetiapp.common.model.request.AttendanceBatchReq
 import com.rsetiapp.common.model.request.AttendanceCandidateReq
 import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.request.BlockReq
-import com.rsetiapp.common.model.request.CandidateListReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
+import com.rsetiapp.common.model.request.CandidateListReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
@@ -24,10 +24,10 @@ import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.BlockResponse
-import com.rsetiapp.common.model.response.CandidateListResponse
-import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.CandidateDetailsRes
+import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.CandidateSearchResp
+import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
@@ -42,8 +42,12 @@ import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
+import com.rsetiapp.core.uidai.ekyc.UidaiKycRequest
+import com.rsetiapp.core.uidai.ekyc.UidaiResp
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.Url
 
 interface AppLevelApi {
 
@@ -112,11 +116,16 @@ interface AppLevelApi {
     suspend fun getFollowStatusListAPI(@Body followUpTypeReq: FollowUpTypeReq): FollowUpStatusResp
 
     @POST("onGoingBatchList")
-    suspend fun getAttendanceBatch( @Body attendanceBatchReq: AttendanceBatchReq): AttendanceBatchRes
+    suspend fun getAttendanceBatch(@Body attendanceBatchReq: AttendanceBatchReq): AttendanceBatchRes
 
     @POST("onGoingBatchCandidateList")
-    suspend fun getAttendanceCandidate( @Body attendanceCandidateReq: AttendanceCandidateReq): AttendanceCandidateRes
+    suspend fun getAttendanceCandidate(@Body attendanceCandidateReq: AttendanceCandidateReq): AttendanceCandidateRes
 
     @POST("insertFollowUp")
     suspend fun insertFollowUpAPI(@Body followUpInsertReq: FollowUpInsertReq): FollowUpInsertRes
+
+    @POST
+    suspend fun postOnAUAFaceAuthNREGA(
+        @Url url: String, @Body request: UidaiKycRequest
+    ): Response<UidaiResp>
 }

@@ -2,6 +2,7 @@ package com.rsetiapp.core.di
 
 import android.content.Context
 import androidx.room.Room
+import com.rsetiapp.BuildConfig
 import com.rsetiapp.core.data.local.database.AppDatabase
 import com.rsetiapp.core.data.remote.AppLevelApi
 import com.rsetiapp.core.util.ApiConstant
@@ -114,9 +115,12 @@ object AppModule {
             .addInterceptor(
                 CustomInterceptor(isPostLogin, userPreferences, isAuthenticationRequired, context)
             )
-            .addInterceptor(logging) // ✅ Ensure logging is added here
             .apply {
                 authenticator?.let { this.authenticator(it) }
+
+                if (BuildConfig.DEBUG){
+                    addInterceptor(logging)
+                }
             }
             .build()
     }
