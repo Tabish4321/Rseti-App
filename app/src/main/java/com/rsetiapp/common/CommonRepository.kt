@@ -16,6 +16,7 @@ import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
+import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.FollowUpTypeReq
 import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.VillageReq
@@ -35,6 +36,7 @@ import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FollowUpInsertRes
 import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
@@ -186,6 +188,12 @@ class CommonRepository @Inject constructor(
     ): Flow<Resource<out AttendanceCandidateRes>> {
         return networkBoundResourceWithoutDb {
             appLevelApi.getAttendanceCandidate(AttendanceCandidateReq(appVersion,batchId))
+        }
+    }
+
+    suspend fun insertFollowUpAPI(followUpInsertReq: FollowUpInsertReq): Flow<Resource<out FollowUpInsertRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.insertFollowUpAPI(followUpInsertReq)
         }
     }
 

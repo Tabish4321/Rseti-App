@@ -36,6 +36,11 @@ class FollowUpCandidateFragment :
 
         init()
         setupRecyclerView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
         collectCandidatesData()
     }
 
@@ -79,7 +84,9 @@ class FollowUpCandidateFragment :
                             } else if (getCandidateResponse.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
                             } else {
-                                showSnackBar(getCandidateResponse.responseDesc ?: "Internal Server Error")
+                                showSnackBar(
+                                    getCandidateResponse.responseDesc ?: "Internal Server Error"
+                                )
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
