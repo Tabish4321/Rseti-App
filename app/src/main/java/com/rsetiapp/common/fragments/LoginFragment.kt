@@ -121,6 +121,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
 
                                     userPreferences.updateUserId(null)
                                     userPreferences.updateUserId(userName)
+                                    userPreferences.saveUserName(getLoginResponse.wrappedList[0].userName)
                                     AppUtil.saveLoginStatus(requireContext(), true)
 
                                     // findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToMainHomePage())

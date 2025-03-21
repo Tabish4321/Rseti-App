@@ -57,7 +57,7 @@ class FollowUpBatchFragment :
         }
 
         years =
-            (arrayListOf("All") + (2023..getCurrentYear()).map { it.toString() }) as ArrayList<String>
+            (arrayListOf("All") + (2024..getCurrentYear()).map { it.toString() }) as ArrayList<String>
         months =
             (arrayListOf("All") + (1..12).map { convertMonthNumberToFullName(it) }) as ArrayList<String>
 
@@ -91,6 +91,7 @@ class FollowUpBatchFragment :
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun updateBatchList() {
         batchFilteredList.clear()
         batchFilteredList.addAll(batchList.filter { batch: Batch ->
