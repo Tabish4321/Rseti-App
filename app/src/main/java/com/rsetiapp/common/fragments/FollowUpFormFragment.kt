@@ -15,7 +15,6 @@ import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -29,9 +28,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
-import com.rsetiapp.common.CandidateBottomSheetFragment
 import com.rsetiapp.common.CommonViewModel
-import com.rsetiapp.common.MySattelementBottomSheet
 import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.common.model.response.FollowUpStatus
@@ -54,8 +51,6 @@ class FollowUpFormFragment :
     BaseFragment<FragmentFollowUpBinding>(FragmentFollowUpBinding::inflate) {
 
     private val commonViewModel: CommonViewModel by activityViewModels()
-    private var selectedDate: String = ""
-    private var selectedStatusItem: String = ""
     private lateinit var candidate: CandidateDetail
 
     //Follow Up Type var
@@ -85,7 +80,6 @@ class FollowUpFormFragment :
         super.onViewCreated(view, savedInstanceState)
 
         init()
-
     }
 
     private fun init() {
@@ -283,42 +277,6 @@ class FollowUpFormFragment :
         }
     }
 
-    private fun listener() {
-
-
-        //Block Spinner
-        binding.spinnerStatus.setOnItemClickListener { parent, view, position, id ->
-            selectedStatusItem = parent.getItemAtPosition(position).toString()
-
-
-            if (selectedStatusItem == "Settled") {
-
-                val bottomSheet = MySattelementBottomSheet()
-                bottomSheet.show(childFragmentManager, "MySattelementBottomSheet")
-
-
-            }
-        }
-
-        // Back Button
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        //Adapter Follow Up Type
-        followUpTypeAdapter = ArrayAdapter(
-            requireContext(), android.R.layout.simple_spinner_dropdown_item, followUpTypeName
-        )
-        binding.spinnerFollowType.setAdapter(followUpTypeAdapter)
-
-        //Adapter Follow Up Status
-        followUpStatusAdapter = ArrayAdapter(
-            requireContext(), android.R.layout.simple_spinner_dropdown_item, followUpStatusName
-        )
-        binding.spinnerStatus.setAdapter(followUpStatusAdapter)
-
-        binding.image1.setOnClickListener {
-            openCamera(binding.image1)
     private fun collectInsertResponse() {
         lifecycleScope.launch {
             collectLatestLifecycleFlow(commonViewModel.insertFollowUpAPI) {
@@ -347,33 +305,6 @@ class FollowUpFormFragment :
                 }
             }
         }
-
-
-
-
-        //Submit Button
-        /*binding.btnSubmit.setOnClickListener {
-
-            collectInsertResponse()
-        }*/
-
-
-        //Adapter Program
-
-        /* programNameAdapter = ArrayAdapter(
-             requireContext(),
-             android.R.layout.simple_spinner_dropdown_item,
-             programName
-         )
-
-         binding.spinnerProgramName.setAdapter(programNameAdapter)*/
-
-
-        /*binding.tvDate.setOnClickListener {
-
-            showDatePicker(binding.tvDate)
-
-        }*/
     }
 
     private fun checkAndRequestPermissions() {
@@ -436,9 +367,7 @@ class FollowUpFormFragment :
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile("IMG_${System.currentTimeMillis()}", ".jpg", storageDir).apply {
             imageUri = FileProvider.getUriForFile(
-                requireContext(),
-                "${requireContext().packageName}.provider",
-                this
+                requireContext(), "${requireContext().packageName}.provider", this
             )
         }
     }

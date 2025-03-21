@@ -82,7 +82,6 @@
     <string name="delete_candidate">Delete Candidate?</string>
     <string name="submit_details">Submit Details</string>
 
-    <string name="status">Status<font color='#FF0000'>*</font></string>
     <string name="statush">Status</string>
     <string name="selectForInvestment">Select For Investment Type</string>
     <string name="SelfInvestment">Self Investment</string>
