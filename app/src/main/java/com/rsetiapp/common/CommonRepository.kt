@@ -1,6 +1,7 @@
 package com.rsetiapp.common
 
-import com.rsetiapp.R
+import com.rsetiapp.core.uidai.ekyc.UidaiKycRequest
+import com.rsetiapp.core.uidai.ekyc.UidaiResp
 import com.rsetiapp.common.model.request.AttendanceBatchReq
 import com.rsetiapp.common.model.request.AttendanceCandidateReq
 import com.rsetiapp.common.model.request.BankIFSCSearchReq
@@ -16,6 +17,7 @@ import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
+import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.FollowUpTypeReq
 import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.VillageReq
@@ -31,7 +33,6 @@ import com.rsetiapp.common.model.response.AttendanceCandidateRes
 import com.rsetiapp.common.model.response.BankIFSCSearchRes
 import com.rsetiapp.common.model.response.Batch
 import com.rsetiapp.common.model.response.BatchListResponse
-import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
@@ -39,6 +40,7 @@ import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FollowUpInsertRes
 import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
@@ -52,7 +54,7 @@ import com.rsetiapp.core.di.AppModule
 import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.networkBoundResourceWithoutDb
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import retrofit2.Response
 import javax.inject.Inject
 
 
@@ -199,6 +201,18 @@ class CommonRepository @Inject constructor(
     ): Flow<Resource<out AttendanceCandidateRes>> {
         return networkBoundResourceWithoutDb {
             appLevelApi.getAttendanceCandidate(AttendanceCandidateReq(appVersion,batchId))
+        }
+    }
+
+    suspend fun insertFollowUpAPI(followUpInsertReq: FollowUpInsertReq): Flow<Resource<out FollowUpInsertRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.insertFollowUpAPI(followUpInsertReq)
+        }
+    }
+
+    suspend fun postOnAUAFaceAuthNREGA(url:String, uidaiKycRequest: UidaiKycRequest): Flow<Resource<out Response<UidaiResp>>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.postOnAUAFaceAuthNREGA(url,uidaiKycRequest)
         }
     }
 }

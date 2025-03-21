@@ -10,7 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.rsetiapp.BuildConfig
+import com.karumi.dexter.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
 import com.rsetiapp.common.adapter.ParentAdapter
@@ -59,6 +59,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
             true
         }
+
+
     }
 
 
