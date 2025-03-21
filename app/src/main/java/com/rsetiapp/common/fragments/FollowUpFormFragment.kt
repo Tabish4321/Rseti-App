@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -27,7 +28,9 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.rsetiapp.R
+import com.rsetiapp.common.CandidateBottomSheetFragment
 import com.rsetiapp.common.CommonViewModel
+import com.rsetiapp.common.MySattelementBottomSheet
 import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.FollowUpType
@@ -50,6 +53,7 @@ class FollowUpFormFragment :
 
     private val commonViewModel: CommonViewModel by activityViewModels()
     private var selectedDate: String = ""
+    private var selectedStatusItem: String = ""
     private lateinit var candidate: CandidateDetail
 
     //Follow Up Type var
@@ -183,6 +187,22 @@ class FollowUpFormFragment :
     }
 
     private fun listener() {
+
+
+        //Block Spinner
+        binding.spinnerStatus.setOnItemClickListener { parent, view, position, id ->
+            selectedStatusItem = parent.getItemAtPosition(position).toString()
+
+
+            if (selectedStatusItem == "Settled") {
+
+                val bottomSheet = MySattelementBottomSheet()
+                bottomSheet.show(childFragmentManager, "MySattelementBottomSheet")
+
+
+            }
+        }
+
         // Back Button
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
@@ -203,6 +223,9 @@ class FollowUpFormFragment :
         binding.image1.setOnClickListener {
             openCamera(binding.image1)
         }
+
+
+
 
         //Submit Button
         /*binding.btnSubmit.setOnClickListener {

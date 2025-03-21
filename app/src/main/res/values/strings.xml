@@ -101,6 +101,20 @@
     <string name="candidate_attendance">Candidate List</string>
     <string name="contact_number">Contact Number</string>
     <string name="roll_no">Roll No.</string>
+    <string name="earnings_Income">Earnings income</string>
+    <string name="earnings_income_hint">earnings income</string>
+    <string name="earnings_income">Earnings Income</string>
+    <string name="employment_given_to_others">employment given to others</string>
+    <string name="enter_number">enter number</string>
+    <string name="family_member_part_time">family member part time</string>
+    <string name="family_member_part_time_hint">family_member_part_time</string>
+    <string name="upload_passbook_scan">passbook copy</string>
+    <string name="settlement_proof">Settlement Proof</string>
+    <string name="settlement_photo">Settlement Photo</string>
+    <string name="employment_given_to_others_desc">employment given to others</string>
+    <string name="appointment_letter">Appointment letter</string>
+    <string name="enter_loan_account_number">Enter Loan Account Number</string>
+    <string name="Enter_City_Name">Enter City Name</string>
 
 
 </resources>

@@ -1,3 +1,4 @@
+
 package com.rsetiapp.common
 
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.BuildConfig
+import com.rsetiapp.common.model.request.BankIFSCSearchReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
@@ -17,6 +19,7 @@ import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
+import com.rsetiapp.common.model.response.BankIFSCSearchRes
 import com.rsetiapp.common.model.response.Batch
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.CandidateDetail
@@ -288,22 +291,6 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
     }
 
 
-    private  var bankIfscCodeAPI =  MutableStateFlow<Resource<out BankDetailsResponse>>(Resource.Loading())
-    val bankIfscCodeAPI = bankIfscCodeAPI.asStateFlow()
-
-    fun bankIfscCodeAPI(eapListReq: EapListReq) {
-        viewModelScope.launch {
-            commonRepository.eapDetailsAPI(eapListReq).collectLatest {
-                bankIfscCodeAPI.emit(it)
-            }
-        }
-
-
-    }
-
-
-
-
 
     private  var _getAttendanceCandidate =  MutableStateFlow<Resource<out AttendanceCandidateRes>>(Resource.Loading())
     val getAttendanceCandidate = _getAttendanceCandidate.asStateFlow()
@@ -334,5 +321,23 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
             }
         }
     }
+
+
+
+
+    private  var _getbankIFSCAPI =  MutableStateFlow<Resource<out BankIFSCSearchRes>>(Resource.Loading())
+    val getbankIFSCAPI = _getbankIFSCAPI.asStateFlow()
+
+    fun getbankIFSCAPI(bankIFSCSearchReq: BankIFSCSearchReq) {
+        viewModelScope.launch {
+            commonRepository.getbankIFSCAPI(bankIFSCSearchReq).collectLatest {
+                _getbankIFSCAPI.emit(it)
+            }
+        }
+
+
+    }
+
+
 
 }

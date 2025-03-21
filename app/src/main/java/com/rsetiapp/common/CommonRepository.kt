@@ -3,6 +3,7 @@ package com.rsetiapp.common
 import com.rsetiapp.R
 import com.rsetiapp.common.model.request.AttendanceBatchReq
 import com.rsetiapp.common.model.request.AttendanceCandidateReq
+import com.rsetiapp.common.model.request.BankIFSCSearchReq
 import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.request.StateListReq
@@ -27,12 +28,14 @@ import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
+import com.rsetiapp.common.model.response.BankIFSCSearchRes
 import com.rsetiapp.common.model.response.Batch
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
+import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EapListResponse
@@ -159,6 +162,15 @@ class CommonRepository @Inject constructor(
     ): Flow<Resource<out CandidateListResponse>> {
         return networkBoundResourceWithoutDb {
             appLevelApi.getFollowUpCandidateListAPI(CandidateListReq(appVersion, batchId))
+        }
+    }
+
+
+    suspend fun getbankIFSCAPI(
+       bankIFSCSearchReq: BankIFSCSearchReq
+    ): Flow<Resource<out BankIFSCSearchRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.bankIFSCAPI(bankIFSCSearchReq)
         }
     }
 
