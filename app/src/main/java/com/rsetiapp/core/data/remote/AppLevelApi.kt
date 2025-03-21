@@ -12,6 +12,7 @@ import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
+import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.FollowUpTypeReq
 import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.GramPanchayatReq
@@ -30,6 +31,7 @@ import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FollowUpInsertRes
 import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
@@ -114,4 +116,7 @@ interface AppLevelApi {
 
     @POST("onGoingBatchCandidateList")
     suspend fun getAttendanceCandidate( @Body attendanceCandidateReq: AttendanceCandidateReq): AttendanceCandidateRes
+
+    @POST("insertFollowUp")
+    suspend fun insertFollowUpAPI(@Body followUpInsertReq: FollowUpInsertReq): FollowUpInsertRes
 }

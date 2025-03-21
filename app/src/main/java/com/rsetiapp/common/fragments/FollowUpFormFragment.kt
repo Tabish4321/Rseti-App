@@ -26,8 +26,10 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
+import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.FollowUpType
@@ -49,20 +51,19 @@ class FollowUpFormFragment :
     BaseFragment<FragmentFollowUpBinding>(FragmentFollowUpBinding::inflate) {
 
     private val commonViewModel: CommonViewModel by activityViewModels()
-    private var selectedDate: String = ""
     private lateinit var candidate: CandidateDetail
 
     //Follow Up Type var
     private var followUpTypeList: List<FollowUpType> = mutableListOf()
     private var followUpTypeName = ArrayList<String>()
-    private var followUpTypeCode = ArrayList<String>()
     private lateinit var followUpTypeAdapter: ArrayAdapter<String>
+    private var selectedFollowUpType: FollowUpType? = null
 
     //Follow Up Status var
     private var followUpStatusList: List<FollowUpStatus> = mutableListOf()
     private var followUpStatusName = ArrayList<String>()
     private lateinit var followUpStatusAdapter: ArrayAdapter<String>
-    private lateinit var selectedFollowUpStatus: FollowUpStatus
+    private var selectedFollowUpStatus: FollowUpStatus? = null
 
     private var image1Base64 = ""
     private var latitude: Double? = null
@@ -73,11 +74,12 @@ class FollowUpFormFragment :
     private var currentImageView: ImageView? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    private var reason: String = ""
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         init()
-
     }
 
     private fun init() {
@@ -110,6 +112,101 @@ class FollowUpFormFragment :
         listener()
     }
 
+    private fun listener() {
+        // Back Button
+        binding.backButton.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        //Adapter Follow Up Type
+        followUpTypeAdapter = ArrayAdapter(
+            requireContext(), android.R.layout.simple_spinner_dropdown_item, followUpTypeName
+        )
+        binding.spinnerFollowType.setAdapter(followUpTypeAdapter)
+        binding.spinnerFollowType.setOnItemClickListener { parent, view, position, id ->
+            selectedFollowUpType = followUpTypeList[position]
+        }
+
+        //Adapter Follow Up Status
+        followUpStatusAdapter = ArrayAdapter(
+            requireContext(), android.R.layout.simple_spinner_dropdown_item, followUpStatusName
+        )
+        binding.spinnerStatus.setAdapter(followUpStatusAdapter)
+        binding.spinnerStatus.setOnItemClickListener { parent, view, position, id ->
+            selectedFollowUpStatus = followUpStatusList[position]
+
+            when (selectedFollowUpStatus!!.statusId) {
+                1 -> {
+                    binding.tvReason.text = getString(R.string.reason_nm)
+                    binding.tvReason.visibility = View.VISIBLE
+                    binding.etReason.visibility = View.VISIBLE
+
+                    binding.etReason.text.clear()
+                    reason = ""
+                }
+
+                3 -> {
+                    binding.tvReason.text = getString(R.string.reason)
+                    binding.tvReason.visibility = View.VISIBLE
+                    binding.etReason.visibility = View.VISIBLE
+
+                    binding.etReason.text.clear()
+                    reason = ""
+                }
+
+                else -> {
+                    binding.tvReason.visibility = View.GONE
+                    binding.etReason.visibility = View.GONE
+
+                    binding.etReason.text.clear()
+                    reason = ""
+                }
+            }
+        }
+
+        // Capture Image
+        binding.image1.setOnClickListener {
+            openCamera(binding.image1)
+        }
+
+        //Submit Button
+        binding.btnSubmit.setOnClickListener {
+            reason = binding.etReason.text.toString()
+
+            if (selectedFollowUpType != null && selectedFollowUpStatus != null && (if (selectedFollowUpStatus!!.statusId == 3) reason.isNotEmpty() else true) && image1Base64.isNotEmpty()) {
+                commonViewModel.insertFollowUpAPI(
+                    FollowUpInsertReq(
+                        appVersion = BuildConfig.VERSION_NAME,
+                        batchId = candidate.batchId.toString(),
+                        candidateId = candidate.candidateId ?: "",
+                        mobileNo = candidate.mobileNo ?: "",
+                        guardianName = candidate.guardianName ?: "",
+                        guardianMobileNo = candidate.guardianNo ?: "",
+                        candidatePhoto = candidate.candidateProfilePic ?: "",
+                        quarterOne = candidate.quarter1 ?: "",
+                        quarterTwo = candidate.quarter2 ?: "",
+                        quarterThree = candidate.quarter3 ?: "",
+                        quarterFour = candidate.quarter4 ?: "",
+                        quarterFive = candidate.quarter5 ?: "",
+                        quarterSix = candidate.quarter6 ?: "",
+                        quarterSeven = candidate.quarter7 ?: "",
+                        quarterEight = candidate.quarter8 ?: "",
+                        userId = userPreferences.getUserName(),
+                        followUpType = selectedFollowUpType!!.followupTypeId,
+                        followUpdate = getCurrentDate(),
+                        followUpDoneBy = userPreferences.getUseID(),
+                        sattlementStatus = selectedFollowUpStatus!!.statusId.toString(),
+                        reason = reason,
+                        followupimage = image1Base64,
+                        latitute = latitude.toString(),
+                        longitute = longitude.toString()
+                    )
+                )
+                collectInsertResponse()
+            } else toastShort("Kindly fill all the fields first")
+        }
+    }
+
     private fun collectFollowTypeResponse() {
         lifecycleScope.launch {
             collectLatestLifecycleFlow(commonViewModel.getFollowTypeList) {
@@ -130,7 +227,6 @@ class FollowUpFormFragment :
 
                                 for (x in followUpTypeList) {
                                     followUpTypeName.add(x.followUpTypeName)
-                                    followUpTypeCode.add(x.followupTypeId)
                                 }
 
                                 followUpTypeAdapter.notifyDataSetChanged()
@@ -181,56 +277,34 @@ class FollowUpFormFragment :
         }
     }
 
-    private fun listener() {
-        // Back Button
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
-        }
+    private fun collectInsertResponse() {
+        lifecycleScope.launch {
+            collectLatestLifecycleFlow(commonViewModel.insertFollowUpAPI) {
+                when (it) {
+                    is Resource.Loading -> showProgressBar()
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        it.error?.let { baseErrorResponse ->
+                            showSnackBar("Internal Server Error111")
+                        }
+                    }
 
-        //Adapter Follow Up Type
-        followUpTypeAdapter = ArrayAdapter(
-            requireContext(), android.R.layout.simple_spinner_dropdown_item, followUpTypeName
-        )
-        binding.spinnerFollowType.setAdapter(followUpTypeAdapter)
-
-        //Adapter Follow Up Status
-        followUpStatusAdapter = ArrayAdapter(
-            requireContext(), android.R.layout.simple_spinner_dropdown_item, followUpStatusName
-        )
-        binding.spinnerStatus.setAdapter(followUpStatusAdapter)
-        binding.spinnerStatus.setOnItemClickListener { parent, view, position, id ->
-            selectedFollowUpStatus = followUpStatusList[position]
-
-            when (selectedFollowUpStatus.statusId) {
-                1 -> {
-                    binding.tvReason.text = getString(R.string.reason_nm)
-                    binding.tvReason.visibility = View.VISIBLE
-                    binding.etReason.visibility = View.VISIBLE
-                }
-
-                3 -> {
-                    binding.tvReason.text = getString(R.string.reason)
-                    binding.tvReason.visibility = View.VISIBLE
-                    binding.etReason.visibility = View.VISIBLE
-                }
-
-                else -> {
-                    binding.tvReason.visibility = View.GONE
-                    binding.etReason.visibility = View.GONE
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        it.data?.let { insertApiResp ->
+                            if (insertApiResp.responseCode == 200) {
+                                showSnackBar("Success")
+                                findNavController().navigateUp()
+                            } else if (insertApiResp.responseCode == 301) {
+                                showSnackBar("Please Update from PlayStore")
+                            } else {
+                                showSnackBar("Internal Server Error 1111")
+                            }
+                        } ?: showSnackBar("Internal Server Error")
+                    }
                 }
             }
         }
-
-        // Capture Image
-        binding.image1.setOnClickListener {
-            openCamera(binding.image1)
-        }
-
-        //Submit Button
-        /*binding.btnSubmit.setOnClickListener {
-
-            collectInsertResponse()
-        }*/
     }
 
     private fun checkAndRequestPermissions() {

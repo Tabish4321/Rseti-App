@@ -13,6 +13,7 @@ import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
+import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.response.AttendanceBatchRes
@@ -26,6 +27,7 @@ import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FollowUpInsertRes
 import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
@@ -319,4 +321,14 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
         }
     }
 
+    private var _insertFollowUpAPI =  MutableStateFlow<Resource<out FollowUpInsertRes>>(Resource.Loading())
+    val insertFollowUpAPI = _insertFollowUpAPI.asStateFlow()
+
+    fun insertFollowUpAPI(followUpInsertReq: FollowUpInsertReq) {
+        viewModelScope.launch {
+            commonRepository.insertFollowUpAPI(followUpInsertReq).collectLatest {
+                _insertFollowUpAPI.emit(it)
+            }
+        }
+    }
 }
