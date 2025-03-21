@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.rsetiapp"
+    namespace = "com.rsetiapp"  // ✅ Ensure this matches your package name
     compileSdk = 35
 
     defaultConfig {
@@ -29,11 +29,15 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isMinifyEnabled = false
+            buildConfigField("String", "API_KEY", "\"DEBUG_API_KEY\"")  // ✅ Example BuildConfig variable
+        }
     }
 
     buildFeatures {
         viewBinding = true
-        buildConfig = true
+        buildConfig = true  // ✅ Ensure BuildConfig is enabled
     }
 
     compileOptions {
@@ -44,89 +48,75 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
     flavorDimensions += listOf("app")
+
     productFlavors {
         create("dev") {
             dimension = "app"
+            buildConfigField("String", "BASE_URL", "\"https://dev.example.com/\"")  // ✅ Add BuildConfig values
         }
         create("prod") {
             dimension = "app"
+            buildConfigField("String", "BASE_URL", "\"https://api.example.com/\"")
         }
         create("stag") {
             dimension = "app"
+            buildConfigField("String", "BASE_URL", "\"https://staging.example.com/\"")
         }
     }
-
-
 }
 
 dependencies {
-    // ✅ Core Android Libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.core)
-    implementation (libs.material)
+    implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.play.services.location)
 
-    // ✅ Lifecycle Components
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
-    // ✅ Navigation Components
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.fragment.ktx)
 
-    // ✅ Room Database
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)
 
-    // ✅ DataStore
     implementation(libs.androidx.datastore.preferences)
 
-    // ✅ Retrofit and Networking
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
-    // ✅ Glide (Image Loading)
     implementation(libs.glide)
     kapt(libs.compiler)
 
-    // ✅ Hilt Dependency Injection
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
-    // ✅ Splash Screen
     implementation(libs.androidx.core.splashscreen)
 
-    // ✅ Permissions Handling (Dexter)
     implementation(libs.dexter)
 
-    // ✅ Security Libraries
     implementation(libs.bcprov.jdk16)
     implementation(libs.jsr105.api)
 
-    // ✅ Retrofit Converters
     implementation(libs.converter.scalars)
     implementation(libs.converter.moshi)
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
 
-    // ✅ OkHttp for Networking
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
 
-    // ✅ **Test Dependencies (Placed in Correct Category)**
-    // 🟢 **Unit Testing (Runs on JVM, No Android Emulator Needed)**
     testImplementation(libs.junit)
 
-    // 🟢 **Android Instrumented Tests (Runs on Android Device/Emulator)**
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    //Xml
     implementation(libs.jackson.dataformat.xml)
     implementation("com.thoughtworks.xstream:xstream:1.4.7") {
         exclude(group = "xmlpull", module = "xmlpull")
@@ -138,15 +128,12 @@ dependencies {
         exclude(group = "org.codehaus.woodstox")
     }
 
-        implementation ("com.fasterxml.jackson.core:jackson-core:2.15.0")
-        implementation ("com.fasterxml.jackson.core:jackson-databind:2.15.0")
-        implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.0")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.15.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.0")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.0")
 
-        // Add StAX API( (Required for XML Parsing)
-        implementation ("javax.xml.stream:stax-api:1.0-2")
-        implementation ("com.fasterxml.woodstox:woodstox-core:6.5.1")
-
-
+    implementation("javax.xml.stream:stax-api:1.0-2")
+    implementation("com.fasterxml.woodstox:woodstox-core:6.5.1")
 }
 
 kapt {

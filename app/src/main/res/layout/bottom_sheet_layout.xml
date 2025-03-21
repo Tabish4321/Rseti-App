@@ -1,0 +1,169 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/dp_17">
+
+
+
+
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/circleImageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CustomCircleShape"
+        app:strokeColor="@color/color_dark_green"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dp_17"
+        app:strokeWidth="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tvAttendanceComplete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="@string/attendance_marked"
+        android:drawableRight="@drawable/ic_verified"
+        android:textColor="@color/color_dark_green"
+        android:textSize="@dimen/dp_25" />
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/dp_80">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/dp_30"
+                android:text="@string/name1"
+                android:textSize="@dimen/dp_20" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/attendancCandidateName"
+                android:fontFamily="@font/avenir_next_semi_bold"
+                android:layout_marginStart="@dimen/dp_20"
+                android:layout_gravity="center"
+                android:textColor="@color/color_dark_green"
+                android:textSize="@dimen/dp_20" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dp_5">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/dp_30"
+            android:text="@string/careof"
+            android:textSize="@dimen/dp_20" />
+
+            <TextView
+                android:id="@+id/attendancCareOf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/dp_20"
+                android:fontFamily="@font/avenir_next_semi_bold"
+                android:textColor="@color/color_dark_green"
+                android:textSize="@dimen/dp_20" />
+
+
+        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dp_10">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/dp_30"
+            android:text="Gender:"
+            android:textSize="@dimen/dp_20" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/attendancGender"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_gravity="center"
+            android:fontFamily="@font/avenir_next_semi_bold"
+            android:textColor="@color/color_dark_green"
+            android:textSize="@dimen/dp_20" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dp_10">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/dp_30"
+            android:text="@string/date_of_birth"
+            android:textSize="@dimen/dp_20" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/attendancCDob"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_gravity="center"
+            android:fontFamily="@font/avenir_next_semi_bold"
+            android:textColor="@color/color_dark_green"
+            android:textSize="@dimen/dp_20" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvLogin"
+        style="@style/Button"
+        android:drawableEnd="@drawable/ic_right_arrow"
+        android:drawablePadding="@dimen/dp_20"
+        android:text="@string/ok"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_50"/>
+
+
+
+    </LinearLayout>
+
+
+

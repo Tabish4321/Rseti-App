@@ -91,6 +91,14 @@
     <string name="mark_attendance">Mark Attendance</string>
     <string name="kyc_failed_msg">Kyc failed</string>
     <string name="something_went_wrong_at_uidai_site">Something went wrong at UIDAI side.</string>
+    <string name="ok">Ok</string>
+    <string name="name">Name</string>
+    <string name="date_of_birth">Date Of Birth:</string>
+    <string name="name1">Name:</string>
+    <string name="careof">CareOf:</string>
+    <string name="attendance_marked">Attendance Marked</string>
+    <string name="as_per_aadhaar">Aadhaar Address</string>
+    <string name="view_profile">View Attendance</string>
 
 
 </resources>

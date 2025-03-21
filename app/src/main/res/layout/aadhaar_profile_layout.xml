@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ConsProfile"
+        style="@style/editTextHome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_50"
+        android:elevation="@dimen/dp_2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/circleImageView"
+            android:layout_width="@dimen/dp_113"
+            android:layout_height="@dimen/dp_113"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/CustomCircleShape"
+            app:strokeColor="@color/color_dark_green"
+            app:strokeWidth="1dp"
+            android:layout_marginStart="@dimen/dp_12"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/editImageButton"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            app:shapeAppearanceOverlay="@style/CustomCircleShape"
+            app:layout_constraintEnd_toEndOf="@id/circleImageView"
+            app:layout_constraintBottom_toBottomOf="@id/circleImageView"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"/>
+
+
+        <TextView
+            android:id="@+id/tvAadhaarName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/candidate_name"
+            android:layout_marginTop="@dimen/dp_12"
+            android:fontFamily="@font/avenir_next_semi_bold"
+            android:textColor="@color/color_dark_green"
+            android:textSize="@dimen/sp_18"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            app:layout_constraintTop_toBottomOf="@+id/circleImageView"
+
+            />
+
+
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_12"
+            tools:viewBindingIgnore="true"
+            android:id="@+id/ivPhoneIcon"
+            android:src="@drawable/baseline_phone_enabled_24"
+            app:layout_constraintTop_toBottomOf="@+id/tvAadhaarName"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvAaadharMobile"
+            android:fontFamily="@font/avenir_next_semi_bold"
+            android:textColor="@color/color_dark_green"
+            android:layout_marginStart="@dimen/dp_10"
+            android:textSize="@dimen/sp_14"
+            android:layout_gravity="center"
+            app:layout_constraintTop_toTopOf="@+id/ivPhoneIcon"
+            app:layout_constraintBottom_toBottomOf="@+id/ivPhoneIcon"
+            app:layout_constraintStart_toEndOf="@+id/ivPhoneIcon"
+            />
+
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:src="@drawable/ic_verified"
+            tools:viewBindingIgnore="true"
+            android:id="@+id/ivPhoneVerified"
+            android:layout_marginStart="@dimen/dp_6"
+            app:layout_constraintStart_toEndOf="@+id/tvAaadharMobile"
+            app:layout_constraintTop_toTopOf="@+id/tvAaadharMobile"
+            app:layout_constraintBottom_toBottomOf="@+id/tvAaadharMobile"
+            />
+
+
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_12"
+            tools:viewBindingIgnore="true"
+            android:id="@+id/ivEmailIcon"
+            android:src="@drawable/baseline_email_24"
+            app:layout_constraintTop_toBottomOf="@+id/ivPhoneIcon"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvEmailMobile"
+            android:fontFamily="@font/avenir_next_semi_bold"
+            android:textColor="@color/color_dark_green"
+            android:layout_marginStart="@dimen/dp_10"
+            android:textSize="@dimen/sp_14"
+            android:layout_gravity="center"
+            app:layout_constraintTop_toTopOf="@+id/ivEmailIcon"
+            app:layout_constraintBottom_toBottomOf="@+id/ivEmailIcon"
+            app:layout_constraintStart_toEndOf="@+id/ivEmailIcon"
+            />
+
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:src="@drawable/ic_verified"
+            tools:viewBindingIgnore="true"
+            android:id="@+id/ivEmailVerified"
+            android:layout_marginStart="@dimen/dp_6"
+            app:layout_constraintStart_toEndOf="@+id/tvEmailMobile"
+            app:layout_constraintTop_toTopOf="@+id/tvEmailMobile"
+            app:layout_constraintBottom_toBottomOf="@+id/tvEmailMobile"
+            />
+
+
+
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:id="@+id/ivGenderIcon"
+            android:layout_marginTop="@dimen/dp_12"
+            android:src="@drawable/gender"
+            tools:viewBindingIgnore="true"
+            app:layout_constraintTop_toBottomOf="@+id/ivEmailIcon"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gender"
+            android:layout_marginStart="@dimen/dp_10"
+            android:textSize="@dimen/sp_16"
+            tools:viewBindingIgnore="true"
+            android:layout_gravity="center"
+            app:layout_constraintTop_toTopOf="@+id/ivGenderIcon"
+            app:layout_constraintBottom_toBottomOf="@+id/ivGenderIcon"
+            app:layout_constraintStart_toEndOf="@+id/ivGenderIcon"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvAaadharGender"
+            android:layout_marginStart="@dimen/dp_30"
+            android:textColor="@color/color_dark_green"
+            android:textSize="@dimen/sp_14"
+            android:fontFamily="@font/avenir_next_semi_bold"
+            android:layout_gravity="start"
+            app:layout_constraintTop_toBottomOf="@+id/ivGenderIcon"
+            app:layout_constraintStart_toStartOf="@id/circleImageView"
+            />
+
+
+
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:id="@+id/ivDobIcon"
+            android:layout_marginTop="@dimen/dp_12"
+            tools:viewBindingIgnore="true"
+            android:src="@drawable/dobb"
+            app:layout_constraintTop_toBottomOf="@+id/tvAaadharGender"
+            app:layout_constraintStart_toStartOf="@id/circleImageView"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/date_of_birth"
+            android:layout_marginStart="@dimen/dp_10"
+            android:textSize="@dimen/sp_16"
+            android:layout_gravity="center"
+            tools:viewBindingIgnore="true"
+
+            app:layout_constraintTop_toTopOf="@+id/ivDobIcon"
+            app:layout_constraintBottom_toBottomOf="@+id/ivDobIcon"
+            app:layout_constraintStart_toEndOf="@+id/ivDobIcon"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_30"
+            android:textColor="@color/color_dark_green"
+            android:id="@+id/tvAaadharDob"
+            android:textSize="@dimen/sp_14"
+            android:fontFamily="@font/avenir_next_semi_bold"
+            android:layout_gravity="start"
+            app:layout_constraintTop_toBottomOf="@+id/ivDobIcon"
+            app:layout_constraintStart_toStartOf="@id/circleImageView"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/viewDetails"
+            android:text="@string/view_profile"
+            android:textColor="@color/color_dark_green"
+            android:textSize="@dimen/sp_18"
+            android:fontFamily="@font/avenir_next_bold"
+            app:layout_constraintStart_toEndOf="@+id/circleImageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="@dimen/dp_50"/>
+
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_12"
+            tools:viewBindingIgnore="true"
+            android:id="@+id/ivAddressIcon"
+            android:src="@drawable/baseline_location_on_24"
+            app:layout_constraintTop_toBottomOf="@+id/tvAaadharDob"
+            app:layout_constraintStart_toStartOf="@id/circleImageView"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/as_per_aadhaar"
+            android:layout_marginStart="@dimen/dp_10"
+            android:textSize="@dimen/sp_16"
+            android:layout_gravity="center"
+            tools:viewBindingIgnore="true"
+            app:layout_constraintStart_toEndOf="@+id/ivAddressIcon"
+            app:layout_constraintTop_toTopOf="@+id/ivAddressIcon"
+            app:layout_constraintBottom_toBottomOf="@+id/ivAddressIcon"
+
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_30"
+            android:textColor="@color/color_dark_green"
+            android:id="@+id/tvAaadharAddress"
+            android:textSize="@dimen/sp_14"
+            android:fontFamily="@font/avenir_next_semi_bold"
+            android:layout_gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/ivAddressIcon"
+            app:layout_constraintStart_toStartOf="@id/circleImageView"
+            />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -16,14 +16,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
+import com.karumi.dexter.BuildConfig
 import com.rsetiapp.core.uidai.ekyc.UidaiKycRequest
 import com.rsetiapp.core.uidai.ekyc.UidaiResp
 import com.rsetiapp.core.uidai.ekyc.IntentModel
 import com.rsetiapp.core.uidai.ekyc.IntentResponse
-import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
 import com.rsetiapp.core.basecomponent.BaseFragment
@@ -208,7 +207,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     private fun handleCaptureResponse(captureResponse: String) {
         try {
 
-            captureResponse.copyToClipboard(requireContext())
+          //  captureResponse.copyToClipboard(requireContext())
 
             // Parse the capture response XML to an object
             val response = CaptureResponse.fromXML(captureResponse)
@@ -260,7 +259,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
             e.printStackTrace()
             toastShort("An error occurred while processing the response.")
             log("EKYCDATA", "Exception: ${e.message}")
-            e.message?.copyToClipboard(requireContext())
+        //    e.message?.copyToClipboard(requireContext())
         }
     }
 
@@ -419,4 +418,14 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     override fun onDestroyView() {
         super.onDestroyView()
     }
+    private fun isAppInstalled(packageName: String): Boolean {
+        val packageManager = context?.packageManager ?: return false  // Ensure context is not null
+        return try {
+            packageManager.getPackageInfo(packageName, 0)
+            true  // ✅ App is installed
+        } catch (e: PackageManager.NameNotFoundException) {
+            false  // ❌ App is not installed
+        }
+    }
+
 }
