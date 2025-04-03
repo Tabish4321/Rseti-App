@@ -19,25 +19,26 @@
             android:background="@drawable/top_home"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/backButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/backButton"
                 android:layout_marginStart="@dimen/dp_20"
                 android:padding="@dimen/dp_5"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_arrow_back_ios_new"/>
+                android:src="@drawable/ic_arrow_back_ios_new" />
+
             <TextView
                 android:id="@+id/tvTitleName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Candidate Follow Up"
+                android:text="@string/candidate_follow_up"
                 android:textColor="@color/white"
-                android:textSize="@dimen/sp_16"/>
+                android:textSize="@dimen/sp_16" />
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -63,7 +64,7 @@
             app:layout_constraintStart_toEndOf="@+id/candidateImage"
             app:layout_constraintTop_toBottomOf="@+id/toolbar"
             app:tint="@color/color_dark_green"
-            tools:ignore="LabelFor" />
+            tools:ignore="ContentDescription,LabelFor" />
 
         <TextView
             android:id="@+id/tvCandidate"
@@ -71,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_5"
             android:fontFamily="@font/avenir_next_demi_bold"
-            android:text="Name"
+            android:text="@string/name"
             android:textColor="@color/color_dark_green"
             app:layout_constraintBottom_toBottomOf="@+id/nameImage"
             app:layout_constraintStart_toEndOf="@+id/nameImage"
@@ -83,7 +84,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/avenir_next_regular"
             android:padding="@dimen/dp_4"
-            android:text="Candidate Name"
+            android:text="@string/candidate_name"
             android:textSize="@dimen/sp_16"
             app:layout_constraintStart_toStartOf="@+id/nameImage"
             app:layout_constraintTop_toBottomOf="@+id/tvCandidate" />
@@ -98,7 +99,7 @@
             app:layout_constraintStart_toEndOf="@+id/candidateImage"
             app:layout_constraintTop_toBottomOf="@+id/tvCandidateName"
             app:tint="@color/color_dark_green"
-            tools:ignore="LabelFor" />
+            tools:ignore="ContentDescription,LabelFor" />
 
         <TextView
             android:id="@+id/tvContact"
@@ -106,8 +107,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_5"
             android:fontFamily="@font/avenir_next_demi_bold"
-
-            android:text="Contact Number"
+            android:text="@string/contact_number"
             android:textColor="@color/color_dark_green"
             app:layout_constraintBottom_toBottomOf="@+id/contactImage"
             app:layout_constraintStart_toEndOf="@+id/contactImage"
@@ -119,7 +119,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/avenir_next_regular"
             android:padding="@dimen/dp_4"
-            android:text="Contact Number"
+            android:text="@string/contact_number"
             android:textSize="@dimen/sp_16"
             app:layout_constraintStart_toStartOf="@+id/contactImage"
             app:layout_constraintTop_toBottomOf="@+id/tvContact" />
@@ -134,7 +134,7 @@
             app:layout_constraintEnd_toStartOf="@+id/tvCareOf"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/candidateImage"
-            tools:ignore="LabelFor" />
+            tools:ignore="ContentDescription,LabelFor" />
 
         <TextView
             android:id="@+id/tvCareOf"
@@ -142,7 +142,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_5"
             android:fontFamily="@font/avenir_next_demi_bold"
-            android:text="Care Of"
+            android:text="@string/care_of"
             android:textColor="@color/color_dark_green"
             app:layout_constraintBottom_toBottomOf="@+id/careOfImage"
             app:layout_constraintStart_toEndOf="@+id/careOfImage"
@@ -154,7 +154,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/avenir_next_regular"
             android:padding="@dimen/dp_4"
-            android:text="Care Of"
+            android:text="@string/care_of"
             android:textSize="@dimen/sp_16"
             app:layout_constraintStart_toStartOf="@+id/careOfImage"
             app:layout_constraintTop_toBottomOf="@+id/tvCareOf" />
@@ -166,8 +166,7 @@
             android:layout_marginStart="@dimen/dp_30"
             android:layout_marginTop="@dimen/dp_10"
             android:fontFamily="@font/avenir_next_demi_bold"
-
-            android:text="Follow Type"
+            android:text="@string/follow_type"
             android:textColor="@color/color_dark_green"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvCareOfName" />
@@ -180,7 +179,7 @@
             android:layout_marginStart="@dimen/dp_30"
             android:layout_marginEnd="@dimen/dp_30"
             android:fontFamily="@font/avenir_next_demi_bold"
-            android:hint="Select follow type"
+            android:hint="@string/select_follow_type"
             android:padding="1dp"
             android:textColorHint="@color/color_dark_green"
             app:boxStrokeColor="@color/color_dark_green"
@@ -207,7 +206,7 @@
             android:layout_marginStart="@dimen/dp_30"
             android:layout_marginTop="@dimen/dp_10"
             android:fontFamily="@font/avenir_next_demi_bold"
-            android:text="@string/date"
+            android:text="@string/date_nm"
             android:textColor="@color/color_dark_green"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tiFollowType" />
@@ -235,7 +234,7 @@
             android:layout_marginStart="@dimen/dp_30"
             android:layout_marginTop="@dimen/dp_10"
             android:fontFamily="@font/avenir_next_demi_bold"
-            android:text="Status"
+            android:text="@string/status"
             android:textColor="@color/color_dark_green"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvDate" />
@@ -248,7 +247,7 @@
             android:layout_marginStart="@dimen/dp_30"
             android:layout_marginEnd="@dimen/dp_30"
             android:fontFamily="@font/avenir_next_demi_bold"
-            android:hint="Select status"
+            android:hint="@string/select_status"
             android:padding="1dp"
             android:textColorHint="@color/color_dark_green"
             app:boxStrokeColor="@color/color_dark_green"
@@ -269,17 +268,41 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
+            android:id="@+id/tvReason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_30"
+            android:layout_marginTop="@dimen/dp_10"
+            android:fontFamily="@font/avenir_next_demi_bold"
+            android:text="@string/reason"
+            android:textColor="@color/color_dark_green"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tiStatus" />
+
+        <EditText
+            android:id="@+id/etReason"
+            style="@style/EditText"
+            android:layout_marginStart="@dimen/dp_30"
+            android:layout_marginEnd="@dimen/dp_30"
+            android:hint="@string/enter_reason"
+            android:imeOptions="actionNext"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/tvReason"
+            app:layout_constraintTop_toBottomOf="@+id/tvReason"
+            tools:ignore="Autofill,TextFields" />
+
+        <TextView
             android:id="@+id/tvDoneBy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_30"
             android:layout_marginTop="@dimen/dp_10"
             android:fontFamily="@font/avenir_next_demi_bold"
-
-            android:text="Follow up done by"
+            android:text="@string/follow_up_done_by"
             android:textColor="@color/color_dark_green"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tiStatus" />
+            app:layout_constraintTop_toBottomOf="@+id/etReason" />
 
         <TextView
             android:id="@+id/etDoneBy"
@@ -288,8 +311,8 @@
             android:layout_marginEnd="@dimen/dp_30"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:hint="Follow up done by"
             android:inputType="none"
+            android:text="@string/follow_up_done_by"
             android:textColor="@color/color_dark_green"
             android:textSize="15sp"
             app:drawableEndCompat="@drawable/baseline_person_24"
@@ -331,7 +354,8 @@
                 android:adjustViewBounds="true"
                 android:background="@drawable/captureimage"
                 android:padding="@dimen/dp_5"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                tools:ignore="ContentDescription" />
 
         </LinearLayout>
 
