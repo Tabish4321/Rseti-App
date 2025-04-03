@@ -30,7 +30,7 @@
             android:layout_marginTop="@dimen/dp_16"
             android:fontFamily="@font/avenir_next_demi_bold"
             android:padding="@dimen/dp_4"
-            android:text="@string/status"
+            android:text="@string/status_mandate"
             android:textColor="@color/color_dark_green" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -155,7 +155,7 @@
             android:textColor="@color/color_dark_green" />
         <TextView
             style="@style/EditText"
-
+            android:id="@+id/total"
             android:hint="@string/Total"/>
 
 
@@ -190,7 +190,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="@string/ifsc_code"
+                    android:text="@string/ifsc_code_mandate"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
@@ -278,7 +278,7 @@
                     android:textSize="16sp" />
 
                 <ProgressBar
-                    android:id="@+id/progressBar"
+                    android:id="@+id/progressBarr"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -302,7 +302,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="@string/bank_account_number"
+                    android:text="@string/enter_loan_account_number_mandate"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
@@ -314,6 +314,7 @@
                     android:hint="@string/enter_loan_account_number"
                     android:inputType="number"
                     android:padding="12dp"
+                    android:maxLength="15"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -334,7 +335,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="@string/city"
+                    android:text="@string/city_mandate"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
@@ -345,6 +346,7 @@
                     android:background="@drawable/edittext_background"
                     android:hint="@string/Enter_City_Name"
                     android:padding="12dp"
+                    android:maxLength="15"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
@@ -366,7 +368,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="@string/Reason"
+                    android:text="@string/Reason_mandate"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
@@ -399,7 +401,7 @@
                     android:layout_marginTop="@dimen/dp_16"
                     android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
-                    android:text="@string/account_status"
+                    android:text="@string/account_status_mandate"
                     android:textColor="@color/color_dark_green" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -444,7 +446,7 @@
                     android:layout_marginTop="@dimen/dp_16"
                     android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
-                    android:text="@string/earnings_income"
+                    android:text="@string/earnings_income_mandate"
                     android:textColor="@color/color_dark_green" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -486,19 +488,40 @@
                     android:layout_marginTop="@dimen/dp_16"
                     android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
-                    android:text="@string/employment_given_to_others"
                     android:textColor="@color/color_dark_green" />
 
 
-
-                <EditText
+              <!--  <EditText
                     android:id="@+id/etEmploymentGiven"
                     style="@style/EditText"
+                   android:text="@string/Enter_number_of_employment_given_to_others"
                     android:hint="@string/employment_given_to_others"
                     android:imeOptions="actionNext"
                     android:inputType="number"
                     android:maxLength="8"
-                    android:paddingHorizontal="@dimen/dp_20" />
+                    android:paddingHorizontal="@dimen/dp_20" />-->
+
+                <TextView
+                    android:id="@+id/tvEmploymentGivenLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Employment_given_to_others_mandate"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/etEmploymentGiven"
+                    style="@style/EditText"
+                    android:background="@drawable/edittext_background"
+                    android:hint="@string/enter_number_of_employment_given_to_others"
+                    android:padding="12dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+
+
+
+
 
             </LinearLayout>
 
@@ -519,7 +542,7 @@
                     android:layout_marginTop="@dimen/dp_16"
                     android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
-                    android:text="@string/family_member_part_time"
+                    android:text="@string/family_member_part_time_job_mandate"
                     android:textColor="@color/color_dark_green" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -527,7 +550,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/avenir_next_demi_bold"
-                    android:hint="@string/family_member_part_time"
+                    android:hint="@string/family_member_part_time_job"
                     android:padding="1dp"
                     android:textColorHint="@color/color_dark_green"
                     app:boxStrokeColor="@color/color_dark_green">
@@ -551,7 +574,7 @@
                     android:layout_marginTop="@dimen/dp_16"
                     android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
-                    android:text="@string/settlement_proof"
+                    android:text="@string/settlement_proof_mandate"
                     android:textColor="@color/color_dark_green" />
 
             </LinearLayout>
@@ -573,9 +596,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/dp_16"
+                    android:id="@+id/settleText"
                     android:textSize="12sp"
                     android:fontFamily="@font/avenir_next_regular"
-                    android:text="@string/settlement_photo"
+                    android:text="settlement_photo"
                     android:textColor="@color/color_dark_green" />
 
                 <TextView
@@ -646,8 +670,6 @@
                     android:background="@drawable/captureimage"
                     android:layout_marginStart="@dimen/dp_10"
                     android:padding="@dimen/dp_5"/>
-
-
             </LinearLayout>
 
             <TextView
@@ -660,13 +682,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/llImageUpload"/>
-
-
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

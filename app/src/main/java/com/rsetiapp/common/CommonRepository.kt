@@ -28,6 +28,7 @@ import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
+import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
 import com.rsetiapp.common.model.response.BankIFSCSearchRes
@@ -48,6 +49,7 @@ import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
+import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.core.data.local.database.AppDatabase
 import com.rsetiapp.core.data.remote.AppLevelApi
 import com.rsetiapp.core.di.AppModule
@@ -215,4 +217,14 @@ class CommonRepository @Inject constructor(
             appLevelApi.postOnAUAFaceAuthNREGA(url,uidaiKycRequest)
         }
     }
+
+    suspend fun getSalaryDetailsAPI(salaryRangeReq: SalaryRangeReq): Flow<Resource<out SalaryRangeRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.salaryRangeDetails(salaryRangeReq)
+        }
+    }
+
+
+
+
 }

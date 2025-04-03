@@ -147,8 +147,17 @@
     <string name="settlement_photo">Settlement Photo</string>
     <string name="employment_given_to_others_desc">employment given to others</string>
     <string name="appointment_letter">Appointment letter</string>
-    <string name="enter_loan_account_number">Enter Loan Account Number</string>
     <string name="Enter_City_Name">Enter City Name</string>
+    <string name="enter_loan_account_number">Enter Loan Account Number</string>
+    <string name="_mandate">Enter Loan Account Number<font color='FF0000'>*</font></string>
+    <string name="Enter_City_Name_mandate">Enter City Name <font color='FF0000'>*</font></string>
+    <string name="Employment_given_to_others">Employment given to others</string>
+    <string name="Employment_given_to_others_mandate">Employment given to others <font color='FF0000'>*</font></string>
+    <string name="family_member_part_time_job">Family member part time Job</string>
+    <string name="family_member_part_time_job_mandate">Family member part time Job <font color='FF0000'>*</font></string>
+    <string name="enter_number_of_employment_given_to_others">Enter the number of emplyment given to others</string>
+
+
 
 
 </resources>

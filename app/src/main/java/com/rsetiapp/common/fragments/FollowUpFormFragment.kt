@@ -1,8 +1,10 @@
 package com.rsetiapp.common.fragments
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Geocoder
@@ -17,22 +19,30 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.collection.emptyLongSet
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
+import com.rsetiapp.common.MySattelementBottomSheet
 import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.FollowUpType
+import com.rsetiapp.common.model.response.SalaryRange
 import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.util.AppUtil.getCurrentDate
 import com.rsetiapp.core.util.Resource
@@ -59,13 +69,14 @@ class FollowUpFormFragment :
     private lateinit var followUpTypeAdapter: ArrayAdapter<String>
     private var selectedFollowUpType: FollowUpType? = null
 
+
     //Follow Up Status var
     private var followUpStatusList: List<FollowUpStatus> = mutableListOf()
     private var followUpStatusName = ArrayList<String>()
     private lateinit var followUpStatusAdapter: ArrayAdapter<String>
     private var selectedFollowUpStatus: FollowUpStatus? = null
-
     private var image1Base64 = ""
+    private var followupimage = ""
     private var latitude: Double? = null
     private var longitude: Double? = null
     private var locationLatLang = ""
@@ -73,13 +84,53 @@ class FollowUpFormFragment :
     private var imageUri: Uri? = null
     private var currentImageView: ImageView? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-
     private var reason: String = ""
+    private var selectdeAccountStatus=""
+    private var selectedRangeId=""
+    private var selectedReason=""
+
+
+
+
+
+    // Salary Range Variables
+    private var salaryRangeList: List<SalaryRange> = mutableListOf()
+    private var salaryRangeNameList = ArrayList<String>() // Store range names for the adapter
+    private lateinit var salaryRangeAdapter: ArrayAdapter<String>
+    private var selectedSalaryRange: SalaryRange? = null // ✅ Corrected type
+
+
+    //account
+    private var accountStatusList: List<FollowUpStatus> = mutableListOf()
+    private lateinit var accountStatusAdapter: ArrayAdapter<String>
+
+    // statusOfSettlement
+    private var statusItemList = ArrayList<String>()
+    private lateinit var statusItemAdapter: ArrayAdapter<String>
+    private var selectedStatus: String = ""
+
+    private var selfInvestmentItem: String = ""
+    private var creditFromBankItem: String = ""
+    private var totalV: String = ""
+    private var upperCaseIfscTextV: String = ""
+    private var bankCode: String = ""
+    private var branchCode: String = ""
+    private var loanAcc: String = ""
+    private var city: String = ""
+    private var rangeId: String = ""
+    private var employmentGiven: String = ""
+    private var familyMemberPartTime: String = ""
+    private var settlementPhoto = ""
+    private var passbookCopy = ""
+    private var appointmentLetter = ""
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         init()
+
+
     }
 
     private fun init() {
@@ -87,7 +138,7 @@ class FollowUpFormFragment :
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         userPreferences = UserPreferences(requireContext())
 
-        if (candidate.candidateProfilePic == "NA") {
+        if (candidate.candidateProfilePic == "NA" || candidate.candidateProfilePic?.isEmpty() ?: true) {
             Glide.with(binding.root.context).load(R.drawable.person).into(binding.candidateImage)
         } else {
             val decodedString: ByteArray =
@@ -127,29 +178,43 @@ class FollowUpFormFragment :
             selectedFollowUpType = followUpTypeList[position]
         }
 
+
         //Adapter Follow Up Status
         followUpStatusAdapter = ArrayAdapter(
             requireContext(), android.R.layout.simple_spinner_dropdown_item, followUpStatusName
         )
         binding.spinnerStatus.setAdapter(followUpStatusAdapter)
+
+
         binding.spinnerStatus.setOnItemClickListener { parent, view, position, id ->
             selectedFollowUpStatus = followUpStatusList[position]
 
-            when (selectedFollowUpStatus!!.statusId) {
+            when (selectedFollowUpStatus?.statusId) {
                 1 -> {
                     binding.tvReason.text = getString(R.string.reason_nm)
                     binding.tvReason.visibility = View.VISIBLE
                     binding.etReason.visibility = View.VISIBLE
-
                     binding.etReason.text.clear()
                     reason = ""
+                }
+
+                2 -> {
+
+                    // Show bottom sheet
+                    val bottomSheet = MySattelementBottomSheet()
+                    bottomSheet.show(parentFragmentManager, "MySattelementBottomSheet")
+
+                    // ✅ Listen for results from MySattelementBottomSheet
+                    setFragmentResultListener("settlement_result") { _, bundle ->
+                        val selectedRangeId = bundle.getString("selectedRangeId", "N/A")
+                        // Process the selected range if needed
+                    }
                 }
 
                 3 -> {
                     binding.tvReason.text = getString(R.string.reason)
                     binding.tvReason.visibility = View.VISIBLE
                     binding.etReason.visibility = View.VISIBLE
-
                     binding.etReason.text.clear()
                     reason = ""
                 }
@@ -157,332 +222,457 @@ class FollowUpFormFragment :
                 else -> {
                     binding.tvReason.visibility = View.GONE
                     binding.etReason.visibility = View.GONE
-
                     binding.etReason.text.clear()
                     reason = ""
                 }
             }
         }
 
-        // Capture Image
+// Capture Image
         binding.image1.setOnClickListener {
             openCamera(binding.image1)
         }
+
+
 
         //Submit Button
         binding.btnSubmit.setOnClickListener {
             reason = binding.etReason.text.toString()
 
-            if (selectedFollowUpType != null && selectedFollowUpStatus != null && (if (selectedFollowUpStatus!!.statusId == 3) reason.isNotEmpty() else true) && image1Base64.isNotEmpty()) {
-                commonViewModel.insertFollowUpAPI(
-                    FollowUpInsertReq(
-                        appVersion = BuildConfig.VERSION_NAME,
-                        batchId = candidate.batchId.toString(),
-                        candidateId = candidate.candidateId ?: "",
-                        mobileNo = candidate.mobileNo ?: "",
-                        guardianName = candidate.guardianName ?: "",
-                        guardianMobileNo = candidate.guardianNo ?: "",
-                        candidatePhoto = candidate.candidateProfilePic ?: "",
-                        quarterOne = candidate.quarter1 ?: "",
-                        quarterTwo = candidate.quarter2 ?: "",
-                        quarterThree = candidate.quarter3 ?: "",
-                        quarterFour = candidate.quarter4 ?: "",
-                        quarterFive = candidate.quarter5 ?: "",
-                        quarterSix = candidate.quarter6 ?: "",
-                        quarterSeven = candidate.quarter7 ?: "",
-                        quarterEight = candidate.quarter8 ?: "",
-                        userId = userPreferences.getUserName(),
-                        followUpType = selectedFollowUpType!!.followupTypeId,
-                        followUpdate = getCurrentDate(),
-                        followUpDoneBy = userPreferences.getUseID(),
-                        sattlementStatus = selectedFollowUpStatus!!.statusId.toString(),
-                        reason = reason,
-                        followupimage = image1Base64,
-                        latitute = latitude.toString(),
-                        longitute = longitude.toString()
+
+            if ( selectedFollowUpType != null && selectedFollowUpStatus != null )
+            {
+                if ((  selectedFollowUpStatus!!.statusId == 3) && image1Base64.isNotEmpty() ) {
+                    commonViewModel.insertFollowUpAPI(
+                        FollowUpInsertReq(
+                            appVersion = BuildConfig.VERSION_NAME,
+                            batchId = candidate.batchId.toString(),
+                            candidateId = candidate.candidateId ?: "",
+                            mobileNo = candidate.mobileNo ?: "",
+                            guardianName = candidate.guardianName ?: "",
+                            guardianMobileNo = candidate.guardianNo ?: "",
+                            candidatePhoto = candidate.candidateProfilePic ?: "",
+                            quarterOne = candidate.quarter1 ?: "",
+                            quarterTwo = candidate.quarter2 ?: "",
+                            quarterThree = candidate.quarter3 ?: "",
+                            quarterFour = candidate.quarter4 ?: "",
+                            quarterFive = candidate.quarter5 ?: "",
+                            quarterSix = candidate.quarter6 ?: "",
+                            quarterSeven = candidate.quarter7 ?: "",
+                            quarterEight = candidate.quarter8 ?: "",
+                            userId = userPreferences.getUserName(),
+                            followUpType = selectedFollowUpType!!.followupTypeId,
+                            followUpdate = getCurrentDate(),
+                            followUpDoneBy = userPreferences.getUseID(),
+                            sattlementStatus = selectedFollowUpStatus!!.statusId.toString(),
+                            reason = reason,
+                            followupImage = image1Base64,
+                            latitute = latitude.toString(),
+                            longitute = longitude.toString(),
+                            statusItem = selectedStatus,
+                            selfInvestmentItem=selfInvestmentItem,
+                            creditFromBankItem=creditFromBankItem,
+                            total = totalV,
+                            upperCaseIfscText =upperCaseIfscTextV,
+                            bankCode = bankCode,
+                            branchCode = branchCode,
+                            loanAcc = loanAcc,
+                            city = city,
+                            accountStatus = selectdeAccountStatus,
+                            rangeId = selectedRangeId,
+                            employmentGiven = employmentGiven,
+                            familyMemberPartTime = familyMemberPartTime,
+                            settlementPhoto = settlementPhoto,
+                            passbookCopy = passbookCopy,
+                            appointmentLetter = appointmentLetter,
+                            salaryRange = "",
+                            settlementReason = settlementPhoto
+
+                        )
                     )
-                )
-                collectInsertResponse()
-            } else toastShort("Kindly fill all the fields first")
+                    collectInsertResponse()
+
+
+                }
+
+               else if( (  selectedFollowUpStatus!!.statusId == 1) && reason.isNotEmpty()&& image1Base64.isNotEmpty()){
+                    commonViewModel.insertFollowUpAPI(
+                        FollowUpInsertReq(
+                            appVersion = BuildConfig.VERSION_NAME,
+                            batchId = candidate.batchId.toString(),
+                            candidateId = candidate.candidateId ?: "",
+                            mobileNo = candidate.mobileNo ?: "",
+                            guardianName = candidate.guardianName ?: "",
+                            guardianMobileNo = candidate.guardianNo ?: "",
+                            candidatePhoto = candidate.candidateProfilePic ?: "",
+                            quarterOne = candidate.quarter1 ?: "",
+                            quarterTwo = candidate.quarter2 ?: "",
+                            quarterThree = candidate.quarter3 ?: "",
+                            quarterFour = candidate.quarter4 ?: "",
+                            quarterFive = candidate.quarter5 ?: "",
+                            quarterSix = candidate.quarter6 ?: "",
+                            quarterSeven = candidate.quarter7 ?: "",
+                            quarterEight = candidate.quarter8 ?: "",
+                            userId = userPreferences.getUserName(),
+                            followUpType = selectedFollowUpType!!.followupTypeId,
+                            followUpdate = getCurrentDate(),
+                            followUpDoneBy = userPreferences.getUseID(),
+                            sattlementStatus = selectedFollowUpStatus!!.statusId.toString(),
+                            reason = reason,
+                            followupImage = image1Base64,
+                            latitute = latitude.toString(),
+                            longitute = longitude.toString(),
+                            statusItem = selectedStatus,
+                            selfInvestmentItem=selfInvestmentItem,
+                            creditFromBankItem=creditFromBankItem,
+                            total = totalV,
+                            upperCaseIfscText =upperCaseIfscTextV,
+                            bankCode = bankCode,
+                            branchCode = branchCode,
+                            loanAcc = loanAcc,
+                            city = city,
+                            accountStatus = selectdeAccountStatus,
+                            rangeId = selectedRangeId,
+                            employmentGiven = employmentGiven,
+                            familyMemberPartTime = familyMemberPartTime,
+                            settlementPhoto = settlementPhoto,
+                            passbookCopy = passbookCopy,
+                            appointmentLetter = appointmentLetter,
+                            salaryRange = "",
+                            settlementReason = settlementPhoto
+
+                        )
+                    )
+                    collectInsertResponse()
+                }
+
+
+                else if (selectedFollowUpType != null && selectedFollowUpStatus != null && selectedFollowUpStatus!!.statusId == 2 && image1Base64.isNotEmpty() )
+                {
+
+
+
+                    getFormData()
+
+
+                    commonViewModel.insertFollowUpAPI(
+                        FollowUpInsertReq(
+                            appVersion = BuildConfig.VERSION_NAME,
+                            batchId = candidate.batchId.toString(),
+                            candidateId = candidate.candidateId ?: "",
+                            mobileNo = candidate.mobileNo ?: "",
+                            guardianName = candidate.guardianName ?: "",
+                            guardianMobileNo = candidate.guardianNo ?: "",
+                            candidatePhoto = candidate.candidateProfilePic ?: "",
+                            quarterOne = candidate.quarter1 ?: "",
+                            quarterTwo = candidate.quarter2 ?: "",
+                            quarterThree = candidate.quarter3 ?: "",
+                            quarterFour = candidate.quarter4 ?: "",
+                            quarterFive = candidate.quarter5 ?: "",
+                            quarterSix = candidate.quarter6 ?: "",
+                            quarterSeven = candidate.quarter7 ?: "",
+                            quarterEight = candidate.quarter8 ?: "",
+                            userId = userPreferences.getUserName(),
+                            followUpType = selectedFollowUpType!!.followupTypeId,
+                            followUpdate = getCurrentDate(),
+                            followUpDoneBy = userPreferences.getUseID(),
+                            sattlementStatus = selectedFollowUpStatus!!.statusId.toString(),
+                            reason = reason,
+                            followupImage = image1Base64,
+                            latitute = latitude.toString(),
+                            longitute = longitude.toString(),
+                            statusItem = selectedStatus,
+                            selfInvestmentItem=selfInvestmentItem,
+                            creditFromBankItem=creditFromBankItem,
+                            total = totalV,
+                            upperCaseIfscText =upperCaseIfscTextV,
+                            bankCode = bankCode,
+                            branchCode = branchCode,
+                            loanAcc = loanAcc,
+                            city = city,
+                            accountStatus = selectdeAccountStatus,
+                            rangeId = selectedRangeId,
+                            employmentGiven = employmentGiven,
+                            familyMemberPartTime = familyMemberPartTime,
+                            settlementPhoto = settlementPhoto,
+                            passbookCopy = passbookCopy,
+                            appointmentLetter = appointmentLetter,
+                            salaryRange = "",
+                            settlementReason = settlementPhoto
+
+                        )
+                    )
+                    collectInsertResponse()
+                }
+            }
+            else toastShort("Kindly fill all the fields first")
+
+
         }
-    }
 
-    private fun collectFollowTypeResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getFollowTypeList) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            toastShort(baseErrorResponse.message)
+            }
+
+
+
+
+
+
+         private fun collectFollowTypeResponse() {
+            lifecycleScope.launch {
+                collectLatestLifecycleFlow(commonViewModel.getFollowTypeList) {
+                    when (it) {
+                        is Resource.Loading -> showProgressBar()
+                        is Resource.Error -> {
+                            hideProgressBar()
+                            it.error?.let { baseErrorResponse ->
+                                toastShort(baseErrorResponse.message)
+                            }
                         }
-                    }
 
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { getFollowUpTypeList ->
-                            if (getFollowUpTypeList.responseCode == 200) {
-                                followUpTypeList = getFollowUpTypeList.wrappedList
+                        is Resource.Success -> {
+                            hideProgressBar()
+                            it.data?.let { getFollowUpTypeList ->
+                                if (getFollowUpTypeList.responseCode == 200) {
+                                    followUpTypeList = getFollowUpTypeList.wrappedList
 
-                                for (x in followUpTypeList) {
-                                    followUpTypeName.add(x.followUpTypeName)
+                                    for (x in followUpTypeList) {
+                                        followUpTypeName.add(x.followUpTypeName)
+                                    }
+
+                                    followUpTypeAdapter.notifyDataSetChanged()
+                                } else if (getFollowUpTypeList.responseCode == 301) {
+                                    showSnackBar("Please Update from PlayStore")
+                                } else {
+                                    showSnackBar(getFollowUpTypeList.responseDesc)
                                 }
-
-                                followUpTypeAdapter.notifyDataSetChanged()
-                            } else if (getFollowUpTypeList.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar(getFollowUpTypeList.responseDesc)
-                            }
-                        } ?: showSnackBar("Internal Server Error")
+                            } ?: showSnackBar("Internal Server Error")
+                        }
                     }
                 }
             }
         }
-    }
 
-    private fun collectFollowStatusResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getFollowStatusList) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            toastShort(baseErrorResponse.message)
+        private fun collectFollowStatusResponse() {
+            lifecycleScope.launch {
+                collectLatestLifecycleFlow(commonViewModel.getFollowStatusList) {
+                    when (it) {
+                        is Resource.Loading -> showProgressBar()
+                        is Resource.Error -> {
+                            hideProgressBar()
+                            it.error?.let { baseErrorResponse ->
+                                toastShort(baseErrorResponse.message)
+                            }
                         }
-                    }
 
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { getFollowUpStatusList ->
-                            if (getFollowUpStatusList.responseCode == 200) {
-                                followUpStatusList = getFollowUpStatusList.wrappedList
+                        is Resource.Success -> {
+                            hideProgressBar()
+                            it.data?.let { getFollowUpStatusList ->
+                                if (getFollowUpStatusList.responseCode == 200) {
+                                    followUpStatusList = getFollowUpStatusList.wrappedList
 
-                                for (x in followUpStatusList) {
-                                    followUpStatusName.add(x.status)
+                                    for (x in followUpStatusList) {
+                                        followUpStatusName.add(x.status)
+                                    }
+
+                                    followUpStatusAdapter.notifyDataSetChanged()
+                                } else if (getFollowUpStatusList.responseCode == 301) {
+                                    showSnackBar("Please Update from PlayStore")
+                                } else {
+                                    showSnackBar(getFollowUpStatusList.responseDesc)
                                 }
-
-                                followUpStatusAdapter.notifyDataSetChanged()
-                            } else if (getFollowUpStatusList.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar(getFollowUpStatusList.responseDesc)
-                            }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-                }
-            }
-        }
-    }
-
-    private fun collectInsertResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.insertFollowUpAPI) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            showSnackBar("Internal Server Error111")
+                            } ?: showSnackBar("Internal Server Error")
                         }
                     }
+                }
+            }
+        }
 
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { insertApiResp ->
-                            if (insertApiResp.responseCode == 200) {
-                                showSnackBar("Success")
-                                findNavController().navigateUp()
-                            } else if (insertApiResp.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar("Internal Server Error 1111")
+
+        private fun collectInsertResponse() {
+            lifecycleScope.launch {
+                collectLatestLifecycleFlow(commonViewModel.insertFollowUpAPI) {
+                    when (it) {
+                        is Resource.Loading -> showProgressBar()
+                        is Resource.Error -> {
+                            hideProgressBar()
+                            it.error?.let { baseErrorResponse ->
+                                showSnackBar("Internal Server Error111")
                             }
-                        } ?: showSnackBar("Internal Server Error")
+                        }
+
+                        is Resource.Success -> {
+                            hideProgressBar()
+                            it.data?.let { insertApiResp ->
+                                if (insertApiResp.responseCode == 200) {
+                                    showSnackBar("Success")
+                                    findNavController().navigateUp()
+                                }else if (insertApiResp.responseCode == 303) {
+                                    showSnackBar(insertApiResp.responseDesc)
+                                } else if (insertApiResp.responseCode == 301) {
+                                    showSnackBar("Please Update from PlayStore")
+                                } else {
+                                    showSnackBar("Internal Server Error 1111")
+                                }
+                            } ?: showSnackBar("Internal Server Error")
+                        }
                     }
                 }
             }
         }
-    }
 
-    private fun checkAndRequestPermissions() {
-        val permissions = arrayOf(
-            android.Manifest.permission.CAMERA,
-            android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-
-        if (permissions.any {
-                ContextCompat.checkSelfPermission(
-                    requireContext(), it
-                ) != android.content.pm.PackageManager.PERMISSION_GRANTED
-            }) {
-            ActivityCompat.requestPermissions(requireActivity(), permissions, 100)
-        }
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 100) {
-            if (grantResults.isNotEmpty() && grantResults.all { it == android.content.pm.PackageManager.PERMISSION_GRANTED }) {
-                Toast.makeText(requireContext(), "Permissions granted!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Permissions denied!", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun openCamera(imageView: ImageView) {
-        checkAndRequestPermissions()
-
-        currentImageView = imageView  // ✅ Store the clicked ImageView
-
-        if (ContextCompat.checkSelfPermission(
-                requireContext(), android.Manifest.permission.CAMERA
-            ) != android.content.pm.PackageManager.PERMISSION_GRANTED
-        ) {
-            Toast.makeText(requireContext(), "Camera permission required!", Toast.LENGTH_SHORT)
-                .show()
-            return
-        }
-
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        val photoFile = createImageFile()
-        imageUri = FileProvider.getUriForFile(
-            requireContext(), "${requireContext().packageName}.provider", photoFile
-        )
-
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-
-        cameraLauncher.launch(intent) // ✅ Launch the camera
-    }
-
-    private fun createImageFile(): File {
-        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile("IMG_${System.currentTimeMillis()}", ".jpg", storageDir).apply {
-            imageUri = FileProvider.getUriForFile(
-                requireContext(), "${requireContext().packageName}.provider", this
+        private fun checkAndRequestPermissions() {
+            val permissions = arrayOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             )
+
+            if (permissions.any {
+                    ContextCompat.checkSelfPermission(
+                        requireContext(), it
+                    ) != PackageManager.PERMISSION_GRANTED
+                }) {
+                ActivityCompat.requestPermissions(requireActivity(), permissions, 100)
+            }
         }
-    }
 
-    private val cameraLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                if (imageUri == null || currentImageView == null) {
-                    Toast.makeText(requireContext(), "Image capture failed!", Toast.LENGTH_SHORT)
+        @Deprecated("Deprecated in Java")
+        override fun onRequestPermissionsResult(
+            requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+        ) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+            if (requestCode == 100) {
+                if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    Toast.makeText(requireContext(), "Permissions granted!", Toast.LENGTH_SHORT)
                         .show()
-                    return@registerForActivityResult
+                } else {
+                    Toast.makeText(requireContext(), "Permissions denied!", Toast.LENGTH_SHORT)
+                        .show()
                 }
+            }
+        }
 
-                val bitmap = uriToBitmap(imageUri!!)
-                bitmap?.let { compressedBitmap ->
-                    currentImageView?.setImageBitmap(compressedBitmap) // ✅ Set the image
+        private fun openCamera(imageView: ImageView) {
+            checkAndRequestPermissions()
 
-                    val base64Image = bitmapToBase64(compressedBitmap) // Convert to Base64
+            currentImageView = imageView  // ✅ Store the clicked ImageView
 
-                    // ✅ Check which ImageView was clicked and store Base64 accordingly
-                    when (currentImageView?.id) {
-                        R.id.image1 -> {
-                            image1Base64 = base64Image
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.CAMERA
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(requireContext(), "Camera permission required!", Toast.LENGTH_SHORT)
+                    .show()
+                return
+            }
 
-                        }
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val photoFile = createImageFile()
+            imageUri = FileProvider.getUriForFile(
+                requireContext(), "${requireContext().packageName}.provider", photoFile
+            )
+
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+
+            cameraLauncher.launch(intent) // ✅ Launch the camera
+        }
+
+        private fun createImageFile(): File {
+            val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            return File.createTempFile("IMG_${System.currentTimeMillis()}", ".jpg", storageDir)
+                .apply {
+                    imageUri = FileProvider.getUriForFile(
+                        requireContext(), "${requireContext().packageName}.provider", this
+                    )
+                }
+        }
+
+        private val cameraLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    if (imageUri == null || currentImageView == null) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Image capture failed!",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                        return@registerForActivityResult
                     }
 
-                    getCurrentLocation()
-                    binding.lllatLang.visible()
-                    binding.llAdress.visible()
+                    val bitmap = uriToBitmap(imageUri!!)
+                    bitmap?.let { compressedBitmap ->
+                        currentImageView?.setImageBitmap(compressedBitmap) // ✅ Set the image
+
+                        val base64Image = bitmapToBase64(compressedBitmap) // Convert to Base64
+
+                        // ✅ Check which ImageView was clicked and store Base64 accordingly
+                        when (currentImageView?.id) {
+                            R.id.image1 -> {
+                                image1Base64 = base64Image
+
+                            }
+                        }
+
+                        getCurrentLocation()
+                        binding.lllatLang.visible()
+                        binding.llAdress.visible()
+                    }
                 }
             }
-        }
 
-    private fun uriToBitmap(uri: Uri): Bitmap? {
-        return try {
-            val inputStream = requireContext().contentResolver.openInputStream(uri)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            inputStream?.close()
-            compressBitmap(bitmap)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-    private fun compressBitmap(bitmap: Bitmap): Bitmap {
-        return try {
-            val maxSize = 1024 // Resize to max 1024px width/height
-            val width = bitmap.width
-            val height = bitmap.height
-            val scale =
-                if (width > height) maxSize.toFloat() / width else maxSize.toFloat() / height
-
-            val newWidth = (width * scale).toInt()
-            val newHeight = (height * scale).toInt()
-
-            Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            bitmap // Return the original bitmap if compression fails
-        }
-    }
-
-    private fun bitmapToBase64(bitmap: Bitmap): String {
-        return try {
-            val outputStream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream) // Increase quality to 90
-            val byteArray = outputStream.toByteArray()
-            outputStream.close()
-            Base64.encodeToString(byteArray, Base64.NO_WRAP) // Use NO_WRAP to avoid line breaks
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ""
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun getCurrentLocation() {
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            if (location != null) {
-                latitude = location.latitude
-                longitude = location.longitude
-
-                locationLatLang = "Lat: $latitude, Lng: $longitude"
-                binding.location.text = locationLatLang
-
-                // Fetch and update address
-                getAddressFromLocation(latitude!!, longitude!!)
-            } else {
-                // If last known location is null, request a fresh location update
-                requestNewLocation()
+        private fun uriToBitmap(uri: Uri): Bitmap? {
+            return try {
+                val inputStream = requireContext().contentResolver.openInputStream(uri)
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+                compressBitmap(bitmap)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
             }
-        }.addOnFailureListener {
-            binding.location.text = getString(R.string.location_not_found)
-            binding.address.text = getString(R.string.address_not_found)
-            Log.e("LocationError", "Failed to get location: ${it.message}")
         }
-    }
 
-    @SuppressLint("MissingPermission")
-    private fun requestNewLocation() {
-        val locationRequest = com.google.android.gms.location.LocationRequest.Builder(
-            com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY,
-            5000 // Update every 5 sec
-        ).apply {
-            setWaitForAccurateLocation(true) // Ensures accuracy
-            setMinUpdateIntervalMillis(2000) // Minimum update interval
-            setMaxUpdateDelayMillis(10000) // Max delay
-            setMaxUpdates(1) // Get only one update and stop
-        }.build()
+        private fun compressBitmap(bitmap: Bitmap): Bitmap {
+            return try {
+                val maxSize = 1024 // Resize to max 1024px width/height
+                val width = bitmap.width
+                val height = bitmap.height
+                val scale =
+                    if (width > height) maxSize.toFloat() / width else maxSize.toFloat() / height
 
-        val locationCallback = object : com.google.android.gms.location.LocationCallback() {
-            override fun onLocationResult(locationResult: com.google.android.gms.location.LocationResult) {
-                locationResult.lastLocation?.let { location ->
+                val newWidth = (width * scale).toInt()
+                val newHeight = (height * scale).toInt()
+
+                Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                bitmap // Return the original bitmap if compression fails
+            }
+        }
+
+        private fun bitmapToBase64(bitmap: Bitmap): String {
+            return try {
+                val outputStream = ByteArrayOutputStream()
+                bitmap.compress(
+                    Bitmap.CompressFormat.JPEG,
+                    90,
+                    outputStream
+                ) // Increase quality to 90
+                val byteArray = outputStream.toByteArray()
+                outputStream.close()
+                Base64.encodeToString(byteArray, Base64.NO_WRAP) // Use NO_WRAP to avoid line breaks
+            } catch (e: Exception) {
+                e.printStackTrace()
+                ""
+            }
+        }
+
+        @SuppressLint("MissingPermission")
+        private fun getCurrentLocation() {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
                     latitude = location.latitude
                     longitude = location.longitude
 
@@ -491,36 +681,97 @@ class FollowUpFormFragment :
 
                     // Fetch and update address
                     getAddressFromLocation(latitude!!, longitude!!)
+                } else {
+                    // If last known location is null, request a fresh location update
+                    requestNewLocation()
+                }
+            }.addOnFailureListener {
+                binding.location.text = getString(R.string.location_not_found)
+                binding.address.text = getString(R.string.address_not_found)
+                Log.e("LocationError", "Failed to get location: ${it.message}")
+            }
+        }
 
-                    fusedLocationClient.removeLocationUpdates(this) // Stop updates after getting location
+        @SuppressLint("MissingPermission")
+        private fun requestNewLocation() {
+            val locationRequest = LocationRequest.Builder(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                5000 // Update every 5 sec
+            ).apply {
+                setWaitForAccurateLocation(true) // Ensures accuracy
+                setMinUpdateIntervalMillis(2000) // Minimum update interval
+                setMaxUpdateDelayMillis(10000) // Max delay
+                setMaxUpdates(1) // Get only one update and stop
+            }.build()
+
+            val locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    locationResult.lastLocation?.let { location ->
+                        latitude = location.latitude
+                        longitude = location.longitude
+
+                        locationLatLang = "Lat: $latitude, Lng: $longitude"
+                        binding.location.text = locationLatLang
+
+                        // Fetch and update address
+                        getAddressFromLocation(latitude!!, longitude!!)
+
+                        fusedLocationClient.removeLocationUpdates(this) // Stop updates after getting location
+                    }
                 }
             }
+
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
         }
 
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
-    }
+        private fun getAddressFromLocation(latitude: Double, longitude: Double) {
+            try {
+                val geocoder = Geocoder(requireContext(), Locale("en", "IN"))
+                val addresses = geocoder.getFromLocation(latitude, longitude, 1)
 
-    private fun getAddressFromLocation(latitude: Double, longitude: Double) {
-        try {
-            val geocoder = Geocoder(requireContext(), Locale("en", "IN"))
-            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+                if (!addresses.isNullOrEmpty()) {
+                    val address = addresses[0]
+                    val fullAddress = address.getAddressLine(0) ?: "Address not available"
+                    val city = address.locality ?: "Unknown City"
+                    val state = address.adminArea ?: "Unknown State"
+                    val pincode = address.postalCode ?: "No Pincode"
+                    val country = address.countryName ?: "Unknown Country"
 
-            if (!addresses.isNullOrEmpty()) {
-                val address = addresses[0]
-                val fullAddress = address.getAddressLine(0) ?: "Address not available"
-                val city = address.locality ?: "Unknown City"
-                val state = address.adminArea ?: "Unknown State"
-                val pincode = address.postalCode ?: "No Pincode"
-                val country = address.countryName ?: "Unknown Country"
-
-                locationAddress = "$fullAddress, $city, $state, $pincode, $country"
-                binding.address.text = locationAddress
-            } else {
-                binding.address.text = getString(R.string.address_not_found)
+                    locationAddress = "$fullAddress, $city, $state, $pincode, $country"
+                    binding.address.text = locationAddress
+                } else {
+                    binding.address
+                        .text = getString(R.string.address_not_found)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                binding.address.text = getString(R.string.error_address)
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            binding.address.text = getString(R.string.error_address)
         }
+
+    fun getFormData() {
+        val sharedPreferences = requireContext().getSharedPreferences("UserFormData", Activity.MODE_PRIVATE)
+
+         selectedStatus = sharedPreferences.getString("selectedStatusItem", "").toString()
+         selfInvestmentItem = sharedPreferences.getString("selectedSelfInvestmentItem", "").toString()
+         creditFromBankItem = sharedPreferences.getString("SelectedCreditFromBankItem", "").toString()
+         totalV = sharedPreferences.getInt("selectedTotal", 0).toString()
+         upperCaseIfscTextV = sharedPreferences.getString("selectedUpperCaseIfscText", "").toString()
+         loanAcc = sharedPreferences.getString("selectedLoanAcc", "").toString()
+         city = sharedPreferences.getString("selectedCity", "").toString()
+        selectedReason  = sharedPreferences.getString("selectedReason", "").toString()
+         selectdeAccountStatus = sharedPreferences.getString("selectdeAccountStatus", "").toString()
+         employmentGiven = sharedPreferences.getString("selectedEmploymentGiven", "").toString()
+         familyMemberPartTime = sharedPreferences.getString("selectedFamilyMemberPartTime", "").toString()
+         settlementPhoto = sharedPreferences.getString("selectedSettlementPhoto", "").toString()
+         passbookCopy = sharedPreferences.getString("selectedPassbookCopy", "").toString()
+        appointmentLetter = sharedPreferences.getString("selectedAppointmentLetter", "").toString()
+        selectedRangeId = sharedPreferences.getString("selectedSalaryRange", "").toString()
+
+        // Example usage: print values
+        Log.d("FormData", "Status: $selectedStatus, Self Investment: $selfInvestmentItem, Credit From Bank: $creditFromBankItem")
     }
+
 }
+
+

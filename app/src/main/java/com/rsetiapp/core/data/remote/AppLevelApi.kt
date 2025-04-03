@@ -19,6 +19,7 @@ import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
+import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.request.StateListReq
 import com.rsetiapp.common.model.request.VillageReq
 import com.rsetiapp.common.model.response.BankIFSCSearchRes
@@ -41,6 +42,7 @@ import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
+import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
@@ -116,6 +118,9 @@ interface AppLevelApi {
 
     @POST("followUpStatus")
     suspend fun getFollowStatusListAPI(@Body followUpTypeReq: FollowUpTypeReq): FollowUpStatusResp
+
+
+
     @POST("bankDetailsByIfsc")
     suspend fun bankIFSCAPI(@Body bankIFSCSearchReq: BankIFSCSearchReq): BankIFSCSearchRes
 
@@ -128,6 +133,9 @@ interface AppLevelApi {
 
     @POST("insertFollowUp")
     suspend fun insertFollowUpAPI(@Body followUpInsertReq: FollowUpInsertReq): FollowUpInsertRes
+
+    @POST("salaryRange")
+    suspend fun salaryRangeDetails(@Body salaryRangeReq: SalaryRangeReq) : SalaryRangeRes
 
     @POST
     suspend fun postOnAUAFaceAuthNREGA(

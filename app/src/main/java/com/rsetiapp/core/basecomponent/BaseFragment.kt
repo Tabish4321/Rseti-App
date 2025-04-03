@@ -171,4 +171,5 @@ abstract class BaseFragment<VB : ViewBinding>(private val bindingInflater: (infl
         return Bitmap.createScaledBitmap(bitmap, width, height, true)
     }
 
+
 }
