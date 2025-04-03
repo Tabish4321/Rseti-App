@@ -99,6 +99,11 @@
     <string name="attendance_marked">Attendance Marked</string>
     <string name="as_per_aadhaar">Aadhaar Address</string>
     <string name="view_profile">View Attendance</string>
+    <string name="mark_today_attention">Mark today Attendance</string>
+    <string name="check_in">Check In</string>
+    <string name="check_out">Check Out</string>
+    <string name="total_hours">Total Hours</string>
+    <string name="_00_00_am">00:00 AM</string>
 
 
 </resources>

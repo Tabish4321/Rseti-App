@@ -77,7 +77,15 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
         val parts = eapDateValue.split("/")
         val eapMonth = parts[0]  // "08"
         val eapYear = parts[1]   // "2025"
-
+/*
+         //Changes for testing
+        // For Open all Eap List testing
+        findNavController().navigate(
+            EapListFragmentDirections.actionEapListFragmentToEAPAwarnessFormFragment(
+                formName,
+                eapIdValue
+            )
+        )*/
         // Check both conditions: status must be Active & date must match current month/year
         if (eapStatusValue == "Active" && eapMonth == currentMonth && eapYear == currentYear) {
             findNavController().navigate(

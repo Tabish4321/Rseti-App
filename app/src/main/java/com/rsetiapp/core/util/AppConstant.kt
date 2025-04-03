@@ -7,7 +7,9 @@ object AppConstant {
 
         const val localUrl= "http://10.197.183.177:8080/"
         const val liveUrl= "https://nrlm.gov.in/kaushalpanjee/rseti/"
-        const val FACE_AUTH_UIADI= "https://nregarep2.nic.in/Netnrega/StateServices/Uid_Face_Auth.svc/PostOnAUA_Face_auth"
+       // const val FACE_AUTH_UIADI= "https://nregarep2.nic.in/Netnrega/StateServices/Uid_Face_Auth.svc/PostOnAUA_Face_auth"
+        const val FACE_AUTH_UIADI= "https://nregarep2.nic.in/netnrega/stateServices/Uid_Face_Auth_DDUGKY.svc/PostOnAUA_Face_auth"
+
 
 
     }
@@ -32,5 +34,7 @@ object AppConstant {
         const val WADH_KEY = "sgydIC09zzy6f8Lb3xaAqzKquKe9lFcNR9uTvYxFp+A="
         var LANGUAGE = "en"
         var ENVIRONMENT_TAG = "P"//"S"
+        var ENCRYPT_IV_KEY = "$10A80$10A80$10A";
+        var ENCRYPT_KEY = "$10A80$10A80$10A";
     }
 }

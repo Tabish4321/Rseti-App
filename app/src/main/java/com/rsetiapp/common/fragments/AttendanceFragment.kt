@@ -1,8 +1,10 @@
 package com.rsetiapp.common.fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -10,13 +12,28 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Base64
+import android.location.Location
+import android.os.Handler
+import android.os.Looper
+import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.karumi.dexter.BuildConfig
 import com.rsetiapp.core.uidai.ekyc.UidaiKycRequest
@@ -25,6 +42,11 @@ import com.rsetiapp.core.uidai.ekyc.IntentModel
 import com.rsetiapp.core.uidai.ekyc.IntentResponse
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
+import com.rsetiapp.common.model.request.AttendanceCheckReq
+import com.rsetiapp.common.model.request.AttendanceInsertReq
+import com.rsetiapp.common.model.response.AttendanceData
+import com.rsetiapp.common.model.response.CandidateDetail
+import com.rsetiapp.common.model.response.VillageList
 import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.uidai.XstreamCommonMethods
 import com.rsetiapp.core.uidai.XstreamCommonMethods.respDecodedXmlToPojoAuth
@@ -35,23 +57,33 @@ import com.rsetiapp.core.util.AppConstant.Constants.LANGUAGE
 import com.rsetiapp.core.util.AppConstant.Constants.PRODUCTION
 import com.rsetiapp.core.util.AppUtil.decodeBase64
 import com.rsetiapp.core.util.Resource
-import com.rsetiapp.core.util.copyToClipboard
 import com.rsetiapp.core.util.log
 import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.core.util.toastShort
 import com.rsetiapp.databinding.FragmentVerifyUserAttendanceBinding
+import com.rsetiapp.core.geoFancing.GeofenceHelper
+import com.rsetiapp.core.util.AppUtil
+import com.rsetiapp.core.util.copyToClipboard
+import com.rsetiapp.core.util.gone
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.security.SecureRandom
+import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 const val CAMERA_REQUEST = 101
 class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     FragmentVerifyUserAttendanceBinding::inflate) {
 
-    private val commonViewModel : CommonViewModel by activityViewModels()
 
-    private var selectedState = ""
-    private var showPassword = true
-    private var aadhaarValidate = false
+    private val commonViewModel : CommonViewModel by activityViewModels()
     private var name = ""
     private var dob = ""
     private var gender = ""
@@ -62,27 +94,154 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     private var po = ""
     private var pinCode = ""
     private var street = ""
-    private var tokenGen = ""
-    private var tokenViaCreate = ""
     private var village = ""
     private var photo = ""
-    private var selectedStateCode = ""
-    private var selectedStateLgdCode = ""
+    private var candidateId = ""
+    private var candidateName = ""
+    private var candidateMobile = ""
+    private var candidateEmail = ""
+    private var candidateGender = ""
+    private var candidateDob = ""
+    private var candidateDp = ""
+    private var selectedAttendanceTypeItem = ""
+    private var batchId = ""
+    private var aadhaarNo = ""
+    private var candidateRollNo = ""
+    private var checkIn = ""
+    private var totalHours = ""
+    private var checkOut = ""
+    private var attendanceFlag = ""
+    private var decryptedAadhaar = ""
+    private lateinit var attendanceAdapter: ArrayAdapter<String>
 
+
+    private val attendanceTypeList =
+        listOf("Aadhaar Attendance","Offline Attendance")
+    private var attendanceStatusRes: List<AttendanceData> = mutableListOf()
+
+    private lateinit var geofenceHelper: GeofenceHelper
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+  /*  private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
+    var radius: Float = 100f*/
+    private var latitude = 28.6295826  // Example geofence latitude
+    private var longitude = 77.2189311  // Example geofence longitude
+    private var radius = 500f  // 100 meters radius
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        startClock()
+
+        binding.tvCurrentDate.text= AppUtil.getCurrentDateForAttendance()
+        candidateId = arguments?.getString("candidateId").toString()
+        candidateName = arguments?.getString("candidateName").toString()
+        candidateMobile = arguments?.getString("candidateMobile").toString()
+        candidateEmail = arguments?.getString("candidateEmail").toString()
+        candidateGender = arguments?.getString("candidateGender").toString()
+        candidateDob = arguments?.getString("candidateDob").toString()
+        candidateDp = arguments?.getString("candidateDp").toString()
+        batchId = arguments?.getString("batchId").toString()
+        candidateRollNo = arguments?.getString("candidateRollNo").toString()
+        aadhaarNo = arguments?.getString("aadhaarNo").toString()
+        commonViewModel.getAttendanceCheckStatus(AttendanceCheckReq(BuildConfig.VERSION_NAME,batchId,candidateId))
+        collectAttendanceStatusResponse()
+        checkAttendanceEligibility()
+
+
+        attendanceAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            attendanceTypeList
+        )
+
+        binding.spinnerAttendanceType.setAdapter(attendanceAdapter)
+
+         decryptedAadhaar = AESCryptography.decryptIntoString(aadhaarNo,
+            AppConstant.Constants.ENCRYPT_KEY,
+            AppConstant.Constants.ENCRYPT_IV_KEY)
+
+        binding.tvAadhaarName.text=candidateName
+        binding.tvRollNoValue.text=candidateRollNo
+        binding.tvEmailMobile.text=candidateEmail
+        binding.tvAaadharMobile.text=candidateMobile
+        binding.tvAaadharGender.text=candidateGender
+        binding.tvAaadharDob.text=candidateDob
+
+        loadBase64Image(candidateDp, binding.circleImageView)
+
+
+
+        geofenceHelper = GeofenceHelper(requireContext())
+
+        requestLocationPermission()
 
         init()
+
+
+        binding.spinnerAttendanceType.setOnItemClickListener { parent, view, position, id ->
+            selectedAttendanceTypeItem = parent.getItemAtPosition(position).toString()
+        }
+
+
     }
-
-    private fun init(){
-
-        // Check if camera permission is granted
+    private fun startClock() {
+        lifecycleScope.launch {
+            while (isAdded) { // Check if fragment is attached
+                val currentTime = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
+                binding.currentTime.text = currentTime
+                delay(1000) // Update every second
+            }
+        }
+    }
+    private fun init() {
         checkCameraPermission()
         initEKYC()
-        binding.tvMarkAttendance.setOnClickListener {
+
+        binding.btnCheckIn.setOnClickListener {
+
+
+
+            if (attendanceFlag=="checkin" && selectedAttendanceTypeItem=="Aadhaar Attendance"){
+
+                showProgressBar()
+                invokeCaptureIntent()
+
+            }
+            else{
+                // Offline Attendance
+
+            }
+
+        }
+
+        binding.btnCheckOut.setOnClickListener {
+            showProgressBar()
+
+
+            if (attendanceFlag=="checkout" && selectedAttendanceTypeItem=="Aadhaar Attendance"){
+
+                showProgressBar()
+                invokeCaptureIntent()
+
+            }
+            else{
+
+                // Offline Attendance
+
+            }
             invokeCaptureIntent()
+
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            geofenceHelper.addGeofence(latitude, longitude, radius, "ATTENDANCE_ZONE")
+        } else {
+            requestLocationPermission()
         }
     }
 
@@ -139,7 +298,6 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                             intent.getStringExtra(AppConstant.Constants.CAPTURE_INTENT_RESPONSE_DATA)
 
                         if (!captureResponse.isNullOrEmpty()) {
-                            log("handleCaptureResponse", captureResponse)
                             handleCaptureResponse(captureResponse)
                         } else {
                             log("handleCaptureResponse", "Capture response data is null or empty.")
@@ -157,6 +315,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                 e.printStackTrace()
                 toastShort("Error: Missing data in result.")
                 log("startUidaiAuthResult", "NullPointerException: ${e.message}")
+
             } catch (e: Exception) {
                 e.printStackTrace()
                 toastShort("An error occurred while processing the result.")
@@ -165,7 +324,6 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         }
 
 
-    // private fun getTransactionID() = Random(System.currentTimeMillis()).nextInt(9999).toString()
 
     private fun getTransactionID(): String {
         val secureRandom = SecureRandom()
@@ -207,17 +365,19 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     private fun handleCaptureResponse(captureResponse: String) {
         try {
 
-          //  captureResponse.copyToClipboard(requireContext())
+
 
             // Parse the capture response XML to an object
             val response = CaptureResponse.fromXML(captureResponse)
 
             if (response.isSuccess) {
+
                 showProgressBar()
                 // Process the response to generate the PoiType or other required fields
                 val poiType = XstreamCommonMethods.processPidBlockEkyc(
                     response.toXML(),
-                    binding.tvMarkAttendance.text.toString().trim(),
+                 // decryptedAadhaar
+                    "939625617876",
                     false,
                     requireContext()
                 )
@@ -238,6 +398,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                 // Handle Aadhaar authentication or additional processing here if required
             } else {
                 toastLong(getString(R.string.kyc_failed_msg))
+
             }
 
 
@@ -372,14 +533,42 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                         pinCode = kycResp.uidData.poa.pc ?: "N/A"
 
 
-                                        // Get the last 4 digits
-                                        val input = binding.tvMarkAttendance.text.toString()
-                                        val lastFourDigits = input.takeLast(4)
-                                        // Create the masked string
-                                        val maskedString =
-                                            "*".repeat(input.length - 4) + lastFourDigits
-
                                         hideProgressBar()
+                                        val currentDate = LocalDate.now()
+                                        val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                                        val currentTime = LocalTime.now()
+                                        val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("hh:mma"))
+                                        val timeFormatter = DateTimeFormatter.ofPattern("hh:mma")
+
+
+
+                                       /* if (checkIn){
+
+                                        }*/
+
+                                        if (attendanceFlag== "checkin"){
+
+
+                                            commonViewModel.getInsertAttendance(AttendanceInsertReq(BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkin",
+                                                formattedTime,"","",candidateName))
+                                        }
+                                    else{
+
+                                            val checkInTime = LocalTime.parse(checkIn, timeFormatter)
+                                            val checkOutTime = LocalTime.parse(formattedTime, timeFormatter)
+                                            val duration = Duration.between(checkInTime, checkOutTime)
+                                            val hours = duration.toHours()
+                                            val minutes = duration.toMinutes() % 60
+
+                                            val totalHoursValue = String.format("%02d:%02d:00", hours, minutes) // Format as HH:mm:ss
+                                            toastLong(totalHoursValue)
+
+                                            commonViewModel.getInsertAttendance(AttendanceInsertReq(BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkout",
+                                                "",formattedTime,totalHoursValue,candidateName))
+                                    }
+
+
+                                        collectAttendanceInsertResponse()
                                         toastLong("name : $name,  gender:$gender, dob:$dob, careOf:$careOf")
 
                                         // toastShort("Ekyc Completed")
@@ -390,19 +579,23 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                             val authRes = respDecodedXmlToPojoAuth(decodedRarParsed)
                                             val errorDesc =
                                                 XstreamCommonMethods.getAuthErrorDescription(authRes.info)
-                                            log("EKYCDATA", errorDesc)
+                                            toastShort(errorDesc)
 
-                                            toastShort("EKYCDATA: Failed")
-                                        } ?: toastShort("Getting Error")
+
+                                        } ?: toastShort("Try Again")
                                     }
                                 } catch (e: Exception) {
                                     hideProgressBar()
                                     e.printStackTrace()
                                     log("EKYCDATA", "Error processing KYC response: ${e.message}")
-                                    toastShort("Error processing KYC response")
+                                    toastShort("Try Again")
                                 }
                             }
                                 ?: toastShort(getString(R.string.something_went_wrong_at_uidai_site))
+                        }
+
+                        else -> {
+
                         }
                     }
                 }
@@ -410,22 +603,258 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                 e.printStackTrace()
                 hideProgressBar()
                 log("EKYCDATA", "Unhandled error: ${e.message}")
-                toastShort("An unexpected error occurred. Please try again.")
+                toastShort("Try Again")
             }
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+
+    private fun requestLocationPermission() {
+        val locationPermission = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
+                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+            if (!granted) {
+                val showRationale = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
+                if (!showRationale) {
+                    // Permission is permanently denied, direct to settings
+                    AlertDialog.Builder(requireContext())
+                        .setTitle("Permission Required")
+                        .setMessage("Location permission is required to mark attendance. Please enable it in settings.")
+                        .setPositiveButton("Go to Settings") { _, _ ->
+                            val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                            intent.data = android.net.Uri.fromParts("package", requireContext().packageName, null)
+                            startActivity(intent)
+                        }
+                        .setNegativeButton("Cancel", null)
+                        .show()
+                } else {
+                    Toast.makeText(requireContext(), "Location permission required!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        locationPermission.launch(
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+        )
     }
-    private fun isAppInstalled(packageName: String): Boolean {
-        val packageManager = context?.packageManager ?: return false  // Ensure context is not null
-        return try {
-            packageManager.getPackageInfo(packageName, 0)
-            true  // ✅ App is installed
-        } catch (e: PackageManager.NameNotFoundException) {
-            false  // ❌ App is not installed
+
+
+    private fun checkAttendanceEligibility() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestLocationPermission()
+            return
+        }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
+
+        fusedLocationClient.getCurrentLocation(
+            com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY, null
+        ).addOnSuccessListener { location: Location? ->
+            if (location != null) {
+                val distance = FloatArray(1)
+                Location.distanceBetween(location.latitude, location.longitude, latitude, longitude, distance)
+
+                if (distance[0] <= radius) {
+                    hideProgressBar()
+
+
+                } else {
+               showAlertGeoFancingDialog(requireContext(),"Alert","Not in attendance zone!")
+                }
+
+                }
+            else
+            showAlertGeoFancingDialog(requireContext(),"Alert","Kindly Enable GPS")
+
+        }
+        }
+
+
+    private fun loadBase64Image(base64String: String?, imageView: ImageView) {
+        if (base64String.isNullOrEmpty()) {
+            return  // Avoid processing if the string is null or empty
+        }
+
+        try {
+            val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+            val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+
+            // Set bitmap to ImageView
+            imageView.setImageBitmap(bitmap)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
         }
     }
 
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+    }
+
+    private fun collectAttendanceStatusResponse() {
+        lifecycleScope.launch {
+            collectLatestLifecycleFlow(commonViewModel.getAttendanceCheckStatus) { result ->
+                when (result) {
+                    is Resource.Loading -> showProgressBar()
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        showSnackBar(result.error?.message ?: "Error fetching data")
+                    }
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        result.data?.let { getAttendanceCheckStatus ->
+                            if (getAttendanceCheckStatus.responseCode == 200) {
+                                attendanceStatusRes = getAttendanceCheckStatus.wrappedList
+
+                                for (x in attendanceStatusRes) {
+
+                                  checkIn = x.checkIn//00:00
+                                  totalHours = x.totalHours//00:00:00
+                               //     latitude = x.lattitude.toDouble()
+                                   checkOut = x.checkOut
+                                   // radius = x.radius.toFloat()
+                                 attendanceFlag = x.attendanceFlag
+                               //   longitude = x.longitude.toDouble()
+
+
+                                    binding.tvCheckInValue.text= x.checkIn
+                                    binding.tvCheckOutValue.text= x.checkOut
+                                    binding.tvTotalHoursValue.text= x.totalHours
+
+                                }
+
+
+                            } else {
+                                showSnackBar(getAttendanceCheckStatus.responseDesc)
+                            }
+                        } ?: showSnackBar("Internal Server Error")
+                    }
+
+                    else -> {
+
+                        showSnackBar("Internal Server Error")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectAttendanceInsertResponse() {
+        lifecycleScope.launch {
+            collectLatestLifecycleFlow(commonViewModel.getInsertAttendance) { result ->
+                when (result) {
+                    is Resource.Loading -> showProgressBar()
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        showSnackBar(result.error?.message ?: "Error fetching data")
+                    }
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        result.data?.let { getInsertAttendance ->
+                            if (getInsertAttendance.responseCode == 200) {
+
+                                showSnackBar(getInsertAttendance.responseDesc)
+
+                                userPhotoUIADI?.let { showBottomSheet(it,name,gender,dob,careOf) }
+
+                            } else {
+                                showSnackBar(getInsertAttendance.responseDesc)
+                            }
+                        } ?: showSnackBar("Internal Server Error")
+                    }
+
+                    else -> {
+
+                        showSnackBar("Internal Server Error")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showAlertGeoFancingDialog(context: Context, title: String, message: String) {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(context)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton("OK") { dialog, _ ->
+            findNavController().navigateUp()
+        }
+
+        val dialog = builder.create()
+        dialog.setCancelable(false)  // Prevent outside touch dismissal
+        dialog.setCanceledOnTouchOutside(false) // Extra safety: disable outside clicks
+        dialog.show()
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    private fun showBottomSheet(
+        image: Bitmap,
+        name: String,
+        gender: String,
+        dateOfBirth: String,
+        careOf: String
+    ) {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+
+        // Inflate the layout
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_layout, null)
+        bottomSheetDialog.setContentView(view)
+
+        // Prevent closing when tapping outside
+        bottomSheetDialog.setCanceledOnTouchOutside(false)
+
+        // Find views
+        val imageView = view.findViewById<ImageView>(R.id.circleImageView)
+        val nameView = view.findViewById<TextView>(R.id.attendancCandidateName)
+        val genderView = view.findViewById<TextView>(R.id.attendancGender)
+        val dobView = view.findViewById<TextView>(R.id.attendancCDob)
+        val careOfView = view.findViewById<TextView>(R.id.attendancCareOf)
+        val okButton = view.findViewById<TextView>(R.id.tvLogin)
+
+        // Set data
+        imageView.setImageBitmap(image)
+        nameView.text = name
+        genderView.text = gender
+        dobView.text = dateOfBirth
+        careOfView.text = careOf
+
+        // Handle OK button click
+        okButton.setOnClickListener {
+
+            findNavController().navigateUp()
+        }
+
+        // Handle back button press
+        bottomSheetDialog.setOnKeyListener { dialog, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                // Show a confirmation dialog before closing
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Exit")
+                    .setMessage("Do you want to close this screen?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        bottomSheetDialog.dismiss()
+                    }
+                    .setNegativeButton("No", null)
+                    .show()
+                return@setOnKeyListener true
+            }
+            false
+        }
+
+        // Show the BottomSheetDialog
+        bottomSheetDialog.show()
+    }
 }

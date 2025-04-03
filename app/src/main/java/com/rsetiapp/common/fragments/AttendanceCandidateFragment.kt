@@ -74,7 +74,7 @@ class AttendanceCandidateFragment  :
                         it.data?.let { getAttendanceBatchAPI ->
                             if (getAttendanceBatchAPI.responseCode == 200) {
                                 AttendanceCandidateList.clear()
-                                AttendanceCandidateList.addAll(getAttendanceBatchAPI.wrappedList) // Add new data
+                                AttendanceCandidateList.addAll(getAttendanceBatchAPI.wrappedList)
                                 candidateListAdapter.notifyDataSetChanged()
                             } else if (getAttendanceBatchAPI.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")

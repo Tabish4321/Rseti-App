@@ -10,6 +10,8 @@ import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.BuildConfig
+import com.rsetiapp.common.model.request.AttendanceCheckReq
+import com.rsetiapp.common.model.request.AttendanceInsertReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
@@ -19,6 +21,8 @@ import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
+import com.rsetiapp.common.model.response.AttendanceCheckRes
+import com.rsetiapp.common.model.response.AttendanceInsertRes
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.CandidateDetailsRes
@@ -292,6 +296,19 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
 
 
 
+    private  var _getInsertAttendance =  MutableStateFlow<Resource<out AttendanceInsertRes>>(Resource.Loading())
+    val getInsertAttendance = _getInsertAttendance.asStateFlow()
+
+    fun getInsertAttendance(attendanceInsertReq: AttendanceInsertReq) {
+        viewModelScope.launch {
+            commonRepository.getInsertAttendance(attendanceInsertReq).collectLatest {
+                _getInsertAttendance.emit(it)
+            }
+        }
+    }
+
+
+
     private  var _getAttendanceCandidate =  MutableStateFlow<Resource<out AttendanceCandidateRes>>(Resource.Loading())
     val getAttendanceCandidate = _getAttendanceCandidate.asStateFlow()
 
@@ -302,6 +319,20 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
             }
         }
     }
+
+
+    private  var _getAttendanceCheckStatus =  MutableStateFlow<Resource<out AttendanceCheckRes>>(Resource.Loading())
+    val getAttendanceCheckStatus = _getAttendanceCheckStatus.asStateFlow()
+
+    fun getAttendanceCheckStatus(attendanceCheckReq: AttendanceCheckReq
+    ) {
+        viewModelScope.launch {
+            commonRepository.getAttendanceCheckStatus(attendanceCheckReq).collectLatest {
+                _getAttendanceCheckStatus.emit(it)
+            }
+        }
+    }
+
 
     fun getFollowTypeListAPI() {
         viewModelScope.launch {

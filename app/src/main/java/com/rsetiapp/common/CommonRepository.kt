@@ -4,6 +4,8 @@ import com.rsetiapp.core.uidai.ekyc.UidaiKycRequest
 import com.rsetiapp.core.uidai.ekyc.UidaiResp
 import com.rsetiapp.common.model.request.AttendanceBatchReq
 import com.rsetiapp.common.model.request.AttendanceCandidateReq
+import com.rsetiapp.common.model.request.AttendanceCheckReq
+import com.rsetiapp.common.model.request.AttendanceInsertReq
 import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.request.StateListReq
@@ -28,6 +30,8 @@ import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
+import com.rsetiapp.common.model.response.AttendanceCheckRes
+import com.rsetiapp.common.model.response.AttendanceInsertRes
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
@@ -186,6 +190,22 @@ class CommonRepository @Inject constructor(
     ): Flow<Resource<out AttendanceCandidateRes>> {
         return networkBoundResourceWithoutDb {
             appLevelApi.getAttendanceCandidate(AttendanceCandidateReq(appVersion,batchId))
+        }
+    }
+
+    suspend fun getAttendanceCheckStatus(
+        attendanceCheckReq: AttendanceCheckReq
+    ): Flow<Resource<out AttendanceCheckRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getAttendanceCheckStatus(attendanceCheckReq)
+        }
+    }
+
+    suspend fun getInsertAttendance(
+       attendanceInsertReq: AttendanceInsertReq
+    ): Flow<Resource<out AttendanceInsertRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getInsertAttendance(attendanceInsertReq)
         }
     }
 

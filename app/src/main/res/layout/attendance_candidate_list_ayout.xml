@@ -88,6 +88,48 @@
         app:layout_constraintStart_toEndOf="@+id/tvContact"
         app:layout_constraintTop_toTopOf="@+id/tvContact" />
 
+    <View
+        android:id="@+id/viewSecc"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:layout_marginTop="@dimen/dp_8"
+        android:background="#DDDDDD"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvContactNumber"/>
+
+    <TextView
+        android:id="@+id/markAttendance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_5"
+        android:fontFamily="@font/avenir_next_demi_bold"
+        android:textColor="#263238"
+        android:text="@string/mark_today_attention"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewSecc" />
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_5"
+        android:layout_marginStart="@dimen/dp_5"
+        android:fontFamily="@font/avenir_next_regular"
+        android:text="14 Mar 25"
+        android:textColor="@color/color_follow_up_title"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/markAttendance" />
+
+    <TextView
+        style="@style/smallButton1"
+        android:textSize="@dimen/dp_12"
+        android:text="Mark Attendance"
+        android:id="@+id/btnMarkAttendance"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

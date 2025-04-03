@@ -4,6 +4,8 @@ import com.rsetiapp.core.uidai.ekyc.UidaiKycRequest
 import com.rsetiapp.core.uidai.ekyc.UidaiResp
 import com.rsetiapp.common.model.request.AttendanceBatchReq
 import com.rsetiapp.common.model.request.AttendanceCandidateReq
+import com.rsetiapp.common.model.request.AttendanceCheckReq
+import com.rsetiapp.common.model.request.AttendanceInsertReq
 import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.request.BlockReq
 import com.rsetiapp.common.model.request.CandidateListReq
@@ -23,6 +25,8 @@ import com.rsetiapp.common.model.request.StateListReq
 import com.rsetiapp.common.model.request.VillageReq
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
+import com.rsetiapp.common.model.response.AttendanceCheckRes
+import com.rsetiapp.common.model.response.AttendanceInsertRes
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.BlockResponse
 import com.rsetiapp.common.model.response.CandidateListResponse
@@ -119,6 +123,12 @@ interface AppLevelApi {
     @POST("onGoingBatchCandidateList")
     suspend fun getAttendanceCandidate( @Body attendanceCandidateReq: AttendanceCandidateReq): AttendanceCandidateRes
 
+    @POST("attandanceCheck")
+    suspend fun getAttendanceCheckStatus( @Body attendanceCheckReq: AttendanceCheckReq): AttendanceCheckRes
+
+
+    @POST("insertAttandance")
+    suspend fun getInsertAttendance( @Body attendanceInsertReq: AttendanceInsertReq): AttendanceInsertRes
     @POST
     suspend fun postOnAUAFaceAuthNREGA(
         @Url url: String,

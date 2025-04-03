@@ -152,7 +152,31 @@
                 android:name="candidateId"
                 app:argType="string" />
             <argument
-                android:name="rollNo"
+                android:name="candidateName"
+                app:argType="string" />
+            <argument
+                android:name="candidateMobile"
+                app:argType="string" />
+            <argument
+                android:name="candidateEmail"
+                app:argType="string" />
+            <argument
+                android:name="candidateGender"
+                app:argType="string" />
+            <argument
+                android:name="candidateDob"
+                app:argType="string" />
+            <argument
+                android:name="candidateDp"
+                app:argType="string" />
+            <argument
+                android:name="batchId"
+                app:argType="string" />
+            <argument
+                android:name="candidateRollNo"
+                app:argType="string" />
+            <argument
+                android:name="aadhaarNo"
                 app:argType="string" />
 
         </action>
