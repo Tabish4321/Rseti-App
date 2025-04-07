@@ -145,7 +145,7 @@
     <string name="enter_number">enter number</string>
     <string name="family_member_part_time">family member part time</string>
     <string name="family_member_part_time_hint">family_member_part_time</string>
-    <string name="upload_passbook_scan">passbook copy</string>
+    <string name="upload_passbook_scan">Passbook copy</string>
     <string name="settlement_proof">Settlement Proof</string>
     <string name="settlement_photo_mandate">Settlement Photo<font color='red'>*</font></string>
     <string name="employment_given_to_others_desc">employment given to others</string>
@@ -162,6 +162,8 @@
     <string name="bank_account_number_mandate">Bank_account_number_mandate*</string>
     <string name="status_mandate">Status*</string>
     <string name="settlement_proof_mandate">Settlement proof*</string>
+    <string name="search">Search</string>
+    <string name="settlement_photos">Settlement photo</string>
 
 
 </resources>

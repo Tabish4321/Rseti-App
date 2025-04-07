@@ -78,6 +78,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
     private fun init(){
 
+
         // Check if camera permission is granted
         checkCameraPermission()
         initEKYC()

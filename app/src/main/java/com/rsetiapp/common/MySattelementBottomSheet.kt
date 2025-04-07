@@ -127,7 +127,7 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
 
 
         val ifscEt = view.findViewById<EditText>(R.id.etIfscCode)
-        val ifscBtn = view.findViewById<Button>(R.id.ifscButton)
+        val ifscBtn = view.findViewById<TextView>(R.id.ifscBtn)
         bankName = view.findViewById<TextView>(R.id.etBankName)
         branchName = view.findViewById<TextView>(R.id.etBranchName)
         total = view.findViewById<TextView>(R.id.total)
@@ -135,25 +135,13 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
         accountNo = view.findViewById(R.id.etBankAcNo)
         spinnerStatus = view.findViewById<AutoCompleteTextView>(R.id.spinnerStatus)
         spinnerAccount = view.findViewById<AutoCompleteTextView>(R.id.spinnerAccountStatus)
-        spinnerFamimyMemberJob =
-            view.findViewById<AutoCompleteTextView>(R.id.spinnerFamilyMemberPartTime)
+        spinnerFamimyMemberJob = view.findViewById<AutoCompleteTextView>(R.id.spinnerFamilyMemberPartTime)
         llselfInvestment = view.findViewById(R.id.llselfinvestment)
         llBankinvestment = view.findViewById(R.id.llBankinvestment)
         llTotal = view.findViewById(R.id.llTotal)
         etCity = view.findViewById(R.id.etCity)
 
-        /* val etCity = view.findViewById<EditText>(R.id.etCity)
 
-        fun validateform(): Boolean{
-           val  cityName = etCity.text.toString().trim()
-            return  if (cityName.isEmpty()) {
-                etCity.error = "City Name is required"
-                false
-            } else {
-                etCity.error = null
-                true
-            }
-        }*/
 
         etSelfInvestment = view.findViewById(R.id.etselfInvestment)
         etReason = view.findViewById(R.id.etReason)
@@ -166,17 +154,6 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
         btnSettledSubmit = view.findViewById(R.id.btnSettled)
         settleText = view.findViewById(R.id.settleText)
 
-        /*//for validating all fields dynamically
-
-        fun validateFields(editTexts: EditText,autoCompleteTextView: AutoCompleteTextView) : Boolean{
-            var allValid=true
-
-            for (editText)
-
-
-
-        }
-*/
 
 
         //Adapter Follow Up Status
@@ -184,7 +161,6 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
             requireContext(), android.R.layout.simple_spinner_dropdown_item, selfAndServiceList
         )
         spinnerStatus.setAdapter(selfAndServiceAdapter)
-
 
 
 
@@ -378,16 +354,16 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
     spinnerEarning.setOnItemClickListener { parent, view, position, id ->
 
             if (position in SalaryRangeList.indices) {
-
                 selectedRangeId = SalaryRangeIdList[position]
 
             }
         }
 
-
         // Rohit
         spinnerStatus.setOnItemClickListener { parent, view, position, id ->
             selectedStatusItem = parent.getItemAtPosition(position) as String
+
+
 
             // Check if the selected item is "Settled In service"
             if (selectedStatusItem.equals("Settled In service", ignoreCase = true)) {
@@ -402,11 +378,14 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
                 etCreditFromBank.text.clear()
                 ivSettlementPhoto.setImageDrawable(null)
                 settleText.visibility = View.GONE
+                ivSettlementPhoto.visibility = View.GONE
 
             }
              else if(selectedStatusItem.equals("SelfSettled", ignoreCase = true )) { llselfInvestment.visibility = View.VISIBLE
                 llBankinvestment.visibility = View.VISIBLE
                 llTotal.visibility = View.VISIBLE
+                settleText.visibility = View.VISIBLE
+                ivSettlementPhoto.visibility = View.VISIBLE
                 //selectedStatusItem=""
                 selectedSelfInvestmentItem=""
                 SelectedCreditFromBankItem=""
