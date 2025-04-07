@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/dp_80">
+            android:layout_marginTop="@dimen/dp_30">
 
 
             <TextView
@@ -154,8 +154,7 @@
         android:drawablePadding="@dimen/dp_20"
         android:text="@string/ok"
         android:gravity="center"
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_marginBottom="@dimen/dp_50"/>
+        android:layout_marginTop="@dimen/dp_100" />
 
 
 

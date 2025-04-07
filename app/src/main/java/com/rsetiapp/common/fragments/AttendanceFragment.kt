@@ -201,36 +201,73 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         binding.btnCheckIn.setOnClickListener {
 
 
+            if (selectedAttendanceTypeItem==""){
 
-            if (attendanceFlag=="checkin" && selectedAttendanceTypeItem=="Aadhaar Attendance"){
-
-                showProgressBar()
-                invokeCaptureIntent()
+                toastShort("Kindly Select Attendance Mode First")
 
             }
             else{
-                // Offline Attendance
 
+
+                if (attendanceFlag=="checkin" && selectedAttendanceTypeItem=="Aadhaar Attendance"){
+
+                    showProgressBar()
+                    invokeCaptureIntent()
+
+                }
+                else{
+                    // Offline Attendance
+
+                    if (attendanceFlag=="checkin" && selectedAttendanceTypeItem=="Offline Attendance"){
+
+                        //CheckOut Offline Attendance
+                        toastShort("Offline Attendance marked checkout")
+
+                    }
+                    else
+                        AppUtil.showAlertDialog(requireContext(),"Alert","Check In Attendance Already Marked")
+
+
+                }
             }
+
+
 
         }
 
         binding.btnCheckOut.setOnClickListener {
-            showProgressBar()
+            if (selectedAttendanceTypeItem==""){
 
-
-            if (attendanceFlag=="checkout" && selectedAttendanceTypeItem=="Aadhaar Attendance"){
-
-                showProgressBar()
-                invokeCaptureIntent()
+                toastShort("Kindly Select Mode First")
 
             }
+
             else{
 
-                // Offline Attendance
+                if (attendanceFlag=="checkout" && selectedAttendanceTypeItem=="Aadhaar Attendance"){
+
+                    showProgressBar()
+                    invokeCaptureIntent()
+
+                }
+                else{
+
+                    // Offline Attendance
+
+                    if (attendanceFlag=="checkout" && selectedAttendanceTypeItem=="Offline Attendance"){
+
+                      //CheckOut Offline Attendance
+                        toastShort("Offline Attendance marked")
+
+                    }
+                    else
+                        AppUtil.showAlertDialog(requireContext(),"Alert","Kindly Mark Attendance CheckIn First")
+
+                }
 
             }
-            invokeCaptureIntent()
+
+          //  invokeCaptureIntent()
 
         }
 
@@ -377,7 +414,8 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                 val poiType = XstreamCommonMethods.processPidBlockEkyc(
                     response.toXML(),
                  // decryptedAadhaar
-                    "939625617876",
+                //   "939625617876",
+                    "877833331122",
                     false,
                     requireContext()
                 )
@@ -397,6 +435,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                 )
                 // Handle Aadhaar authentication or additional processing here if required
             } else {
+                hideProgressBar()
                 toastLong(getString(R.string.kyc_failed_msg))
 
             }
@@ -567,11 +606,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                                 "",formattedTime,totalHoursValue,candidateName))
                                     }
 
-
                                         collectAttendanceInsertResponse()
-                                        toastLong("name : $name,  gender:$gender, dob:$dob, careOf:$careOf")
-
-                                        // toastShort("Ekyc Completed")
                                     } else {
                                         hideProgressBar()
                                         val decodedRar = decodeBase64(kycResp.rar)
@@ -834,6 +869,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         // Handle OK button click
         okButton.setOnClickListener {
 
+            bottomSheetDialog.dismiss()
             findNavController().navigateUp()
         }
 

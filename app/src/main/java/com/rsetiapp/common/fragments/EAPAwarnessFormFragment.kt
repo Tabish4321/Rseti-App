@@ -579,6 +579,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
                 }
             }
         }
@@ -616,6 +617,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
                 }
             }
         }
@@ -656,6 +658,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
                         } ?: showSnackBar("Internal Server Error")
                     }
+
+                    else -> { showSnackBar("Internal Server Error")}
                 }
             }
         }
@@ -697,6 +701,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
+                    else -> { showSnackBar("Internal Server Error")}
                 }
             }
         }
@@ -744,6 +750,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
+                    else -> { showSnackBar("Internal Server Error")}
                 }
             }
         }
@@ -782,6 +790,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
+                    else -> { showSnackBar("Internal Server Error")}
                 }
             }
         }
@@ -820,6 +830,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
+                    else -> { showSnackBar("Internal Server Error")}
                 }
             }
         }
@@ -858,6 +870,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
+                    else -> { showSnackBar("Internal Server Error")}
                 }
             }
         }
@@ -892,7 +906,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
         // Handle date selection
         datePicker.addOnPositiveButtonClickListener { selection ->
-            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
             val formattedDate = sdf.format(Date(selection))
             textView.text = formattedDate
             selectedDate = formattedDate
