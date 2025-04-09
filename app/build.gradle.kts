@@ -4,6 +4,8 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
     id("androidx.navigation.safeargs.kotlin")
+    id("kotlin-parcelize") // Add this line
+
 }
 
 android {
@@ -14,7 +16,7 @@ android {
         applicationId = "com.rsetiapp"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0"
 
         // ✅ Ensure this is correctly set for Android instrumented tests
@@ -134,6 +136,9 @@ dependencies {
 
     implementation("javax.xml.stream:stax-api:1.0-2")
     implementation("com.fasterxml.woodstox:woodstox-core:6.5.1")
+
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
 }
 
 kapt {

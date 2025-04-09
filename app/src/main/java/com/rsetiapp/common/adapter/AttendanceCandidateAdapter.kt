@@ -3,6 +3,7 @@ package com.rsetiapp.common.adapter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -11,11 +12,14 @@ import com.bumptech.glide.Glide
 import com.rsetiapp.R
 import com.rsetiapp.common.fragments.AttendanceCandidateFragmentDirections
 import com.rsetiapp.common.model.response.Candidate
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.databinding.AttendanceCandidateListAyoutBinding
 
 class AttendanceCandidateAdapter(
     private val candidateList: List<Candidate>
 ) : RecyclerView.Adapter<AttendanceCandidateAdapter.CandidateViewHolder>() {
+
+
 
     var candidateId=""
     var rollNo=""
@@ -37,19 +41,17 @@ class AttendanceCandidateAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(candidate: Candidate) {
-            if (candidate == null) {
-                return // Prevents NullPointerException
-            }
 
             val context = binding.root.context
 
             // Handle Profile Picture
-            val profilePic = candidate.candidateProfilePic
-            if (profilePic.isNullOrEmpty() || profilePic == "NA") {
+            val profilePic = candidate.candidateProfilePic ?: "NA"
+
+            if (profilePic == "NA" || profilePic.isEmpty()) {
                 Glide.with(context)
                     .load(R.drawable.person)
                     .into(binding.candidateImage)
-            } else {
+            }  else {
                 try {
                     val decodedString: ByteArray = Base64.decode(profilePic, Base64.DEFAULT)
                     val profileBitmap: Bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
@@ -68,18 +70,29 @@ class AttendanceCandidateAdapter(
             binding.tvCandidateName.text = candidate.candidateName ?: "Unknown"
             binding.tvRollNumberValue.text = candidate.rollNo.toString() ?: "N/A"
             binding.tvContactNumber.text = candidate.mobileNo ?: "N/A"
+            binding.tvDate.text= AppUtil.getCurrentDateForAttendance()
            candidateId= candidate.candidateId
            rollNo= candidate.rollNo.toString()
+          var aadhhaarNo= candidate.adhaarNo
+
 
 
             // Handle Click Navigation (Ensure safe `adapterPosition`)
-            binding.root.setOnClickListener {
+            binding.btnMarkAttendance.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION && position < candidateList.size) {
-                    val action = AttendanceCandidateFragmentDirections.actionAttendanceCandidateFragmentToAttendanceFragment(candidateId,rollNo)
+
+
+                    val action = AttendanceCandidateFragmentDirections
+                        .actionAttendanceCandidateFragmentToAttendanceFragment(candidate.candidateId,candidate.candidateName,candidate.mobileNo,candidate.emailId
+                        ,candidate.gender,candidate.dateOfBirth,candidate.candidateProfilePic,
+                            candidate.batchId.toString(),candidate.rollNo.toString(),aadhhaarNo
+                        )
+
                     binding.root.findNavController().navigate(action)
                 }
             }
+
         }
     }
 }

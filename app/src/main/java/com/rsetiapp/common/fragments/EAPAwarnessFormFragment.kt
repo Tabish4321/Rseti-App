@@ -61,6 +61,7 @@ import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.visible
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Calendar
 
 @AndroidEntryPoint
 class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(FragmentEapAwarnessBinding::inflate),
@@ -232,19 +233,36 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             selectedBrief =binding.etBrief.text.toString()
 
 
+
+
+
             if (selectedDate.isNotEmpty()&& selectedTotalParticipants.isNotEmpty()&& selectedNameOfNGO.isNotEmpty() && selectedprogramNameCodeItem.isNotEmpty() &&
                 selectedStateCodeItem.isNotEmpty() &&  selectedDistrictCodeItem.isNotEmpty() &&  selectedBlockCodeItem.isNotEmpty() && selectedGpCodeItem.isNotEmpty()&&
                 selectedVillageCodeItem.isNotEmpty() && selectedNoOfAppExpectedNextMonth.isNotEmpty() && selectedBrief.isNotEmpty()&& image1Base64.isNotEmpty()&&
                 image2Base64.isNotEmpty()){
 
 
-                commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
-                    selectedprogramNameCodeItem,selectedStateCodeItem,selectedDistrictCodeItem,selectedBlockCodeItem,selectedGpCodeItem,selectedVillageCodeItem,
-                    selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
-                    latitude.toString(),
-                    longitude.toString(),candidateList))
-                collectInsertResponse()
 
+                val totalParticipant = binding.etTotalParticipant.text.toString()
+
+                if (counts != totalParticipant) {
+
+                    AppUtil.showAlertDialog(requireContext(),"Alert","Candidates should be equal to total participants")
+
+                }
+
+
+                else{
+
+                    commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
+                        selectedprogramNameCodeItem,selectedStateCodeItem,selectedDistrictCodeItem,selectedBlockCodeItem,selectedGpCodeItem,selectedVillageCodeItem,
+                        selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
+                        latitude.toString(),
+                        longitude.toString(),candidateList))
+                    collectInsertResponse()
+
+
+                }
 
             }
 
@@ -561,6 +579,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
                 }
             }
         }
@@ -598,6 +617,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
                 }
             }
         }
@@ -638,6 +658,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
                         } ?: showSnackBar("Internal Server Error")
                     }
+
+                    else -> { showSnackBar("Internal Server Error")}
                 }
             }
         }
@@ -679,6 +701,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
+                    else -> { showSnackBar("Internal Server Error")}
                 }
             }
         }
@@ -726,6 +750,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
+                    else -> { showSnackBar("Internal Server Error")}
                 }
             }
         }
@@ -764,6 +790,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
+                    else -> { showSnackBar("Internal Server Error")}
                 }
             }
         }
@@ -802,6 +830,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
+                    else -> { showSnackBar("Internal Server Error")}
                 }
             }
         }
@@ -840,34 +870,48 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
+
+                    else -> { showSnackBar("Internal Server Error")}
                 }
             }
         }
     }
 
+
     private fun showDatePicker(textView: TextView) {
-        // Restrict to future dates only
+        val calendar = Calendar.getInstance()
+
+        // Get today's date (milliseconds)
+        val today = calendar.timeInMillis
+
+        // Get the last day of the current month
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+        val endOfMonth = calendar.timeInMillis
+
+        // Set constraints: From today to the last day of the month
         val constraintsBuilder = CalendarConstraints.Builder()
-            .setValidator(DateValidatorPointForward.now()) // Only future dates
+            .setStart(today)     // Restrict to today
+            .setEnd(endOfMonth)  // Restrict to the last day of the current month
+            .setValidator(DateValidatorPointForward.now()) // Only future dates including today
 
         // Create Material Date Picker
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select a Date")
-            .setSelection(MaterialDatePicker.todayInUtcMilliseconds()) // Default today
-            .setCalendarConstraints(constraintsBuilder.build())
+            .setSelection(today) // Default today
+            .setCalendarConstraints(constraintsBuilder.build()) // Apply constraints
             .build()
 
         // Show Date Picker
         datePicker.show(parentFragmentManager, "DATE_PICKER")
 
+        // Handle date selection
         datePicker.addOnPositiveButtonClickListener { selection ->
-            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
             val formattedDate = sdf.format(Date(selection))
             textView.text = formattedDate
-            selectedDate= formattedDate
+            selectedDate = formattedDate
         }
-    }
-    private fun checkAndRequestPermissions() {
+    }    private fun checkAndRequestPermissions() {
         val permissions = arrayOf(
             android.Manifest.permission.CAMERA,
             android.Manifest.permission.ACCESS_FINE_LOCATION,

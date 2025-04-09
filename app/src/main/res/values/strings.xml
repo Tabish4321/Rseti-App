@@ -165,5 +165,12 @@
     <string name="search">Search</string>
     <string name="settlement_photos">Settlement photo</string>
 
+    <string name="mark_today_attention">Mark today Attendance</string>
+    <string name="check_in">Check In</string>
+    <string name="check_out">Check Out</string>
+    <string name="total_hours">Total Hours</string>
+    <string name="_00_00_am">00:00 AM</string>
+    <string name="attendance_mode">Attendance Mode<font color='#FF0000'>*</font></string>
+    <string name="select_attendance_mode">Select Attendance Mode</string>
 
 </resources>

@@ -61,6 +61,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     private lateinit var candidateNameSearch: TextView
     private lateinit var candidatePicSearch: ShapeableImageView
     private lateinit var llCandidateSearch: LinearLayout
+    private lateinit var AddCandidate: TextView
     private lateinit var etCandidateName: EditText
     private lateinit var etGender: EditText
     private lateinit var etGuardianName: EditText
@@ -105,6 +106,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         candidateNameSearch = view.findViewById(R.id.candidateNameSearch)
         candidatePicSearch = view.findViewById(R.id.candidatePicSearch)
         llCandidateSearch = view.findViewById(R.id.llSearch)
+        AddCandidate = view.findViewById(R.id.btnAddCandidate)
 
 
 
@@ -136,16 +138,13 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         })
 
 
-
-
-
         etDob.setOnClickListener {
 
             showDatePicker(etDob)
         }
 
 
-        llCandidateSearch.setOnClickListener {
+        AddCandidate.setOnClickListener {
             llCandidateSearch.gone()
 
             commonViewModel.candidateDetailsAPI(CandidateDetailsReq(BuildConfig.VERSION_NAME,candidateId))
@@ -309,7 +308,6 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
                                     etAddress.setText(x.candidateAddress)
                                     etMobileNo.setText(x.mobileNo)
                                     etDob.text = x.dob
-
 
                                     candidateName= x.candidateName
                                     candidateGender =x.gender

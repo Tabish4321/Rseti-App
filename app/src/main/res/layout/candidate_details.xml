@@ -114,6 +114,15 @@
                         android:padding="@dimen/dp_4"
                         android:text="@string/candidate_name"
                         android:textColor="@color/color_dark_green" />
+                    <TextView
+                        style="@style/smallButton1"
+                        android:textSize="@dimen/dp_12"
+                        android:text="Add Candidate"
+                        android:id="@+id/btnAddCandidate"
+                        android:layout_marginStart="@dimen/dp_40"
+                        android:layout_marginTop="@dimen/dp_10"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
                 </LinearLayout>
 

@@ -1,5 +1,6 @@
 package com.rsetiapp.common.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -43,6 +44,33 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
     }
     private fun listener(){
 
+// Disable long-press (prevents copy-paste menu)
+        binding.etPassword.setOnLongClickListener { true }
+
+// Prevents context menu actions (copy, cut, paste)
+        binding.etPassword.customSelectionActionModeCallback = object : android.view.ActionMode.Callback {
+            override fun onCreateActionMode(mode: android.view.ActionMode?, menu: android.view.Menu?): Boolean = false
+            override fun onPrepareActionMode(mode: android.view.ActionMode?, menu: android.view.Menu?): Boolean = false
+            override fun onActionItemClicked(mode: android.view.ActionMode?, item: android.view.MenuItem?): Boolean = false
+            override fun onDestroyActionMode(mode: android.view.ActionMode?) {}
+        }
+
+// Disable clipboard pasting, but allow normal keyboard inputs
+        binding.etPassword.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                val clipboard = v.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                clipboard.setPrimaryClip(android.content.ClipData.newPlainText("", "")) // Clear clipboard
+            }
+        }
+
+// Disable drag-and-drop text pasting
+        binding.etPassword.setOnDragListener { _, _ -> true }
+
+// Prevent programmatic clipboard pasting
+        binding.etPassword.setTextIsSelectable(false) // Prevents text selection
+        binding.etPassword.isLongClickable = false
+
+
         binding.tvForgotPass.setOnClickListener {
 
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment())
@@ -77,7 +105,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                 val shaPass = AppUtil.sha512Hash(password)
                 if (AppUtil.getSavedLanguagePreference(requireContext()).contains("eng")) {
 
-                    AppUtil.saveLanguagePreference(requireContext(), "eng")
+                    AppUtil.saveLanguagePreference(requireContext(), "en")
 
 
                 } else

@@ -56,6 +56,11 @@ object AppUtil {
     fun createFileName(userId: Int?): String {
         return "${userId}_${System.currentTimeMillis()}.jpg"
     }
+     fun getCurrentDateForAttendance(): String {
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("dd MMMM yyyy, EEEE", Locale.getDefault())
+        return dateFormat.format(calendar.time)
+    }
 
     // Add this function to your class
     fun convertUriToBase64(uri: Uri,context: Context): String {
@@ -134,6 +139,9 @@ object AppUtil {
         }
         builder.create().show()
     }
+
+
+
 
 
     fun isNetworkAvailable(context: Context?): Boolean {

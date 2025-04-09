@@ -2,6 +2,8 @@ package com.rsetiapp.core.data.remote
 
 import com.rsetiapp.common.model.request.AttendanceBatchReq
 import com.rsetiapp.common.model.request.AttendanceCandidateReq
+import com.rsetiapp.common.model.request.AttendanceCheckReq
+import com.rsetiapp.common.model.request.AttendanceInsertReq
 import com.rsetiapp.common.model.request.BankIFSCSearchReq
 import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.request.BlockReq
@@ -25,6 +27,8 @@ import com.rsetiapp.common.model.request.VillageReq
 import com.rsetiapp.common.model.response.BankIFSCSearchRes
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
+import com.rsetiapp.common.model.response.AttendanceCheckRes
+import com.rsetiapp.common.model.response.AttendanceInsertRes
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.BlockResponse
 import com.rsetiapp.common.model.response.CandidateDetailsRes
@@ -134,6 +138,12 @@ interface AppLevelApi {
     @POST("insertFollowUp")
     suspend fun insertFollowUpAPI(@Body followUpInsertReq: FollowUpInsertReq): FollowUpInsertRes
 
+    @POST("attandanceCheck")
+    suspend fun getAttendanceCheckStatus( @Body attendanceCheckReq: AttendanceCheckReq): AttendanceCheckRes
+
+
+    @POST("insertAttandance")
+    suspend fun getInsertAttendance( @Body attendanceInsertReq: AttendanceInsertReq): AttendanceInsertRes
     @POST("salaryRange")
     suspend fun salaryRangeDetails(@Body salaryRangeReq: SalaryRangeReq) : SalaryRangeRes
 

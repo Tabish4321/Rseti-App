@@ -8,11 +8,18 @@ data class AttendanceCandidateRes(
     val appCode: String?
 )
 
+
 data class Candidate(
     val candidateName: String,
     val rollNo: Int,
     val mobileNo: String,
     val batchId: Int,
     val candidateId: String,
+    val comAddress: String,
+    val dateOfBirth: String,
+    val emailId: String,
+    val gender: String,
+    val adhaarNo: String,
     val candidateProfilePic: String
 )
+
