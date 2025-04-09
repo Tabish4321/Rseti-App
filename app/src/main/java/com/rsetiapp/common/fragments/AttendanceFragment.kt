@@ -130,6 +130,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     }
 
     private val startUidaiAuthResult =
+
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             try {
                 if (result.resultCode == Activity.RESULT_OK) {

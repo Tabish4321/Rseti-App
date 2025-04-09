@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 
 class AttendanceCandidateFragment  :
     BaseFragment<AttendanceCandidateFragmentBinding>(AttendanceCandidateFragmentBinding::inflate)   {
+
     private lateinit var candidateListAdapter: AttendanceCandidateAdapter
     private var AttendanceCandidateList = mutableListOf<Candidate>()
     private val commonViewModel: CommonViewModel by activityViewModels()
