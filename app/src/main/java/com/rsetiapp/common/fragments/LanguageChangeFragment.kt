@@ -26,7 +26,7 @@ class LanguageChangeFragment : BaseFragment<FragmentLanguageChangeBinding>(Fragm
 
 
 
-        if (AppUtil.getSavedLanguagePreference(requireContext()).contains("eng")){
+        if (AppUtil.getSavedLanguagePreference(requireContext()).contains("en")){
 
             binding.checkEnglishIcon.visible()
             binding.checkIconHindi.gone()
@@ -51,9 +51,9 @@ class LanguageChangeFragment : BaseFragment<FragmentLanguageChangeBinding>(Fragm
                 onYesClicked = {
                     // Action for Yes button
 
-                    AppUtil.changeAppLanguage(requireContext(),"eng")
+                    AppUtil.changeAppLanguage(requireContext(),"en")
                     lifecycleScope.launch {
-                      AppUtil.saveLanguagePreference(requireContext(),"eng")
+                      AppUtil.saveLanguagePreference(requireContext(),"en")
                         binding.checkEnglishIcon.visible()
                         binding.checkIconHindi.gone()
                         findNavController().navigateUp()

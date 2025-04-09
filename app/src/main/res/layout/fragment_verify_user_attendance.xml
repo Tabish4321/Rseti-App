@@ -284,7 +284,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/avenir_next_demi_bold"
-            android:hint="Select Attendance Mode"
+            android:hint="@string/select_attendance_mode"
             android:padding="1dp"
             android:id="@+id/AttendanceType"
             app:layout_constraintStart_toStartOf="parent"
