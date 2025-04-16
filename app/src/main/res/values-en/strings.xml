@@ -81,6 +81,7 @@
     <string name="delete">Delete</string>
     <string name="delete_candidate">Delete Candidate?</string>
     <string name="submit_details">Submit Details</string>
+
     <string name="statush">Status</string>
     <string name="selectForInvestment">Select For Investment Type</string>
     <string name="SelfInvestment">Self Investment</string>
@@ -88,12 +89,15 @@
     <string name="Total">Total</string>
     <string name="bank_name">Bank name</string>
     <string name="ifsc_code">IFSC Code</string>
+    <string name="ifsc_code_mandate">IFSC Code<font color='red'>*</font></string>
     <string name="enter_ifsc_code">Enter Ifsc Code</string>
     <string name="branch_name">branch name</string>
     <string name="bank_account_number">Loan account number</string>
     <string name="city">City</string>
     <string name="Reason">Reason</string>
+    <string name="Reason_mandate">Reason<font color='red'>*</font></string>
     <string name="account_status">Account Status</string>
+    <string name="account_status_mandate">Account status<font color='red'>*</font></string>
     <string name="batchList">Batches</string>
     <string name="batch_name">Batch Name</string>
     <string name="batch_id">Batch ID</string>
@@ -136,35 +140,37 @@
     <string name="view_profile">View Attendance</string>
     <string name="earnings_Income">Earnings income</string>
     <string name="earnings_income_hint">earnings income</string>
-    <string name="earnings_income">Earnings Income</string>
+    <string name="earnings_income_mandate">Earnings Income<font color='red'>*</font></string>
     <string name="employment_given_to_others">employment given to others</string>
     <string name="enter_number">enter number</string>
     <string name="family_member_part_time">family member part time</string>
     <string name="family_member_part_time_hint">family_member_part_time</string>
     <string name="upload_passbook_scan">Passbook copy</string>
-
     <string name="settlement_proof">Settlement Proof</string>
-    <string name="settlement_photo">Settlement Photo</string>
+    <string name="settlement_photo_mandate">Settlement Photo<font color='red'>*</font></string>
     <string name="employment_given_to_others_desc">employment given to others</string>
     <string name="appointment_letter">Appointment letter</string>
     <string name="enter_loan_account_number">Enter Loan Account Number</string>
+    <string name="enter_loan_account_number_mandate">Enter Loan Account Number<font color='red'>*</font></string>
     <string name="Enter_City_Name">Enter City Name</string>
-    <string name="_mandate">Enter Loan Account Number<font color='red'>*</font></string>
-    <string name="Enter_City_Name_mandate">Enter City Name <font color='red'>*</font></string>
+    <string name="city_mandate">City <font color='red'>*</font></string>
     <string name="Employment_given_to_others">Employment given to others</string>
-    <string name="Employment_given_to_others_mandate">Employment given to others <font color='red'>*</font></string>
     <string name="family_member_part_time_job">Family member part time Job</string>
-    <string name="family_member_part_time_job_mandate">Family member part time Job <font color='red'>*</font></string>
     <string name="enter_number_of_employment_given_to_others">Enter the number of emplyment given to others</string>
+    <string name="Employment_given_to_others_mandate">Employment given to others <font color='red'>*</font></string>
+    <string name="family_member_part_time_job_mandate">Family member part-time Job <font color='red'>*</font></string>
+    <string name="bank_account_number_mandate">Bank_account_number_mandate*</string>
+    <string name="status_mandate">Status*</string>
+    <string name="settlement_proof_mandate">Settlement proof*</string>
+    <string name="search">Search</string>
+    <string name="settlement_photos">Settlement photo</string>
 
-    <string name="attendance_mode">Attendance Mode<font color='#FF0000'>*</font></string>
-    <string name="as_per_aadhaar">Aadhaar Address</string>
-    <string name="view_profile">View Attendance</string>
     <string name="mark_today_attention">Mark today Attendance</string>
     <string name="check_in">Check In</string>
     <string name="check_out">Check Out</string>
     <string name="total_hours">Total Hours</string>
     <string name="_00_00_am">00:00 AM</string>
-
+    <string name="attendance_mode">Attendance Mode<font color='#FF0000'>*</font></string>
+    <string name="select_attendance_mode">Select Attendance Mode</string>
 
 </resources>

@@ -580,8 +580,8 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
 
 
     /* private fun showProgressBar() {
-         progressBar.visibility = View.VISIBLE
-     }
+     }         progressBar.visibility = View.VISIBLE
+
  
      private fun hideProgressBar() {
          progressBar.visibility = View.GONE

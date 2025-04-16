@@ -4,18 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-03-24T11:00:00.835742Z">
+        <DropdownSelection timestamp="2025-04-11T05:45:58.252040200Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=10BEBF1A09004HB" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection />
-        <DropdownSelection timestamp="2025-04-02T07:07:10.034598Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Rohit\.android\avd\Medium_Phone_API_35.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=mfcelvcuyd9dzpln" />
             </handle>
           </Target>
         </DropdownSelection>

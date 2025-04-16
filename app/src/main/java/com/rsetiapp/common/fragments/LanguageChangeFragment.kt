@@ -18,8 +18,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 
 class
-
-
 LanguageChangeFragment : BaseFragment<FragmentLanguageChangeBinding>(FragmentLanguageChangeBinding :: inflate)  {
 
 
