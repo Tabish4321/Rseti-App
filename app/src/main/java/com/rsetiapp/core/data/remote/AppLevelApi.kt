@@ -4,6 +4,7 @@ import com.rsetiapp.common.model.request.AttendanceBatchReq
 import com.rsetiapp.common.model.request.AttendanceCandidateReq
 import com.rsetiapp.common.model.request.AttendanceCheckReq
 import com.rsetiapp.common.model.request.AttendanceInsertReq
+import com.rsetiapp.common.model.request.BankIFSCSearchReq
 import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.request.BlockReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
@@ -20,8 +21,10 @@ import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
+import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.request.StateListReq
 import com.rsetiapp.common.model.request.VillageReq
+import com.rsetiapp.common.model.response.BankIFSCSearchRes
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
 import com.rsetiapp.common.model.response.AttendanceCheckRes
@@ -43,6 +46,7 @@ import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
+import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
@@ -119,6 +123,12 @@ interface AppLevelApi {
     @POST("followUpStatus")
     suspend fun getFollowStatusListAPI(@Body followUpTypeReq: FollowUpTypeReq): FollowUpStatusResp
 
+
+
+    @POST("bankDetailsByIfsc")
+    suspend fun bankIFSCAPI(@Body bankIFSCSearchReq: BankIFSCSearchReq): BankIFSCSearchRes
+
+
     @POST("onGoingBatchList")
     suspend fun getAttendanceBatch(@Body attendanceBatchReq: AttendanceBatchReq): AttendanceBatchRes
 
@@ -134,6 +144,9 @@ interface AppLevelApi {
 
     @POST("insertAttandance")
     suspend fun getInsertAttendance( @Body attendanceInsertReq: AttendanceInsertReq): AttendanceInsertRes
+    @POST("salaryRange")
+    suspend fun salaryRangeDetails(@Body salaryRangeReq: SalaryRangeReq) : SalaryRangeRes
+
     @POST
     suspend fun postOnAUAFaceAuthNREGA(
         @Url url: String, @Body request: UidaiKycRequest

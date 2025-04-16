@@ -6,6 +6,7 @@ import com.rsetiapp.common.model.request.AttendanceBatchReq
 import com.rsetiapp.common.model.request.AttendanceCandidateReq
 import com.rsetiapp.common.model.request.AttendanceCheckReq
 import com.rsetiapp.common.model.request.AttendanceInsertReq
+import com.rsetiapp.common.model.request.BankIFSCSearchReq
 import com.rsetiapp.common.model.request.BatchListReq
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.request.StateListReq
@@ -29,14 +30,18 @@ import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
+import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
+import com.rsetiapp.common.model.response.BankIFSCSearchRes
+import com.rsetiapp.common.model.response.Batch
 import com.rsetiapp.common.model.response.AttendanceCheckRes
 import com.rsetiapp.common.model.response.AttendanceInsertRes
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
+import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.EapListResponse
@@ -48,6 +53,7 @@ import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
+import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.core.data.local.database.AppDatabase
 import com.rsetiapp.core.data.remote.AppLevelApi
 import com.rsetiapp.core.di.AppModule
@@ -167,6 +173,15 @@ class CommonRepository @Inject constructor(
         }
     }
 
+
+    suspend fun getbankIFSCAPI(
+       bankIFSCSearchReq: BankIFSCSearchReq
+    ): Flow<Resource<out BankIFSCSearchRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.bankIFSCAPI(bankIFSCSearchReq)
+        }
+    }
+
     suspend fun getFollowTypeListAPI(appVersion: String): Flow<Resource<out FollowUpTypeResp>>{
         return networkBoundResourceWithoutDb {
             appLevelApi.getFollowTypeListAPI(FollowUpTypeReq( appVersion))
@@ -222,4 +237,14 @@ class CommonRepository @Inject constructor(
             appLevelApi.postOnAUAFaceAuthNREGA(url,uidaiKycRequest)
         }
     }
+
+    suspend fun getSalaryDetailsAPI(salaryRangeReq: SalaryRangeReq): Flow<Resource<out SalaryRangeRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.salaryRangeDetails(salaryRangeReq)
+        }
+    }
+
+
+
+
 }

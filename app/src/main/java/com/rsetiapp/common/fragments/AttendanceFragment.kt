@@ -122,9 +122,9 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     private lateinit var geofenceHelper: GeofenceHelper
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-  /*  private var latitude: Double = 0.0
-    private var longitude: Double = 0.0
-    var radius: Float = 100f*/
+    /*  private var latitude: Double = 0.0
+      private var longitude: Double = 0.0
+      var radius: Float = 100f*/
     private var latitude = 28.6295826  // Example geofence latitude
     private var longitude = 77.2189311  // Example geofence longitude
     private var radius = 500f  // 100 meters radius
@@ -157,7 +157,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
         binding.spinnerAttendanceType.setAdapter(attendanceAdapter)
 
-         decryptedAadhaar = AESCryptography.decryptIntoString(aadhaarNo,
+        decryptedAadhaar = AESCryptography.decryptIntoString(aadhaarNo,
             AppConstant.Constants.ENCRYPT_KEY,
             AppConstant.Constants.ENCRYPT_IV_KEY)
 
@@ -256,7 +256,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                     if (attendanceFlag=="checkout" && selectedAttendanceTypeItem=="Offline Attendance"){
 
-                      //CheckOut Offline Attendance
+                        //CheckOut Offline Attendance
                         toastShort("Offline Attendance marked")
 
                     }
@@ -267,7 +267,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
             }
 
-          //  invokeCaptureIntent()
+            //  invokeCaptureIntent()
 
         }
 
@@ -410,12 +410,13 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
             if (response.isSuccess) {
 
                 showProgressBar()
+
                 // Process the response to generate the PoiType or other required fields
                 val poiType = XstreamCommonMethods.processPidBlockEkyc(
                     response.toXML(),
-                 // decryptedAadhaar
-                //   "939625617876",
-                    "877833331122",
+                    // decryptedAadhaar
+                    //   "939625617876",
+                    "939625617876",
                     false,
                     requireContext()
                 )
@@ -445,6 +446,8 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
             // Handle camera permission-related issues
             hideProgressBar()
             e.printStackTrace()
+         //   e.message?.copyToClipboard(requireContext())
+
             toastShort("Camera permission is required for this feature.")
             log("EKYCDATA", "SecurityException: ${e.message}")
         } catch (e: IllegalArgumentException) {
@@ -459,7 +462,6 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
             e.printStackTrace()
             toastShort("An error occurred while processing the response.")
             log("EKYCDATA", "Exception: ${e.message}")
-        //    e.message?.copyToClipboard(requireContext())
         }
     }
 
@@ -525,8 +527,11 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                         is Resource.Error -> {
                             hideProgressBar()
+
                             resource.error?.let { errorResponse ->
                                 toastShort(errorResponse.message)
+                                errorResponse.message?.copyToClipboard(requireContext())
+
                                 log("EKYCDATA", errorResponse.message ?: "Unknown error message")
                             } ?: run {
                                 toastShort("Nothing to show pls try again")
@@ -581,9 +586,9 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
 
 
-                                       /* if (checkIn){
+                                        /* if (checkIn){
 
-                                        }*/
+                                         }*/
 
                                         if (attendanceFlag== "checkin"){
 
@@ -591,7 +596,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                             commonViewModel.getInsertAttendance(AttendanceInsertReq(BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkin",
                                                 formattedTime,"","",candidateName))
                                         }
-                                    else{
+                                        else{
 
                                             val checkInTime = LocalTime.parse(checkIn, timeFormatter)
                                             val checkOutTime = LocalTime.parse(formattedTime, timeFormatter)
@@ -604,7 +609,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                                             commonViewModel.getInsertAttendance(AttendanceInsertReq(BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkout",
                                                 "",formattedTime,totalHoursValue,candidateName))
-                                    }
+                                        }
 
                                         collectAttendanceInsertResponse()
                                     } else {
@@ -706,15 +711,15 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
 
                 } else {
-               showAlertGeoFancingDialog(requireContext(),"Alert","Not in attendance zone!")
+                    showAlertGeoFancingDialog(requireContext(),"Alert","Not in attendance zone!")
                 }
 
-                }
+            }
             else
-            showAlertGeoFancingDialog(requireContext(),"Alert","Kindly Enable GPS")
+                showAlertGeoFancingDialog(requireContext(),"Alert","Kindly Enable GPS")
 
         }
-        }
+    }
 
 
     private fun loadBase64Image(base64String: String?, imageView: ImageView) {
@@ -756,13 +761,13 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                                 for (x in attendanceStatusRes) {
 
-                                  checkIn = x.checkIn//00:00
-                                  totalHours = x.totalHours//00:00:00
-                               //     latitude = x.lattitude.toDouble()
-                                   checkOut = x.checkOut
-                                   // radius = x.radius.toFloat()
-                                 attendanceFlag = x.attendanceFlag
-                               //   longitude = x.longitude.toDouble()
+                                    checkIn = x.checkIn//00:00
+                                    totalHours = x.totalHours//00:00:00
+                                    //     latitude = x.lattitude.toDouble()
+                                    checkOut = x.checkOut
+                                    // radius = x.radius.toFloat()
+                                    attendanceFlag = x.attendanceFlag
+                                    //   longitude = x.longitude.toDouble()
 
 
                                     binding.tvCheckInValue.text= x.checkIn

@@ -1,3 +1,4 @@
+
 package com.rsetiapp.common
 
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,7 @@ import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.common.model.request.AttendanceCheckReq
 import com.rsetiapp.common.model.request.AttendanceInsertReq
+import com.rsetiapp.common.model.request.BankIFSCSearchReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
@@ -20,10 +22,13 @@ import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
+import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
 import com.rsetiapp.common.model.response.AttendanceCheckRes
 import com.rsetiapp.common.model.response.AttendanceInsertRes
+import com.rsetiapp.common.model.response.BankIFSCSearchRes
+import com.rsetiapp.common.model.response.Batch
 import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.CandidateDetailsRes
@@ -39,6 +44,7 @@ import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
+import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.core.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -376,4 +382,35 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
             }
         }
     }
+
+
+
+    private  var _getbankIFSCAPI =  MutableStateFlow<Resource<out BankIFSCSearchRes>>(Resource.Loading())
+    val getbankIFSCAPI = _getbankIFSCAPI.asStateFlow()
+
+    fun getbankIFSCAPI(bankIFSCSearchReq: BankIFSCSearchReq) {
+        viewModelScope.launch {
+            commonRepository.getbankIFSCAPI(bankIFSCSearchReq).collectLatest {
+                _getbankIFSCAPI.emit(it)
+            }
+        }
+
+
+    }
+
+private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>(Resource.Loading())
+    val salaryDetailsState = _salaryDetailsState.asStateFlow()
+
+    fun getSalaryRange(salaryRangeReq: SalaryRangeReq) {
+        viewModelScope.launch {
+            commonRepository.getSalaryDetailsAPI(salaryRangeReq).collectLatest {
+                _salaryDetailsState.emit(it)
+            }
+        }
+    }
+
+
+
+
+
 }

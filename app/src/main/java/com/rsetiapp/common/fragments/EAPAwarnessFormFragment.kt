@@ -514,7 +514,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
 
             } else {
-                Toast.makeText(requireContext(), "Invalid selection", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Invalid Selection", Toast.LENGTH_SHORT).show()
             }
         }
 

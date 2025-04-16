@@ -17,7 +17,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 @AndroidEntryPoint
 
-class LanguageChangeFragment : BaseFragment<FragmentLanguageChangeBinding>(FragmentLanguageChangeBinding :: inflate)  {
+class
+LanguageChangeFragment : BaseFragment<FragmentLanguageChangeBinding>(FragmentLanguageChangeBinding :: inflate)  {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
