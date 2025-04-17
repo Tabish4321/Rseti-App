@@ -29,6 +29,8 @@ import java.util.Locale
 import java.util.TimeZone
 import android.content.res.Configuration
 import android.provider.Settings
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import com.google.gson.Gson
 import com.rsetiapp.R
 import java.security.MessageDigest
@@ -60,6 +62,54 @@ object AppUtil {
         val calendar = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("dd MMMM yyyy, EEEE", Locale.getDefault())
         return dateFormat.format(calendar.time)
+    }
+    private var isSessionDialogShown = false // Flag to prevent multiple dialogs
+
+    fun showSessionExpiredDialog(navController: NavController, context: Context) {
+        if (isSessionDialogShown) return // Prevent showing multiple dialogs
+
+        isSessionDialogShown = true // Set flag to true when dialog is shown
+
+        val builder = androidx.appcompat.app.AlertDialog.Builder(context)
+        builder.setTitle("Session Expired")
+        builder.setMessage("Your session has expired. Please log in again.")
+        builder.setCancelable(false) // Prevent dismissing on outside touch or back press
+
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+            logoutUser(navController, context)
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+    fun logoutUser(navController: NavController, context: Context) {
+        // Clear user session data
+        AppUtil.saveLoginStatus(context, false)
+
+        // Navigate to login and reset the flag after navigation
+        navController.navigate(
+            R.id.loginFragment,
+            null,
+            NavOptions.Builder()
+                .setPopUpTo(navController.graph.startDestinationId, true) // Clear everything
+                .build()
+        )
+
+        isSessionDialogShown = false // Reset flag after navigation
+    }
+
+    fun saveTokenPreference(context: Context, tokenCode: String) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("token_code", tokenCode)
+        editor.apply()
+    }
+
+    fun getSavedTokenPreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("token_code", "") ?: "" // Default to English
     }
 
     // Add this function to your class

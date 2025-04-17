@@ -59,6 +59,7 @@ import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.response.Program
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.UserPreferences
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.core.util.visible
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
@@ -160,6 +161,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
+
         formName = arguments?.getString("formName").toString()
         eapId = arguments?.getString("eapId").toString()
         userPreferences = UserPreferences(requireContext())
@@ -205,9 +208,9 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 // Set initial count after adapter is set
         updateCandidateCount(candidateList.size)
 
-        commonViewModel.getStateListApi()
-        commonViewModel.getEapAutoFetchListAPI(userPreferences.getUseID(), BuildConfig.VERSION_NAME)
-        commonViewModel.getProgramListAPI()
+        commonViewModel.getStateListApi(AppUtil.getSavedTokenPreference(requireContext()),userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
+        commonViewModel.getEapAutoFetchListAPI(AppUtil.getSavedTokenPreference(requireContext()),userPreferences.getUseID(), BuildConfig.VERSION_NAME,AppUtil.getAndroidId(requireContext()))
+        commonViewModel.getProgramListAPI(AppUtil.getSavedTokenPreference(requireContext()),userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
         collectProgramNameResponse()
         collectEapAutoFetchResponse()
         collectStateResponse()
@@ -254,7 +257,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
                 else{
 
-                    commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
+                    commonViewModel.insertEAPAPI(AppUtil.getSavedTokenPreference(requireContext()),EAPInsertRequest(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
                         selectedprogramNameCodeItem,selectedStateCodeItem,selectedDistrictCodeItem,selectedBlockCodeItem,selectedGpCodeItem,selectedVillageCodeItem,
                         selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
                         latitude.toString(),
@@ -373,7 +376,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             if (position in state.indices) {
                 selectedStateCodeItem = stateCode[position]
                 selectedStateLgdCodeItem = stateLgdCode[position]
-                commonViewModel.getDistrictListApi(selectedStateCodeItem)
+                commonViewModel.getDistrictListApi(AppUtil.getSavedTokenPreference(requireContext()),selectedStateCodeItem,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
                 districtAdapter.notifyDataSetChanged()
 
 
@@ -417,7 +420,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             if (position in district.indices) {
                 selectedDistrictCodeItem = districtCode[position]
                 selectedDistrictLgdCodeItem = districtLgdCode[position]
-                commonViewModel.getBlockListApi(selectedDistrictCodeItem)
+                commonViewModel.getBlockListApi(AppUtil.getSavedTokenPreference(requireContext()),selectedDistrictCodeItem,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
                 gpAdapter.notifyDataSetChanged()
 
                 selectedBlockCodeItem = ""
@@ -452,7 +455,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             if (position in block.indices) {
                 selectedBlockCodeItem = blockCode[position]
                 selectedbBlockLgdCodeItem = blockLgdCode[position]
-                commonViewModel.getGpListApi(selectedBlockCodeItem)
+                commonViewModel.getGpListApi(AppUtil.getSavedTokenPreference(requireContext()),selectedBlockCodeItem,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
                 selectedGpCodeItem = ""
                 selectedbGpLgdCodeItem = ""
                 selectedGpItem = ""
@@ -478,7 +481,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             if (position in gp.indices) {
                 selectedGpCodeItem = gpCode[position]
                 selectedbGpLgdCodeItem = gpLgdCode[position]
-                commonViewModel.getVillageListApi(selectedGpCodeItem)
+                commonViewModel.getVillageListApi(AppUtil.getSavedTokenPreference(requireContext()),selectedGpCodeItem,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
 
                 selectedVillageCodeItem = ""
                 selectedbVillageLgdCodeItem = ""
@@ -574,8 +577,11 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                                 stateAdapter.notifyDataSetChanged()
                             } else if (getEapAutoFetchListAPI.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar("Internal Server Error111")
+                            }   else if (getEapAutoFetchListAPI.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getEapAutoFetchListAPI.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
@@ -612,9 +618,12 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                                 stateAdapter.notifyDataSetChanged()
                             } else if (getProgramListAPI.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar(getProgramListAPI.responseDesc)
+                            }  else if (getProgramListAPI.responseCode == 401) {
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+
+
                             }
+                            else toastLong(getProgramListAPI.responseDesc)
                         } ?: showSnackBar("Internal Server Error")
                     }
 
@@ -652,8 +661,13 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
                             else if (insertApiResp.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar("Internal Server Error 1111")
+                            }
+                            else if (insertApiResp.responseCode==401){
+
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(insertApiResp.responseDesc)
                             }
 
                         } ?: showSnackBar("Internal Server Error")
@@ -696,8 +710,11 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                                 stateAdapter.notifyDataSetChanged()
                             } else if (getStateResponse.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar(getStateResponse.responseDesc)
+                            }   else if (getStateResponse.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getStateResponse.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
@@ -745,8 +762,11 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                                 }
                             } else if (getDistrictResponse.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar("Something went wrong")
+                            }   else if (getDistrictResponse.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getDistrictResponse.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
@@ -785,8 +805,11 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                                 blockAdapter.notifyDataSetChanged()
                             } else if (getBlockResponse.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar("Something went wrong")
+                            }  else if (getBlockResponse.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getBlockResponse.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
@@ -825,8 +848,11 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                                 blockAdapter.notifyDataSetChanged()
                             } else if (getGpResponse.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar("Something went wrong")
+                            }  else if (getGpResponse.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getGpResponse.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
@@ -865,8 +891,11 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                                 withContext(Dispatchers.Main) {
                                     villageAdapter.notifyDataSetChanged()
                                 }
-                            } else {
-                                showSnackBar("Something went wrong")
+                            }  else if (getVillageResponse.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getVillageResponse.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
@@ -937,80 +966,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         }
     }
 
-    private fun openCamera(imageView: ImageView) {
-        checkAndRequestPermissions()
-
-        currentImageView = imageView  // ✅ Store the clicked ImageView
-
-        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA)
-            != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(requireContext(), "Camera permission required!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        val photoFile = createImageFile()
-        imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", photoFile)
-
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-
-        cameraLauncher.launch(intent) // ✅ Launch the camera
-    }
-
-
-    private fun createImageFile(): File {
-        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile("IMG_${System.currentTimeMillis()}", ".jpg", storageDir).apply {
-            imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", this)
-        }
-    }
-
-    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            if (imageUri == null || currentImageView == null) {
-                Toast.makeText(requireContext(), "Image capture failed!", Toast.LENGTH_SHORT).show()
-                return@registerForActivityResult
-            }
-
-            val bitmap = uriToBitmap(imageUri!!)
-            bitmap?.let { compressedBitmap ->
-                currentImageView?.setImageBitmap(compressedBitmap) // ✅ Set the image
-
-                val base64Image = bitmapToBase64(compressedBitmap) // Convert to Base64
-
-                // ✅ Check which ImageView was clicked and store Base64 accordingly
-                when (currentImageView?.id) {
-                    R.id.image1 -> {
-                        image1Base64 = base64Image
-
-                    }
-                    R.id.image2 -> {
-                        image2Base64 = base64Image
-
-                    }
-                }
-
-                getCurrentLocation()
-                binding.lllatLang.visible()
-                binding.llAdress.visible()
-            }
-        }
-    }
-
-    private fun uriToBitmap(uri: Uri): Bitmap? {
-        return try {
-            val inputStream = requireContext().contentResolver.openInputStream(uri)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            inputStream?.close()
-            compressBitmap(bitmap)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-
     private fun compressBitmap(bitmap: Bitmap): Bitmap {
         return try {
             val maxSize = 1024 // Resize to max 1024px width/height
@@ -1040,6 +995,51 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             ""
         }
     }
+
+    private fun openCamera(imageView: ImageView) {
+        checkAndRequestPermissions()
+
+        currentImageView = imageView
+
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA)
+            != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(requireContext(), "Camera permission required!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraLauncher.launch(intent)
+    }
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageBitmap = result.data?.extras?.get("data") as? Bitmap
+            if (imageBitmap == null || currentImageView == null) {
+                Toast.makeText(requireContext(), "Image capture failed!", Toast.LENGTH_SHORT).show()
+                return@registerForActivityResult
+            }
+
+            val compressedBitmap = compressBitmap(imageBitmap)
+            currentImageView?.setImageBitmap(compressedBitmap)
+
+            val base64Image = bitmapToBase64(compressedBitmap)
+
+            when (currentImageView?.id) {
+                R.id.image1 -> {
+                    image1Base64 = base64Image
+                }
+                R.id.image2 -> {
+                    image2Base64 = base64Image
+                }
+            }
+
+            getCurrentLocation()
+            binding.lllatLang.visible()
+            binding.llAdress.visible()
+        }
+    }
+
+
+
     @SuppressLint("MissingPermission")
     private fun getCurrentLocation() {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->

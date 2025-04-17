@@ -18,6 +18,8 @@ import com.rsetiapp.common.model.response.Module
 import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
+import com.rsetiapp.core.util.UserPreferences
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.core.util.toastShort
 import com.rsetiapp.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +36,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
+
         setupRecyclerView()
         collectModulesData()
         handleBackPress()
@@ -72,7 +76,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     @SuppressLint("NotifyDataSetChanged")
     private fun collectModulesData() {
-        commonViewModel.getFormAPI(BuildConfig.VERSION_NAME,userPreferences.getUseID() )
+        commonViewModel.getFormAPI(AppUtil.getSavedTokenPreference(requireContext()),BuildConfig.VERSION_NAME,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
         lifecycleScope.launch {
             commonViewModel.getFormAPI.collectLatest { resource ->
                 when (resource) {
@@ -88,8 +92,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                                 moduleList.clear()
                                 moduleList.addAll(response.wrappedList)
                                 parentAdapter.notifyDataSetChanged()
-                            } else {
-                                toastShort(response.responseDesc)
+                            }
+                            else if (response.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(response.responseDesc)
                             }
                         }
                     }

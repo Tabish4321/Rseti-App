@@ -1,176 +1,175 @@
 <resources>
-    <string name="app_name">Rseti App</string>
-    <string name="login_to_your_account">Login to your account</string>
-    <string name="login_id">Enter User id</string>
-    <string name="password">Password</string>
-    <string name="forgot_password">Forgot password?</string>
-    <string name="enter_password">Enter Password</string>
-    <string name="login">Login</string>
-    <string name="please_sign_in_to_your_account">Please sign in to your account</string>
-    <string name="userId">User ID</string>
-    <string name="form_name">Form Name</string>
-    <string name="organisation_name">Organisation Name</string>
-    <string name="institute_name">Institute Name</string>
-    <string name="date">Date<font color='#FF0000'>*</font></string>
-    <string name="select_date">Select Date</string>
-    <string name="total_participants">Total Participants<font color='#FF0000'>*</font></string>
-    <string name="select_total_participants">Enter Total Participants</string>
-    <string name="participating_official">Participating Official</string>
-    <string name="designation">Designation</string>
-    <string name="name_of_org">Enter Name of the organisation</string>
-    <string name="name_of_organization">Name of the organisation /NGOs/Banks Participated <font color='#FF0000'>*</font></string>
-    <string name="program_name">Program Name<font color='#FF0000'>*</font></string>
-    <string name="select_program_name">Select Program Name</string>
-    <string name="state">State <font color='#FF0000'>*</font></string>
-    <string name="select_state">Select State</string>
-    <string name="district">District <font color='#FF0000'>*</font></string>
-    <string name="select_district">Select District</string>
-    <string name="Block">Block <font color='#FF0000'>*</font></string>
-    <string name="select_Block">Select Block</string>
-    <string name="Gp">Gp <font color='#FF0000'>*</font></string>
-    <string name="select_gp">Select GP</string>
-    <string name="Village">Village <font color='#FF0000'>*</font></string>
-    <string name="select_Village">Select Village</string>
-    <string name="no_of_application_expected">No.of applications generated through Kaushal panjee <font color='#FF0000'>*</font></string>
-    <string name="enter_no_of_application_expected">No.of applications generated through Kaushal panjee</string>
-    <string name="brief_description">Brief description of the Programme <font color='#FF0000'>*</font></string>
-    <string name="enter_brief_description">Brief description of the Programme</string>
-    <string name="capture_image">Capture Image<font color='#FF0000'>*</font></string>
-    <string name="submit">Submit Details</string>
-    <string name="add_candidate">Add Candidate</string>
-    <string name="location">Location :-  </string>
-    <string name="location_not_found">Location not found</string>
-    <string name="address_not_found">Address not found</string>
-    <string name="address">Address :-  </string>
-    <string name="error_address">Error getting address</string>
-    <string name="send_again">Send again</string>
-    <string name="verify">Verify</string>
-    <string name="not_receive_code">Did\\\'t receive a code!</string>
-    <string name="enter_code_msg">Please enter 4 digit OTP sent to your phone number</string>
-    <string name="enter_code_email_msg">Please enter 4 digit OTP sent to your email address</string>
-    <string name="enter_code">Enter OTP</string>
-    <string name="email">Enter Email</string>
-    <string name="enter_phone">Enter Phone Number</string>
-    <string name="forgot_id_and_password">Forgot id and password</string>
-    <string name="enter_id">Enter User Id</string>
-    <string name="hindi">Hindi</string>
-    <string name="english">English</string>
-    <string name="candidate_name">Candidate Name</string>
-    <string name="candidate_name_up">Candidate Name<font color='#FF0000'>*</font></string>
-    <string name="mobile_number">Mobile Number</string>
-    <string name="mobile_number_man">Mobile Number<font color='#FF0000'>*</font></string>
-    <string name="guardian_name">Guardian Name<font color='#FF0000'>*</font></string>
-    <string name="guardian_name1">Guardian Name</string>
-    <string name="guardian_Mobile">Guardian Mobile Nuber</string>
-    <string name="guardian_Mobile_man">Guardian Mobile Nuber<font color='#FF0000'>*</font></string>
-    <string name="gender">Gender</string>
-    <string name="gender_man">Gender<font color='#FF0000'>*</font></string>
-    <string name="dob">Date Of Birth</string>
-    <string name="dob_man">Date Of Birth<font color='#FF0000'>*</font></string>
-    <string name="full_address">Full Address</string>
-    <string name="full_address_man">Full Address<font color='#FF0000'>*</font></string>
-    <string name="eap_id">Eap Id</string>
-    <string name="close">Close</string>
-    <string name="add">Add</string>
-    <string name="search_candidate_via_kaushal_panjee">Search candidate via kaushal panjee ID</string>
-    <string name="enter_kaushal_panjee_id">Enter kaushal panjee ID</string>
-    <string name="eapName">Eap List</string>
-    <string name="added_candidates">Added Candidates</string>
-    <string name="are_you_sure_you_want_to_delete_this_candidate">Are you sure you want to delete this candidate?</string>
-    <string name="cancel">Cancel</string>
-    <string name="delete">Delete</string>
-    <string name="delete_candidate">Delete Candidate?</string>
-    <string name="submit_details">Submit Details</string>
+    <string name="app_name">आरसेटी ऐप</string>
+    <string name="login_to_your_account">अपने खाते में लॉगिन करें</string>
+    <string name="login_id">यूज़र आईडी दर्ज करें</string>
+    <string name="password">पासवर्ड</string>
+    <string name="forgot_password">पासवर्ड भूल गए?</string>
+    <string name="enter_password">पासवर्ड दर्ज करें</string>
+    <string name="login">लॉगिन</string>
+    <string name="please_sign_in_to_your_account">कृपया अपने खाते में साइन इन करें</string>
+    <string name="userId">यूज़र आईडी</string>
+    <string name="form_name">फॉर्म का नाम</string>
+    <string name="organisation_name">संगठन का नाम</string>
+    <string name="institute_name">संस्थान का नाम</string>
+    <string name="date">दिनांक<font color='#FF0000'>*</font></string>
+    <string name="select_date">दिनांक चुनें</string>
+    <string name="total_participants">कुल प्रतिभागी<font color='#FF0000'>*</font></string>
+    <string name="select_total_participants">कुल प्रतिभागियों की संख्या दर्ज करें</string>
+    <string name="participating_official">भाग लेने वाला अधिकारी</string>
+    <string name="designation">पद</string>
+    <string name="name_of_org">संगठन का नाम दर्ज करें</string>
+    <string name="name_of_organization">संगठन/एनजीओ/बैंक का नाम जिन्होंने भाग लिया <font color='#FF0000'>*</font></string>
+    <string name="program_name">कार्यक्रम का नाम<font color='#FF0000'>*</font></string>
+    <string name="select_program_name">कार्यक्रम का नाम चुनें</string>
+    <string name="state">राज्य <font color='#FF0000'>*</font></string>
+    <string name="select_state">राज्य चुनें</string>
+    <string name="district">जिला <font color='#FF0000'>*</font></string>
+    <string name="select_district">जिला चुनें</string>
+    <string name="Block">ब्लॉक <font color='#FF0000'>*</font></string>
+    <string name="select_Block">ब्लॉक चुनें</string>
+    <string name="Gp">ग्राम पंचायत <font color='#FF0000'>*</font></string>
+    <string name="select_gp">ग्राम पंचायत चुनें</string>
+    <string name="Village">गांव <font color='#FF0000'>*</font></string>
+    <string name="select_Village">गांव चुनें</string>
+    <string name="no_of_application_expected">कौशल पंजी के माध्यम से उत्पन्न आवेदनों की संख्या <font color='#FF0000'>*</font></string>
+    <string name="enter_no_of_application_expected">कौशल पंजी के माध्यम से उत्पन्न आवेदनों की संख्या</string>
+    <string name="brief_description">कार्यक्रम का संक्षिप्त विवरण <font color='#FF0000'>*</font></string>
+    <string name="enter_brief_description">कार्यक्रम का संक्षिप्त विवरण दर्ज करें</string>
+    <string name="capture_image">चित्र कैप्चर करें<font color='#FF0000'>*</font></string>
+    <string name="submit">विवरण सबमिट करें</string>
+    <string name="add_candidate">उम्मीदवार जोड़ें</string>
+    <string name="location">स्थान :-</string>
+    <string name="location_not_found">स्थान नहीं मिला</string>
+    <string name="address_not_found">पता नहीं मिला</string>
+    <string name="address">पता :-</string>
+    <string name="error_address">पता प्राप्त करने में त्रुटि</string>
+    <string name="send_again">पुनः भेजें</string>
+    <string name="verify">सत्यापित करें</string>
+    <string name="not_receive_code">कोड प्राप्त नहीं हुआ!</string>
+    <string name="enter_code_msg">कृपया अपने फोन नंबर पर भेजा गया 4 अंकों का ओटीपी दर्ज करें</string>
+    <string name="enter_code_email_msg">कृपया अपने ईमेल पते पर भेजा गया 4 अंकों का ओटीपी दर्ज करें</string>
+    <string name="enter_code">ओटीपी दर्ज करें</string>
+    <string name="email">ईमेल दर्ज करें</string>
+    <string name="enter_phone">फोन नंबर दर्ज करें</string>
+    <string name="forgot_id_and_password">यूज़र आईडी और पासवर्ड भूल गए</string>
+    <string name="enter_id">यूज़र आईडी दर्ज करें</string>
+    <string name="hindi">हिन्दी</string>
+    <string name="english">अंग्रेज़ी</string>
+    <string name="candidate_name">उम्मीदवार का नाम</string>
+    <string name="candidate_name_up">उम्मीदवार का नाम<font color='#FF0000'>*</font></string>
+    <string name="mobile_number">मोबाइल नंबर</string>
+    <string name="mobile_number_man">मोबाइल नंबर<font color='#FF0000'>*</font></string>
+    <string name="guardian_name">अभिभावक का नाम<font color='#FF0000'>*</font></string>
+    <string name="guardian_name1">अभिभावक का नाम</string>
+    <string name="guardian_Mobile">अभिभावक का मोबाइल नंबर</string>
+    <string name="guardian_Mobile_man">अभिभावक का मोबाइल नंबर<font color='#FF0000'>*</font></string>
+    <string name="gender">लिंग</string>
+    <string name="gender_man">लिंग<font color='#FF0000'>*</font></string>
+    <string name="dob">जन्म तिथि</string>
+    <string name="dob_man">जन्म तिथि<font color='#FF0000'>*</font></string>
+    <string name="full_address">पूरा पता</string>
+    <string name="full_address_man">पूरा पता<font color='#FF0000'>*</font></string>
+    <string name="eap_id">ईएपी आईडी</string>
+    <string name="close">बंद करें</string>
+    <string name="add">जोड़ें</string>
+    <string name="search_candidate_via_kaushal_panjee">कौशल पंजी आईडी के माध्यम से उम्मीदवार खोजें</string>
+    <string name="enter_kaushal_panjee_id">कौशल पंजी आईडी दर्ज करें</string>
+    <string name="eapName">ईएपी सूची</string>
+    <string name="added_candidates">जोड़े गए उम्मीदवार</string>
+    <string name="are_you_sure_you_want_to_delete_this_candidate">क्या आप वाकई इस उम्मीदवार को हटाना चाहते हैं?</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="delete">हटाएं</string>
+    <string name="delete_candidate">उम्मीदवार हटाएं?</string>
+    <string name="submit_details">विवरण सबमिट करें</string>
+    <string name="statush">स्थिति</string>
+    <string name="selectForInvestment">निवेश प्रकार चुनें</string>
+    <string name="SelfInvestment">स्व निवेश</string>
+    <string name="credit_linkage_bank_actuals">(क्रेडिट लिंक) बैंक (वास्तविक)</string>
+    <string name="Total">कुल</string>
+    <string name="bank_name">बैंक का नाम</string>
+    <string name="ifsc_code">आईएफएससी कोड</string>
+    <string name="ifsc_code_mandate">आईएफएससी कोड<font color='red'>*</font></string>
+    <string name="enter_ifsc_code">आईएफएससी कोड दर्ज करें</string>
+    <string name="branch_name">शाखा का नाम</string>
+    <string name="bank_account_number">ऋण खाता संख्या</string>
+    <string name="city">शहर</string>
+    <string name="Reason">कारण</string>
+    <string name="Reason_mandate">कारण<font color='red'>*</font></string>
+    <string name="account_status">खाता स्थिति</string>
+    <string name="account_status_mandate">खाता स्थिति<font color='red'>*</font></string>
+    <string name="batchList">बैच</string>
+    <string name="batch_name">बैच का नाम</string>
+    <string name="batch_id">बैच आईडी</string>
+    <string name="candidate_attendance">उम्मीदवार सूची</string>
+    <string name="contact_number">संपर्क नंबर</string>
+    <string name="roll_no">रोल नंबर</string>
+    <string name="name">नाम</string>
+    <string name="candidate_follow_up">उम्मीदवार फॉलो अप</string>
+    <string name="care_of">सी/ओ</string>
+    <string name="follow_type">फॉलो टाइप</string>
+    <string name="select_follow_type">फॉलो टाइप चुनें</string>
+    <string name="date_nm">तिथि</string>
+    <string name="status">स्थिति</string>
+    <string name="select_status">स्थिति चुनें</string>
+    <string name="reason">कारण<font color='#FF0000'>*</font></string>
+    <string name="reason_nm">कारण</string>
+    <string name="enter_reason">कारण दर्ज करें</string>
+    <string name="follow_up_done_by">फॉलो अप किसके द्वारा किया गया</string>
+    <string name="select_year">वर्ष चुनें</string>
+    <string name="select_month">माह चुनें</string>
+    <string name="settlement_status">सेटलमेंट स्थिति</string>
+    <string name="follow_up_status">फॉलो अप स्थिति</string>
+    <string name="status_quarter_1">एस1</string>
+    <string name="status_quarter_2">एस2</string>
+    <string name="status_quarter_3">एस3</string>
+    <string name="status_quarter_4">एस4</string>
+    <string name="status_quarter_5">एस5</string>
+    <string name="status_quarter_6">एस6</string>
+    <string name="status_quarter_7">एस7</string>
+    <string name="status_quarter_8">एस8</string>
+    <string name="mark_attendance">हाज़िरी अंकित करें</string>
+    <string name="kyc_failed_msg">केवाईसी विफल</string>
+    <string name="something_went_wrong_at_uidai_site">यूआईडीएआई साइट पर कुछ गलत हुआ।</string>
+    <string name="ok">ठीक है</string>
+    <string name="date_of_birth">जन्म तिथि:</string>
+    <string name="name1">नाम:</string>
+    <string name="careof">सी/ओ:</string>
+    <string name="attendance_marked">हाज़िरी अंकित की गई</string>
+    <string name="as_per_aadhaar">आधार पता</string>
+    <string name="view_profile">हाज़िरी देखें</string>
+    <string name="earnings_Income">आय</string>
+    <string name="earnings_income_hint">आय</string>
+    <string name="earnings_income_mandate">आय<font color='red'>*</font></string>
+    <string name="employment_given_to_others">अन्य लोगों को रोजगार प्रदान किया</string>
+    <string name="enter_number">संख्या दर्ज करें</string>
+    <string name="family_member_part_time">पारिवारिक सदस्य अंशकालिक कार्य</string>
+    <string name="family_member_part_time_hint">पारिवारिक सदस्य अंशकालिक कार्य</string>
+    <string name="upload_passbook_scan">पासबुक कॉपी</string>
+    <string name="settlement_proof">सेटलमेंट प्रमाण</string>
+    <string name="settlement_photo_mandate">सेटलमेंट फोटो<font color='red'>*</font></string>
+    <string name="employment_given_to_others_desc">अन्य लोगों को रोजगार प्रदान किया</string>
+    <string name="appointment_letter">नियुक्ति पत्र</string>
+    <string name="enter_loan_account_number">ऋण खाता संख्या दर्ज करें</string>
+    <string name="enter_loan_account_number_mandate">ऋण खाता संख्या दर्ज करें<font color='red'>*</font></string>
+    <string name="Enter_City_Name">शहर का नाम दर्ज करें</string>
+    <string name="city_mandate">शहर<font color='red'>*</font></string>
+    <string name="Employment_given_to_others">अन्य लोगों को रोजगार प्रदान किया</string>
+    <string name="family_member_part_time_job">पारिवारिक सदस्य अंशकालिक कार्य</string>
+    <string name="enter_number_of_employment_given_to_others">अन्य लोगों को प्रदान किए गए रोजगार की संख्या दर्ज करें</string>
+    <string name="Employment_given_to_others_mandate">अन्य लोगों को रोजगार प्रदान किया<font color='red'>*</font></string>
+    <string name="family_member_part_time_job_mandate">पारिवारिक सदस्य अंशकालिक कार्य<font color='red'>*</font></string>
+    <string name="bank_account_number_mandate">बैंक खाता संख्या<font color='red'>*</font></string>
+    <string name="status_mandate">स्थिति<font color='red'>*</font></string>
+    <string name="settlement_proof_mandate">सेटलमेंट प्रमाण<font color='red'>*</font></string>
+    <string name="search">खोजें</string>
+    <string name="settlement_photos">सेटलमेंट फोटो</string>
+    <string name="mark_today_attention">आज की हाज़िरी अंकित करें</string>
+    <string name="check_in">चेक इन</string>
+    <string name="check_out">चेक आउट</string>
+    <string name="total_hours">कुल घंटे</string>
+    <string name="_00_00_am">00:00 पूर्वाह्न</string>
+    <string name="attendance_mode">हाज़िरी का तरीका<font color='#FF0000'>*</font></string>
+    <string name="select_attendance_mode">हाज़िरी का तरीका चुनें</string>
 
-    <string name="statush">Status</string>
-    <string name="selectForInvestment">Select For Investment Type</string>
-    <string name="SelfInvestment">Self Investment</string>
-    <string name="credit_linkage_bank_actuals">(Credit Linkage) Bank (Actuals)</string>
-    <string name="Total">Total</string>
-    <string name="bank_name">Bank name</string>
-    <string name="ifsc_code">IFSC Code</string>
-    <string name="ifsc_code_mandate">IFSC Code<font color='red'>*</font></string>
-    <string name="enter_ifsc_code">Enter Ifsc Code</string>
-    <string name="branch_name">branch name</string>
-    <string name="bank_account_number">Loan account number</string>
-    <string name="city">City</string>
-    <string name="Reason">Reason</string>
-    <string name="Reason_mandate">Reason<font color='red'>*</font></string>
-    <string name="account_status">Account Status</string>
-    <string name="account_status_mandate">Account status<font color='red'>*</font></string>
-    <string name="batchList">Batches</string>
-    <string name="batch_name">Batch Name</string>
-    <string name="batch_id">Batch ID</string>
-    <string name="candidate_attendance">Candidate List</string>
-    <string name="contact_number">Contact Number</string>
-    <string name="roll_no">Roll No.</string>
-    <string name="name">Name</string>
-    <string name="candidate_follow_up">Candidate Follow Up</string>
-    <string name="care_of">Care Of</string>
-    <string name="follow_type">Follow Type</string>
-    <string name="select_follow_type">Select follow type</string>
-    <string name="date_nm">Date</string>
-    <string name="status">Status</string>
-    <string name="select_status">Select status</string>
-    <string name="reason">Reason<font color='#FF0000'>*</font></string>
-    <string name="reason_nm">Reason</string>
-    <string name="enter_reason">Enter Reason</string>
-    <string name="follow_up_done_by">Follow up done by</string>
-    <string name="select_year">Select Year</string>
-    <string name="select_month">Select Month</string>
-    <string name="settlement_status">Settlement Status</string>
-    <string name="follow_up_status">Follow Up status</string>
-    <string name="status_quarter_1">S1</string>
-    <string name="status_quarter_2">S2</string>
-    <string name="status_quarter_3">S3</string>
-    <string name="status_quarter_4">S4</string>
-    <string name="status_quarter_5">S5</string>
-    <string name="status_quarter_6">S6</string>
-    <string name="status_quarter_7">S7</string>
-    <string name="status_quarter_8">S8</string>
-    <string name="mark_attendance">Mark Attendance</string>
-    <string name="kyc_failed_msg">Kyc failed</string>
-    <string name="something_went_wrong_at_uidai_site">Something went wrong at UIDAI side.</string>
-    <string name="ok">Ok</string>
-    <string name="date_of_birth">Date Of Birth:</string>
-    <string name="name1">Name:</string>
-    <string name="careof">CareOf:</string>
-    <string name="attendance_marked">Attendance Marked</string>
-    <string name="as_per_aadhaar">Aadhaar Address</string>
-    <string name="view_profile">View Attendance</string>
-    <string name="earnings_Income">Earnings income</string>
-    <string name="earnings_income_hint">earnings income</string>
-    <string name="earnings_income_mandate">Earnings Income<font color='red'>*</font></string>
-    <string name="employment_given_to_others">employment given to others</string>
-    <string name="enter_number">enter number</string>
-    <string name="family_member_part_time">family member part time</string>
-    <string name="family_member_part_time_hint">family_member_part_time</string>
-    <string name="upload_passbook_scan">Passbook copy</string>
-    <string name="settlement_proof">Settlement Proof</string>
-    <string name="settlement_photo_mandate">Settlement Photo<font color='red'>*</font></string>
-    <string name="employment_given_to_others_desc">employment given to others</string>
-    <string name="appointment_letter">Appointment letter</string>
-    <string name="enter_loan_account_number">Enter Loan Account Number</string>
-    <string name="enter_loan_account_number_mandate">Enter Loan Account Number<font color='red'>*</font></string>
-    <string name="Enter_City_Name">Enter City Name</string>
-    <string name="city_mandate">City <font color='red'>*</font></string>
-    <string name="Employment_given_to_others">Employment given to others</string>
-    <string name="family_member_part_time_job">Family member part time Job</string>
-    <string name="enter_number_of_employment_given_to_others">Enter the number of emplyment given to others</string>
-    <string name="Employment_given_to_others_mandate">Employment given to others <font color='red'>*</font></string>
-    <string name="family_member_part_time_job_mandate">Family member part-time Job <font color='red'>*</font></string>
-    <string name="bank_account_number_mandate">Bank_account_number_mandate*</string>
-    <string name="status_mandate">Status*</string>
-    <string name="settlement_proof_mandate">Settlement proof*</string>
-    <string name="search">Search</string>
-    <string name="settlement_photos">Settlement photo</string>
-
-    <string name="mark_today_attention">Mark today Attendance</string>
-    <string name="check_in">Check In</string>
-    <string name="check_out">Check Out</string>
-    <string name="total_hours">Total Hours</string>
-    <string name="_00_00_am">00:00 AM</string>
-    <string name="attendance_mode">Attendance Mode<font color='#FF0000'>*</font></string>
-    <string name="select_attendance_mode">Select Attendance Mode</string>
 
 </resources>

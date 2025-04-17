@@ -12,7 +12,10 @@ import com.rsetiapp.common.CommonViewModel
 import com.rsetiapp.common.adapter.CandidateDetailsAdapter
 import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.core.basecomponent.BaseFragment
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
+import com.rsetiapp.core.util.UserPreferences
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.databinding.FragmentFollowUpCandidateBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -30,6 +33,7 @@ class FollowUpCandidateFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
 
         batchId = arguments?.getString("batchId").toString()
         batchName = arguments?.getString("batchName").toString()
@@ -60,8 +64,9 @@ class FollowUpCandidateFragment :
     @SuppressLint("NotifyDataSetChanged")
     private fun collectCandidatesData() {
         commonViewModel.getCandidateAPI(
+            AppUtil.getSavedTokenPreference(requireContext()),
             BuildConfig.VERSION_NAME,
-            batchId
+            batchId,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()
         )
         lifecycleScope.launch {
             commonViewModel.getCandidateAPI.collectLatest { resource ->
@@ -83,10 +88,11 @@ class FollowUpCandidateFragment :
                                 candidateAdapter.notifyDataSetChanged()
                             } else if (getCandidateResponse.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar(
-                                    getCandidateResponse.responseDesc ?: "Internal Server Error"
-                                )
+                            }   else if (getCandidateResponse.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getCandidateResponse.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }

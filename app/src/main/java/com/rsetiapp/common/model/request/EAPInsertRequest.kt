@@ -1,7 +1,9 @@
 package com.rsetiapp.common.model.request
 
 data class EAPInsertRequest(
-    val appVersion: String,
+    val imeiNo :String,
+     val login: String,
+     val appVersion: String,
     val orgId: String,
     val eapId: String,
     val instituteId: String,

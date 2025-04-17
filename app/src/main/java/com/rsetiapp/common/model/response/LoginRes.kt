@@ -1,10 +1,11 @@
 package com.rsetiapp.common.model.response
 
 data class LoginRes(
-    val wrappedList: List<LoginDetails>, // Replace Any with the appropriate type if wrappedList contains specific objects
+    val wrappedList: List<LoginDetails>,
     val responseCode: Int,
     val responseDesc: String,
-    val responseMsg: String
+    val responseMsg: String,
+    val appCode: String
 )
 
 data class LoginDetails(

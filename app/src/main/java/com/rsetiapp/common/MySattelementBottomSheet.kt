@@ -23,6 +23,7 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.karumi.dexter.BuildConfig
 import com.rsetiapp.R
@@ -30,12 +31,16 @@ import com.rsetiapp.common.model.request.BankIFSCSearchReq
 import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.response.BankDetailsList
 import com.rsetiapp.common.model.response.SalaryRange
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
+import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.gone
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.core.util.toastShort
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
+import javax.inject.Inject
 
 class MySattelementBottomSheet: BottomSheetDialogFragment() {
     private val commonViewModel: CommonViewModel by activityViewModels()
@@ -106,6 +111,9 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
     private  var selectedPassbookCopy=""
     private  var selectedAppointmentLetter=""
 
+    lateinit var userPreferences: UserPreferences
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -118,7 +126,7 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        commonViewModel.getSalaryRange(SalaryRangeReq(BuildConfig.VERSION_NAME))
+        commonViewModel.getSalaryRange(AppUtil.getSavedTokenPreference(requireContext()),SalaryRangeReq(BuildConfig.VERSION_NAME,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()))
 
         collectSalaryRangeResponse()
 
@@ -140,7 +148,6 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
         llBankinvestment = view.findViewById(R.id.llBankinvestment)
         llTotal = view.findViewById(R.id.llTotal)
         etCity = view.findViewById(R.id.etCity)
-
 
 
         etSelfInvestment = view.findViewById(R.id.etselfInvestment)
@@ -416,9 +423,10 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
                 val inputText = ifscEt.text.toString()
                  selectedUpperCaseIfscText = inputText.uppercase()
                 commonViewModel.getbankIFSCAPI(
+                    AppUtil.getSavedTokenPreference(requireContext()),
                     BankIFSCSearchReq(
                         BuildConfig.VERSION_NAME,
-                        selectedUpperCaseIfscText
+                        selectedUpperCaseIfscText,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()
                     )
                 )
 
@@ -477,6 +485,12 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
                                 accLenghth= 0
 
                             }
+                            else if (getBankDetails.responseCode == 401) {
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+
+
+                            }
+                            else toastLong(getBankDetails.responseDesc)
 
                         } ?:   Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
 
@@ -534,6 +548,13 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
 
 
                             }
+                            else if (getSalaryRangeDetails.responseCode == 401) {
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+
+
+                            }
+
+                            else toastLong(getSalaryRangeDetails.responseDesc)
 
 
 

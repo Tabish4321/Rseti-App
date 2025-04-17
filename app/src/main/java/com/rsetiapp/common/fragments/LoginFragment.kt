@@ -2,19 +2,25 @@ package com.rsetiapp.common.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.core.basecomponent.BaseFragment
+import com.rsetiapp.core.util.AESCryptography
+import com.rsetiapp.core.util.AppConstant
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
+import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.onRightDrawableClicked
 import com.rsetiapp.core.util.setRightDrawablePassword
 import com.rsetiapp.core.util.toastShort
@@ -26,13 +32,20 @@ import kotlinx.coroutines.launch
 class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding :: inflate ){
     private var userName = ""
     private var password = ""
+    private var token = ""
+    private var saltPassword = ""
     private var showPassword = true
+    private var isApiCalled = false
+
 
 
     private val commonViewModel: CommonViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
+
+
 
         init()
         handleBackPress()
@@ -95,27 +108,47 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
             }
 
         }
+        binding.etEmail.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                s?.let {
+                    if (it.isNotEmpty() && !isApiCalled) {
+                        isApiCalled = true
+                        commonViewModel.getToken(AppUtil.getAndroidId(requireContext()), BuildConfig.VERSION_NAME)
+                        collectTokenResponse()
+
+                    }
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
 
 
         binding.tvLogin.setOnClickListener {
+            if (AppUtil.getSavedLanguagePreference(requireContext()).contains("en")) {
+
+                AppUtil.saveLanguagePreference(requireContext(), "en")
+
+
+            } else
+                AppUtil.changeAppLanguage(
+                    requireContext(),
+                    AppUtil.getSavedLanguagePreference(requireContext())
+                )
 
             if (binding.etEmail.text.isNotEmpty() && binding.etPassword.text.isNotEmpty()) {
                 userName = binding.etEmail.text.toString().uppercase()
                 password = binding.etPassword.text.toString()
+
                 val shaPass = AppUtil.sha512Hash(password)
-                if (AppUtil.getSavedLanguagePreference(requireContext()).contains("eng")) {
-
-                    AppUtil.saveLanguagePreference(requireContext(), "en")
-
-
-                } else
-                    AppUtil.changeAppLanguage(
-                        requireContext(),
-                        AppUtil.getSavedLanguagePreference(requireContext())
-                    )
+                val saltPass = shaPass+saltPassword
+                val finalPass = AppUtil.sha512Hash(saltPass)
 
 
-                commonViewModel.getLoginAPI(LoginReq(userName,shaPass,AppUtil.getAndroidId(requireContext()),BuildConfig.VERSION_NAME,""))
+
+                commonViewModel.getLoginAPI(LoginReq(userName,finalPass,AppUtil.getAndroidId(requireContext()),BuildConfig.VERSION_NAME,""))
 
                 collectLoginResponse()
 
@@ -146,20 +179,32 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                         it.data?.let { getLoginResponse ->
                             when (getLoginResponse.responseCode) {
                                 200 -> {
+                                    val token1 = AESCryptography.decryptIntoString(getLoginResponse.appCode,AppConstant.Constants.ENCRYPT_KEY,AppConstant.Constants.ENCRYPT_IV_KEY)
 
-                                    userPreferences.updateUserId(null)
+                                   /* userPreferences.updateUserId(null)
                                     userPreferences.updateUserId(userName)
-                                    userPreferences.saveUserName(getLoginResponse.wrappedList[0].userName)
+                                    userPreferences.saveUserName(getLoginResponse.wrappedList[0].loginId)
                                     AppUtil.saveLoginStatus(requireContext(), true)
+*/
+                                    if (token == token1){
+                                        AppUtil.saveTokenPreference(requireContext(),"Bearer "+getLoginResponse.appCode)
+                                        userPreferences.updateUserId(null)
+                                        userPreferences.updateUserId(userName)
+                                        userPreferences.saveUserName(getLoginResponse.wrappedList[0].loginId)
+                                        AppUtil.saveLoginStatus(requireContext(), true)  // true means user is logged in
 
-                                    // findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToMainHomePage())
+                                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFrahment())
 
-                                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFrahment())
+
+                                    }
+                                    else toastShort("Session expired")
 
                                 }
 
                                 203 -> {
+                                    commonViewModel.getToken(AppUtil.getAndroidId(requireContext()), BuildConfig.VERSION_NAME)
                                     showSnackBar(getLoginResponse.responseDesc)
+                                    showSnackBar(getLoginResponse.responseMsg)
 
                                 }
 
@@ -168,7 +213,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                                 }
 
                                 else -> {
-                                    showSnackBar("Something went wrong")
+                                    showSnackBar(getLoginResponse.responseDesc)
                                 }
                             }
                         } ?: showSnackBar("Internal Server Error")
@@ -197,6 +242,50 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                     }
                 }
             })
+    }
+    private fun collectTokenResponse() {
+        lifecycleScope.launch {
+            collectLatestLifecycleFlow(commonViewModel.getToken) {
+                when (it) {
+                    is Resource.Loading -> showProgressBar()
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        it.error?.let { baseErrorResponse ->
+                            toastShort(baseErrorResponse.message)
+                        }
+                    }
+
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        it.data?.let { getToken ->
+                            when (getToken.responseCode) {
+                                200 -> {
+
+                                    token= AESCryptography.decryptIntoString(getToken.authToken,
+                                        AppConstant.Constants.ENCRYPT_KEY,AppConstant.Constants.ENCRYPT_IV_KEY)
+
+                                    saltPassword= AESCryptography.decryptIntoString(getToken.passString,
+                                        AppConstant.Constants.ENCRYPT_KEY,AppConstant.Constants.ENCRYPT_IV_KEY)
+
+                                }
+
+                                301 -> {
+
+                                    showSnackBar(getToken.responseDesc)
+
+
+                                }
+
+
+                                else -> {
+                                    showSnackBar("Something went wrong")
+                                }
+                            }
+                        } ?: showSnackBar("Internal Server Error")
+                    }
+                }
+            }
+        }
     }
 
 }

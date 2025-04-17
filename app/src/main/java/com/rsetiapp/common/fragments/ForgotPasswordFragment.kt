@@ -15,6 +15,7 @@ import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
 import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
+import com.rsetiapp.common.model.request.ValidateOtpReq
 import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.util.*
 import com.rsetiapp.databinding.FragmentForgotPasswordBinding
@@ -56,7 +57,12 @@ class ForgotPasswordFragment :
         }
 
         binding.tvVerify.setOnClickListener {
-            validateAndNavigate()
+
+            //changes
+            val enteredOtp = "${binding.et1.text}${binding.et2.text}${binding.et3.text}${binding.et4.text}"
+
+            commonViewModel.getOtpValidateApi(ValidateOtpReq(BuildConfig.VERSION_NAME,mobileNo,AppUtil.getAndroidId(requireContext()),enteredOtp,userId))
+            collectValidateOtpResponse()
             clearOtpFields()
         }
 
@@ -70,8 +76,7 @@ class ForgotPasswordFragment :
             userId = binding.etId.text.toString()
 
             if (mobileNo.isNotEmpty() && userId.isNotEmpty()) {
-                otp = AppUtil.generateOTP().toString()
-                commonViewModel.generateOtpAPI(OtpGenerateRequest(BuildConfig.VERSION_NAME, userId, otp, mobileNo))
+                commonViewModel.generateOtpAPI(OtpGenerateRequest(BuildConfig.VERSION_NAME, userId, mobileNo,AppUtil.getAndroidId(requireContext())))
                 collectOtpAndMobileVerifyResponse()
             } else {
                 toastShort("Please fill all fields")
@@ -86,7 +91,7 @@ class ForgotPasswordFragment :
 
             if (mobileNo.isNotEmpty() && userId.isNotEmpty()) {
                 otp = AppUtil.generateOTP().toString()
-                commonViewModel.generateOtpAPI(OtpGenerateRequest(BuildConfig.VERSION_NAME, userId, otp, mobileNo))
+                commonViewModel.generateOtpAPI(OtpGenerateRequest(BuildConfig.VERSION_NAME, userId, mobileNo,AppUtil.getAndroidId(requireContext())))
                 collectOtpAndMobileVerifyResponse()
             } else {
                 toastShort("Please fill all fields")
@@ -148,8 +153,10 @@ class ForgotPasswordFragment :
                                         binding.progressButton.root.gone()
                                     }
                                     301 -> showSnackBar("Please Update from PlayStore")
-                                    302, 201 -> toastShort(mobileVerifyRes.responseDesc)
-                                    else -> showSnackBar("Something went wrong")
+
+                                    201 -> toastShort(mobileVerifyRes.responseDesc)
+                                    203 -> toastShort(mobileVerifyRes.responseDesc)
+                                    else -> showSnackBar(mobileVerifyRes.responseDesc)
                                 }
                             } ?: showSnackBar("Internal Server Error")
                         }
@@ -194,7 +201,16 @@ class ForgotPasswordFragment :
         }
 
         binding.et4.onDone {
-            validateAndNavigate()
+
+            //changes
+            val enteredOtp = "${binding.et1.text}${binding.et2.text}${binding.et3.text}${binding.et4.text}"
+                binding.clForgotOTP.gone()
+
+            commonViewModel.getOtpValidateApi(ValidateOtpReq(BuildConfig.VERSION_NAME,mobileNo,AppUtil.getAndroidId(requireContext()),enteredOtp,userId))
+            collectValidateOtpResponse()
+               /* commonViewModel.forgetPasswordAPI(FogotPaasReq(BuildConfig.VERSION_NAME, userId))
+                collectForgotPassSendResponse()*/
+
         }
     }
 
@@ -220,7 +236,7 @@ class ForgotPasswordFragment :
                                     }
                                     301 -> showSnackBar("Please Update from PlayStore")
                                     303 -> toastLong(mobileVerifyRes.responseDesc)
-                                    else -> showSnackBar("Something went wrong")
+                                    else -> showSnackBar(mobileVerifyRes.responseDesc)
                                 }
                             } ?: showSnackBar("Internal Server Error")
                         }
@@ -253,5 +269,51 @@ class ForgotPasswordFragment :
             binding.tvVerify.gone()  // ✅ Hide Verify Button
         }
     }
+
+    private fun collectValidateOtpResponse() {
+        lifecycleScope.launch {
+            collectLatestLifecycleFlow(commonViewModel.getOtpValidateApi) {
+                when (it) {
+                    is Resource.Loading -> showProgressBar()
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        it.error?.let { baseErrorResponse ->
+                            toastShort(baseErrorResponse.message)
+                        }
+                    }
+
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        it.data?.let { getOtpValidateApi ->
+                            if (getOtpValidateApi.responseCode == 200) {
+                                toastShort(getOtpValidateApi.responseDesc)
+                                binding.clForgotOTP.gone()
+                                commonViewModel.forgetPasswordAPI(FogotPaasReq(BuildConfig.VERSION_NAME, userId))
+                                collectForgotPassSendResponse()
+
+                            } else if (getOtpValidateApi.responseCode == 301) {
+                                showSnackBar("Please Update from PlayStore")
+                            }
+
+                            else if (getOtpValidateApi.responseCode == 207) {
+                                toastShort(getOtpValidateApi.responseDesc)
+                            }
+                            else if (getOtpValidateApi.responseCode == 210) {
+                                toastShort(getOtpValidateApi.responseDesc)
+                            }
+
+
+
+                            else {
+                                showSnackBar(getOtpValidateApi.responseDesc)
+                            }
+                        } ?: showSnackBar("Internal Server Error")
+                    }
+                }
+            }
+        }
+    }
+
+
 
 }

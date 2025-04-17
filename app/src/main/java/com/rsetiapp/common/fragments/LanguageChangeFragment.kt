@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 
 import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.util.AppUtil
+import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.gone
 import com.rsetiapp.core.util.visible
 import com.rsetiapp.databinding.FragmentLanguageChangeBinding
@@ -24,6 +25,7 @@ LanguageChangeFragment : BaseFragment<FragmentLanguageChangeBinding>(FragmentLan
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        userPreferences = UserPreferences(requireContext())
 
 
 
@@ -103,6 +105,67 @@ LanguageChangeFragment : BaseFragment<FragmentLanguageChangeBinding>(FragmentLan
             )
 
         }
+
+        binding.languageTamil.setOnClickListener {
+
+            showYesNoDialog(
+                context = requireContext(),  // Use your context here (e.g., `requireContext()` in fragments)
+                title = "Coming soon",
+                message = "",
+                onYesClicked = {
+                /*    // Action for Yes button
+                    lifecycleScope.launch{
+
+                        AppUtil.changeAppLanguage(requireContext(),"hi")
+                        binding.checkIconHindi.visible()
+                        binding.checkEnglishIcon.gone()
+                        AppUtil.saveLanguagePreference(requireContext(),"hi")
+
+                        findNavController().navigateUp()
+
+
+                    }*/
+
+
+
+                },
+                onNoClicked = {
+
+                }
+            )
+
+        }
+        binding.languageAssamese.setOnClickListener {
+
+            showYesNoDialog(
+                context = requireContext(),  // Use your context here (e.g., `requireContext()` in fragments)
+                title = "Coming soon",
+                message = "",
+                onYesClicked = {
+                    /*    // Action for Yes button
+                        lifecycleScope.launch{
+
+                            AppUtil.changeAppLanguage(requireContext(),"hi")
+                            binding.checkIconHindi.visible() eb197b9cab05dac2
+                            binding.checkEnglishIcon.gone()
+                            AppUtil.saveLanguagePreference(requireContext(),"hi")
+
+                            findNavController().navigateUp()
+
+
+                        }*/
+
+
+
+                },
+                onNoClicked = {
+
+                }
+            )
+
+        }
+
+
 
 
     }

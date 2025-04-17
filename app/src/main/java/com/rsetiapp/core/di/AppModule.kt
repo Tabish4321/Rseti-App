@@ -63,7 +63,8 @@ object AppModule {
         @ApplicationContext context: Context
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(AppConstant.StaticURL.liveUrl) // Ensure this is correct
+          //  .baseUrl(AppConstant.StaticURL.liveUrl) // Ensure this is correct
+            .baseUrl(AppConstant.StaticURL.localUrl) // Ensure this is correct
             .client(
                 getRetrofitClient(
                     null, userPreferences = userPreferences,
@@ -84,7 +85,8 @@ object AppModule {
         @ApplicationContext context: Context
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(AppConstant.StaticURL.liveUrl)
+           // .baseUrl(AppConstant.StaticURL.liveUrl)
+            .baseUrl(AppConstant.StaticURL.localUrl)
             .client(
                 getRetrofitClient(null, userPreferences = userPreferences, context = context)
             )

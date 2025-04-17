@@ -36,12 +36,15 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Base64
 import android.widget.ImageView
+import androidx.navigation.fragment.findNavController
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.response.CandidateData
 import com.rsetiapp.common.model.response.CandidateSearchData
+import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.gone
+import com.rsetiapp.core.util.toastLong
 
 @AndroidEntryPoint
 class CandidateBottomSheetFragment(private val candidateList: MutableList<Candidate>, private val adapter: RecyclerView.Adapter<*>,
@@ -69,6 +72,8 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     private lateinit var etAddress: EditText
     private lateinit var etMobileNo: EditText
     private lateinit var etDob: TextView
+    lateinit var userPreferences: UserPreferences
+
 
 
 
@@ -119,10 +124,10 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
 
                 val getCandidateId = s.toString()
                 if (getCandidateId.length == 10) {
-                    commonViewModel.candidateSearchListAPI(
+                    commonViewModel.candidateSearchListAPI(AppUtil.getSavedTokenPreference(requireContext()),
                         CandidateSearchReq(
                             BuildConfig.VERSION_NAME,
-                            getCandidateId
+                            getCandidateId,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()
                         )
                     )
                     collectCandidateSearchResponse()
@@ -147,7 +152,8 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         AddCandidate.setOnClickListener {
             llCandidateSearch.gone()
 
-            commonViewModel.candidateDetailsAPI(CandidateDetailsReq(BuildConfig.VERSION_NAME,candidateId))
+            commonViewModel.candidateDetailsAPI(AppUtil.getSavedTokenPreference(requireContext()),CandidateDetailsReq(BuildConfig.VERSION_NAME,candidateId
+            ,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()))
             collectCandidateDataResponse()
 
         }
@@ -273,7 +279,12 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
 
 
                             }
+                            else if (getSearchRes.responseCode == 401) {
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
 
+                            }
+
+                            else toastLong(getSearchRes.responseDesc)
                         } ?:   Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
 
                     }
@@ -327,9 +338,11 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
 
 
                             }
+                            else if (getcandidateDetailsRes.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
                             else {
-                                Toast.makeText(requireContext(), getcandidateDetailsRes.responseDesc ?: "Error", Toast.LENGTH_SHORT).show()
-
+                                toastLong(getcandidateDetailsRes.responseDesc)
                             }
                         } ?:   Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
 

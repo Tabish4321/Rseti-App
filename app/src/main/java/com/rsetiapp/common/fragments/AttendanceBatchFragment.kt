@@ -12,7 +12,9 @@ import com.rsetiapp.common.CommonViewModel
 import com.rsetiapp.common.adapter.AttendanceBatchAdapter
 import com.rsetiapp.common.model.response.AttendanceBatch
 import com.rsetiapp.core.basecomponent.BaseFragment
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
+import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.databinding.AttendanceBatchFragmentBinding
 import kotlinx.coroutines.launch
 
@@ -23,9 +25,12 @@ class AttendanceBatchFragment :
     private val commonViewModel: CommonViewModel by activityViewModels()
 
 
+  //   lateinit var userPreferences: UserPreferences
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
 
         init()
         setupRecyclerView()
@@ -35,7 +40,7 @@ class AttendanceBatchFragment :
     private fun init(){
 
         collectAttendanceBatchResponse()
-        commonViewModel.getAttendanceBatchAPI(BuildConfig.VERSION_NAME)
+        commonViewModel.getAttendanceBatchAPI(AppUtil.getSavedTokenPreference(requireContext()),BuildConfig.VERSION_NAME,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID())
         listener()
 
     }

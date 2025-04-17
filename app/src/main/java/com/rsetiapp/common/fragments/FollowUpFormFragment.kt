@@ -44,9 +44,11 @@ import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.FollowUpType
 import com.rsetiapp.common.model.response.SalaryRange
 import com.rsetiapp.core.basecomponent.BaseFragment
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.AppUtil.getCurrentDate
 import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.UserPreferences
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.core.util.toastShort
 import com.rsetiapp.core.util.visible
 import com.rsetiapp.databinding.FragmentFollowUpBinding
@@ -127,6 +129,7 @@ class FollowUpFormFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
 
         init()
 
@@ -152,9 +155,9 @@ class FollowUpFormFragment :
         binding.tvCareOfName.text = candidate.guardianName
         binding.tvContactName.text = candidate.mobileNo
 
-        commonViewModel.getFollowTypeListAPI()
+        commonViewModel.getFollowTypeListAPI(AppUtil.getSavedTokenPreference(requireContext()),AppUtil.getAndroidId(requireContext()),userPreferences.getUseID())
         collectFollowTypeResponse()
-        commonViewModel.getFollowStatusListAPI()
+        commonViewModel.getFollowStatusListAPI(AppUtil.getSavedTokenPreference(requireContext()),AppUtil.getAndroidId(requireContext()),userPreferences.getUseID())
         collectFollowStatusResponse()
 
         binding.tvDate.text = getCurrentDate()
@@ -243,8 +246,8 @@ class FollowUpFormFragment :
             if ( selectedFollowUpType != null && selectedFollowUpStatus != null )
             {
                 if ((  selectedFollowUpStatus!!.statusId == 3) && image1Base64.isNotEmpty() ) {
-                    commonViewModel.insertFollowUpAPI(
-                        FollowUpInsertReq(
+                    commonViewModel.insertFollowUpAPI(AppUtil.getSavedTokenPreference(requireContext()),
+                        FollowUpInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
                             appVersion = BuildConfig.VERSION_NAME,
                             batchId = candidate.batchId.toString(),
                             candidateId = candidate.candidateId ?: "",
@@ -296,8 +299,9 @@ class FollowUpFormFragment :
                 }
 
                else if( (  selectedFollowUpStatus!!.statusId == 1) && reason.isNotEmpty()&& image1Base64.isNotEmpty()){
-                    commonViewModel.insertFollowUpAPI(
-                        FollowUpInsertReq(
+                    commonViewModel.insertFollowUpAPI(AppUtil.getSavedTokenPreference(requireContext()),
+                        FollowUpInsertReq(AppUtil.getAndroidId(requireContext()),
+                            userPreferences.getUseID(),
                             appVersion = BuildConfig.VERSION_NAME,
                             batchId = candidate.batchId.toString(),
                             candidateId = candidate.candidateId ?: "",
@@ -355,8 +359,9 @@ class FollowUpFormFragment :
                     getFormData()
 
 
-                    commonViewModel.insertFollowUpAPI(
-                        FollowUpInsertReq(
+                    commonViewModel.insertFollowUpAPI(AppUtil.getSavedTokenPreference(requireContext()),
+                        FollowUpInsertReq(AppUtil.getAndroidId(requireContext())
+                            ,userPreferences.getUseID(),
                             appVersion = BuildConfig.VERSION_NAME,
                             batchId = candidate.batchId.toString(),
                             candidateId = candidate.candidateId ?: "",
@@ -442,8 +447,11 @@ class FollowUpFormFragment :
                                     followUpTypeAdapter.notifyDataSetChanged()
                                 } else if (getFollowUpTypeList.responseCode == 301) {
                                     showSnackBar("Please Update from PlayStore")
-                                } else {
-                                    showSnackBar(getFollowUpTypeList.responseDesc)
+                                }   else if (getFollowUpTypeList.responseCode==401){
+                                    AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                                }
+                                else {
+                                    toastLong(getFollowUpTypeList.responseDesc)
                                 }
                             } ?: showSnackBar("Internal Server Error")
                         }
@@ -477,8 +485,11 @@ class FollowUpFormFragment :
                                     followUpStatusAdapter.notifyDataSetChanged()
                                 } else if (getFollowUpStatusList.responseCode == 301) {
                                     showSnackBar("Please Update from PlayStore")
-                                } else {
-                                    showSnackBar(getFollowUpStatusList.responseDesc)
+                                }  else if (getFollowUpStatusList.responseCode==401){
+                                    AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                                }
+                                else {
+                                    toastLong(getFollowUpStatusList.responseDesc)
                                 }
                             } ?: showSnackBar("Internal Server Error")
                         }
@@ -510,8 +521,12 @@ class FollowUpFormFragment :
                                     showSnackBar(insertApiResp.responseDesc)
                                 } else if (insertApiResp.responseCode == 301) {
                                     showSnackBar("Please Update from PlayStore")
-                                } else {
-                                    showSnackBar("Internal Server Error 1111")
+
+                                }  else if (insertApiResp.responseCode==401){
+                                    AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                                }
+                                else {
+                                    toastLong(insertApiResp.responseDesc)
                                 }
                             } ?: showSnackBar("Internal Server Error")
                         }
@@ -552,87 +567,47 @@ class FollowUpFormFragment :
             }
         }
 
-        private fun openCamera(imageView: ImageView) {
-            checkAndRequestPermissions()
+    private fun openCamera(imageView: ImageView) {
+        checkAndRequestPermissions()
 
-            currentImageView = imageView  // ✅ Store the clicked ImageView
+        currentImageView = imageView
 
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(), Manifest.permission.CAMERA
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                Toast.makeText(requireContext(), "Camera permission required!", Toast.LENGTH_SHORT)
-                    .show()
-                return
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            Toast.makeText(requireContext(), "Camera permission required!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraLauncher.launch(intent)  // No extra output, no file
+    }
+
+
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val bitmap = result.data?.extras?.get("data") as? Bitmap
+            if (bitmap == null || currentImageView == null) {
+                Toast.makeText(requireContext(), "Image capture failed!", Toast.LENGTH_SHORT).show()
+                return@registerForActivityResult
             }
 
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            val photoFile = createImageFile()
-            imageUri = FileProvider.getUriForFile(
-                requireContext(), "${requireContext().packageName}.provider", photoFile
-            )
+            val compressedBitmap = compressBitmap(bitmap)
+            currentImageView?.setImageBitmap(compressedBitmap)
 
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            val base64Image = bitmapToBase64(compressedBitmap)
 
-            cameraLauncher.launch(intent) // ✅ Launch the camera
-        }
-
-        private fun createImageFile(): File {
-            val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            return File.createTempFile("IMG_${System.currentTimeMillis()}", ".jpg", storageDir)
-                .apply {
-                    imageUri = FileProvider.getUriForFile(
-                        requireContext(), "${requireContext().packageName}.provider", this
-                    )
-                }
-        }
-
-        private val cameraLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    if (imageUri == null || currentImageView == null) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Image capture failed!",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
-                        return@registerForActivityResult
-                    }
-
-                    val bitmap = uriToBitmap(imageUri!!)
-                    bitmap?.let { compressedBitmap ->
-                        currentImageView?.setImageBitmap(compressedBitmap) // ✅ Set the image
-
-                        val base64Image = bitmapToBase64(compressedBitmap) // Convert to Base64
-
-                        // ✅ Check which ImageView was clicked and store Base64 accordingly
-                        when (currentImageView?.id) {
-                            R.id.image1 -> {
-                                image1Base64 = base64Image
-
-                            }
-                        }
-
-                        getCurrentLocation()
-                        binding.lllatLang.visible()
-                        binding.llAdress.visible()
-                    }
+            when (currentImageView?.id) {
+                R.id.image1 -> {
+                    image1Base64 = base64Image
                 }
             }
 
-        private fun uriToBitmap(uri: Uri): Bitmap? {
-            return try {
-                val inputStream = requireContext().contentResolver.openInputStream(uri)
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                inputStream?.close()
-                compressBitmap(bitmap)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            }
+            getCurrentLocation()
+            binding.lllatLang.visible()
+            binding.llAdress.visible()
         }
+    }
 
         private fun compressBitmap(bitmap: Bitmap): Bitmap {
             return try {

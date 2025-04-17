@@ -12,7 +12,10 @@ import com.rsetiapp.common.CommonViewModel
 import com.rsetiapp.common.adapter.AttendanceCandidateAdapter
 import com.rsetiapp.common.model.response.Candidate
 import com.rsetiapp.core.basecomponent.BaseFragment
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
+import com.rsetiapp.core.util.UserPreferences
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.databinding.AttendanceCandidateFragmentBinding
 import kotlinx.coroutines.launch
 
@@ -27,11 +30,12 @@ class AttendanceCandidateFragment  :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
 
         batchId = arguments?.getString("batchId").toString()
         batchName = arguments?.getString("batchName").toString()
 
-        commonViewModel.getAttendanceCandidate(BuildConfig.VERSION_NAME,batchId)
+        commonViewModel.getAttendanceCandidate(AppUtil.getSavedTokenPreference(requireContext()),BuildConfig.VERSION_NAME,batchId,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID())
         collectAttendanceBatchResponse()
 
         init()
@@ -79,6 +83,12 @@ class AttendanceCandidateFragment  :
                                 candidateListAdapter.notifyDataSetChanged()
                             } else if (getAttendanceBatchAPI.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
+                            }
+                            else if (getAttendanceBatchAPI.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getAttendanceBatchAPI.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }

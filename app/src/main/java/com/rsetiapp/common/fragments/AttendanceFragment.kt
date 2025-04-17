@@ -63,6 +63,7 @@ import com.rsetiapp.core.util.toastShort
 import com.rsetiapp.databinding.FragmentVerifyUserAttendanceBinding
 import com.rsetiapp.core.geoFancing.GeofenceHelper
 import com.rsetiapp.core.util.AppUtil
+import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.copyToClipboard
 import com.rsetiapp.core.util.gone
 import kotlinx.coroutines.Dispatchers
@@ -132,6 +133,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         startClock()
+        userPreferences = UserPreferences(requireContext())
 
         binding.tvCurrentDate.text= AppUtil.getCurrentDateForAttendance()
         candidateId = arguments?.getString("candidateId").toString()
@@ -144,7 +146,8 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         batchId = arguments?.getString("batchId").toString()
         candidateRollNo = arguments?.getString("candidateRollNo").toString()
         aadhaarNo = arguments?.getString("aadhaarNo").toString()
-        commonViewModel.getAttendanceCheckStatus(AttendanceCheckReq(BuildConfig.VERSION_NAME,batchId,candidateId))
+        commonViewModel.getAttendanceCheckStatus(AppUtil.getSavedTokenPreference(requireContext()),AttendanceCheckReq(BuildConfig.VERSION_NAME,batchId,candidateId
+        ,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()))
         collectAttendanceStatusResponse()
         checkAttendanceEligibility()
 
@@ -593,7 +596,8 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                         if (attendanceFlag== "checkin"){
 
 
-                                            commonViewModel.getInsertAttendance(AttendanceInsertReq(BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkin",
+                                            commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
+                                                BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkin",
                                                 formattedTime,"","",candidateName))
                                         }
                                         else{
@@ -607,7 +611,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                             val totalHoursValue = String.format("%02d:%02d:00", hours, minutes) // Format as HH:mm:ss
                                             toastLong(totalHoursValue)
 
-                                            commonViewModel.getInsertAttendance(AttendanceInsertReq(BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkout",
+                                            commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkout",
                                                 "",formattedTime,totalHoursValue,candidateName))
                                         }
 
@@ -777,8 +781,11 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                 }
 
 
-                            } else {
-                                showSnackBar(getAttendanceCheckStatus.responseDesc)
+                            }   else if (getAttendanceCheckStatus.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getAttendanceCheckStatus.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
@@ -810,8 +817,11 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                                 userPhotoUIADI?.let { showBottomSheet(it,name,gender,dob,careOf) }
 
-                            } else {
-                                showSnackBar(getInsertAttendance.responseDesc)
+                            }   else if (getInsertAttendance.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getInsertAttendance.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }

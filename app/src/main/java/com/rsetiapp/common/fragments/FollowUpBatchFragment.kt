@@ -13,11 +13,14 @@ import com.rsetiapp.common.CommonViewModel
 import com.rsetiapp.common.adapter.BatchAdapter
 import com.rsetiapp.common.model.response.Batch
 import com.rsetiapp.core.basecomponent.BaseFragment
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.AppUtil.convertMonthNumberToFullName
 import com.rsetiapp.core.util.AppUtil.extractMonthFromDate
 import com.rsetiapp.core.util.AppUtil.extractYearFromDate
 import com.rsetiapp.core.util.AppUtil.getCurrentYear
 import com.rsetiapp.core.util.Resource
+import com.rsetiapp.core.util.UserPreferences
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.databinding.FragmentFollowUpBatchBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -43,6 +46,7 @@ class FollowUpBatchFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
 
         formName = arguments?.getString("formName").toString()
 
@@ -117,7 +121,7 @@ class FollowUpBatchFragment :
 
     @SuppressLint("NotifyDataSetChanged")
     private fun collectBatchesData() {
-        commonViewModel.getBatchAPI(BuildConfig.VERSION_NAME, userPreferences.getUseID())
+        commonViewModel.getBatchAPI(AppUtil.getSavedTokenPreference(requireContext()),BuildConfig.VERSION_NAME, userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
         lifecycleScope.launch {
             commonViewModel.getBatchAPI.collectLatest { resource ->
                 when (resource) {
@@ -142,8 +146,11 @@ class FollowUpBatchFragment :
                                 batchAdapter.notifyDataSetChanged()
                             } else if (getBatchResponse.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar(getBatchResponse.responseDesc ?: "")
+                            }  else if (getBatchResponse.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getBatchResponse.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }

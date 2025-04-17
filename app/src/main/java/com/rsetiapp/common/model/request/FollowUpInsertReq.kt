@@ -30,7 +30,8 @@ data class FollowUpInsertReq(
 */
 
 
-
+    val imeiNo :String,
+    val login: String,
     val appVersion: String,
     val batchId: String,
     val candidateId: String,

@@ -18,6 +18,7 @@ import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.UserPreferences
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.databinding.EapListFragmentBinding
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -38,6 +39,7 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
 
 
 
@@ -57,7 +59,7 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = eapAdapter
 
-        commonViewModel.eapDetailsAPI(EapListReq(BuildConfig.VERSION_NAME, userPreferences.getUseID()))
+        commonViewModel.eapDetailsAPI(AppUtil.getSavedTokenPreference(requireContext()),EapListReq(BuildConfig.VERSION_NAME, userPreferences.getUseID(),AppUtil.getAndroidId(requireContext())))
         collectEapListResponse()
     }
 
@@ -129,8 +131,11 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
                                 eapList.clear()  // Clear old data
                                 eapList.addAll(getEapResponse.wrappedList)  // Add new data
                                 eapAdapter.notifyDataSetChanged()  // Notify RecyclerView
-                            } else {
-                                showSnackBar(getEapResponse.responseDesc ?: "Error")
+                            }  else if (getEapResponse.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getEapResponse.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
