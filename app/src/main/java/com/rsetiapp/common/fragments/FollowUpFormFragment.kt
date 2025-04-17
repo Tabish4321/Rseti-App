@@ -69,7 +69,6 @@ class FollowUpFormFragment :
     private lateinit var followUpTypeAdapter: ArrayAdapter<String>
     private var selectedFollowUpType: FollowUpType? = null
 
-
     //Follow Up Status var
     private var followUpStatusList: List<FollowUpStatus> = mutableListOf()
     private var followUpStatusName = ArrayList<String>()
@@ -510,8 +509,12 @@ class FollowUpFormFragment :
                                     showSnackBar(insertApiResp.responseDesc)
                                 } else if (insertApiResp.responseCode == 301) {
                                     showSnackBar("Please Update from PlayStore")
-                                } else {
-                                    showSnackBar("Internal Server Error 1111")
+                                }
+                                else if (insertApiResp.responseCode == 206) {
+                                    showSnackBar(insertApiResp.responseDesc)
+                                }
+                                else {
+                                    showSnackBar(insertApiResp.responseDesc)
                                 }
                             } ?: showSnackBar("Internal Server Error")
                         }

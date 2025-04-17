@@ -28,8 +28,11 @@ import com.karumi.dexter.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.model.request.BankIFSCSearchReq
 import com.rsetiapp.common.model.request.SalaryRangeReq
+import com.rsetiapp.common.model.request.SettleStatusRequest
 import com.rsetiapp.common.model.response.BankDetailsList
 import com.rsetiapp.common.model.response.SalaryRange
+import com.rsetiapp.common.model.response.sattlementStatus
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.gone
 import com.rsetiapp.core.util.toastShort
@@ -66,10 +69,14 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
     private lateinit var selectedImageView: ImageView
     private val PICK_IMAGE_REQUEST = 1
 
-    // self service adapter
+  /*  // self service adapter(static)
     private lateinit var selfAndServiceAdapter: ArrayAdapter<String>
-    private val selfAndServiceList = listOf("SelfSettled", "Settled In service")
+    private val selfAndServiceList = listOf("SelfSettled","Self Help Group","Bank", "Settled In service")
+    */
 
+    //Status from API Adapter
+    // Member variables
+    private lateinit var allStatusAdapter: ArrayAdapter<String>
 
     private  lateinit var accountStatusAdapter: ArrayAdapter<String>
     private val accountStatusList = listOf("Active", "InActive")
@@ -82,7 +89,10 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
 
     private lateinit var salaryRangeAdapter: ArrayAdapter<String>
     private var SalaryRangeList : List<SalaryRange> = listOf()
+    private var sattalementStatusList : List<sattlementStatus> = listOf()
     private var SalaryRangeNameList = ArrayList<String>()
+    private var  statusNames  = ArrayList<String>()
+    private var  statusId  = ArrayList<String>()
     private var SalaryRangeIdList = ArrayList<String>()
 
 
@@ -112,14 +122,12 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
     ): View {
         return inflater.inflate(R.layout.settlement_bottomsheet_layout, container, false)
     }
-
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        commonViewModel.getSettlementStatus(SettleStatusRequest(BuildConfig.VERSION_NAME,"BANKADMIN",AppUtil.getAndroidId(requireContext())))
+        collectSettlementStatusResponse()
         commonViewModel.getSalaryRange(SalaryRangeReq(BuildConfig.VERSION_NAME))
-
         collectSalaryRangeResponse()
 
         // ✅ Load saved data and prefill the form
@@ -157,10 +165,17 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
 
 
         //Adapter Follow Up Status
-        selfAndServiceAdapter = ArrayAdapter(
-            requireContext(), android.R.layout.simple_spinner_dropdown_item, selfAndServiceList
+
+
+
+        allStatusAdapter = ArrayAdapter(
+            requireContext(), android.R.layout.simple_spinner_dropdown_item, statusNames
         )
-        spinnerStatus.setAdapter(selfAndServiceAdapter)
+        spinnerStatus.setAdapter(allStatusAdapter)
+
+        spinnerStatus.setOnItemClickListener { parent, view, position, id ->
+            selectedStatusItem = parent.getItemAtPosition(position).toString()
+        }
 
 
 
@@ -194,6 +209,15 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
         // salary adapter
         salaryRangeAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_spinner_dropdown_item,SalaryRangeNameList)
         spinnerEarning.setAdapter(salaryRangeAdapter)
+
+
+/*
+
+        //Dynamic data from API for all the status
+        allStatusAdapter=   ArrayAdapter(requireContext(),android.R.layout.simple_spinner_dropdown_item,allStatusList)
+        spinnerEarning.setAdapter(allStatusAdapter)
+*/
+
 
 
         etCreditFromBank.addTextChangedListener(object : TextWatcher {
@@ -256,7 +280,7 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
             if (selectedStatusItem.isEmpty()) {
                 Toast.makeText(requireContext(), "Please select status.", Toast.LENGTH_SHORT).show()
             }
-           else if (selectedStatusItem == "SelfSettled") {
+           else if (selectedStatusItem == "Self Settled") {
                 if (selectedSelfInvestmentItem.isNotEmpty() &&
                     SelectedCreditFromBankItem.isNotEmpty() &&
                     selectedUpperCaseIfscText.isNotEmpty() &&
@@ -302,7 +326,7 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
                     Toast.makeText(requireContext(), "Kindly fill all details", Toast.LENGTH_SHORT).show()
                 }
             }
-            else if (selectedStatusItem=="Settled In service"){
+            else if (selectedStatusItem=="Settled in service"){
                 if (selectedUpperCaseIfscText.isNotEmpty() &&
                     selectedLoanAcc.isNotEmpty() &&
                     selectedCity.isNotEmpty() &&
@@ -366,7 +390,7 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
 
 
             // Check if the selected item is "Settled In service"
-            if (selectedStatusItem.equals("Settled In service", ignoreCase = true)) {
+            if (selectedStatusItem.equals("Settled in service", ignoreCase = true)) {
                 // Hide the self-investment section
                 llselfInvestment.visibility = View.GONE
                 llBankinvestment.visibility =View.GONE
@@ -381,7 +405,7 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
                 ivSettlementPhoto.visibility = View.GONE
 
             }
-             else if(selectedStatusItem.equals("SelfSettled", ignoreCase = true )) { llselfInvestment.visibility = View.VISIBLE
+             else if(selectedStatusItem.equals("Self Settled", ignoreCase = true )) { llselfInvestment.visibility = View.VISIBLE
                 llBankinvestment.visibility = View.VISIBLE
                 llTotal.visibility = View.VISIBLE
                 settleText.visibility = View.VISIBLE
@@ -437,10 +461,12 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
     private fun collectBankDetailResponse() {
         lifecycleScope.launch {
             commonViewModel.getbankIFSCAPI.collectLatest { it ->
+
                 when (it) {
                     is Resource.Loading -> Toast.makeText(requireContext(), "", Toast.LENGTH_SHORT).show()
                     is Resource.Error -> {
-                     //   hideProgressBar()
+
+                     //hideProgressBar()
                         Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
 
                     }
@@ -544,6 +570,73 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
             }
         }
     }
+
+
+    private fun collectSettlementStatusResponse() {
+        lifecycleScope.launch {
+            commonViewModel.getSettlementStatusState.collectLatest { it ->
+                when (it) {
+                    is Resource.Loading -> Toast.makeText(requireContext(), "", Toast.LENGTH_SHORT).show()
+
+                    //showProgressBar()
+                    is Resource.Error -> {
+                        //  hideProgressBar()
+                        Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
+
+                    }
+                    is Resource.Success -> {
+                        //  hideProgressBar()
+                        it.data?.let { getSettlementStatusState ->
+                            if (getSettlementStatusState.responseCode == 200) {
+                                sattalementStatusList= getSettlementStatusState.wrappedList
+
+
+
+                                for (x in sattalementStatusList) {
+                                    statusNames.add(x.status)
+                                    statusId.add(x.statusId.toString())
+                                }
+                                // ✅ Retrieve saved salary range from the database
+                                val savedSalaryRangeId = getSavedSalaryRangeIdFromDB()
+
+                                if (savedSalaryRangeId.isNotEmpty()) {
+                                    val savedIndex = SalaryRangeIdList.indexOf(savedSalaryRangeId)
+                                    if (savedIndex != -1) {
+                                        // ✅ Set the saved salary range in the spinner
+                                        spinnerEarning.setText(SalaryRangeNameList[savedIndex], false)
+                                        selectedRangeId = savedSalaryRangeId
+                                    }
+
+                                    // ✅ Ask the user if they want to update their salary range
+                                    showSalaryUpdateDialog()
+                                }
+
+
+                            }
+                            else if (getSettlementStatusState.responseCode == 301) {
+                                Toast.makeText(requireContext(), getSettlementStatusState.responseMsg, Toast.LENGTH_SHORT).show()
+
+
+                            }
+                            else if (getSettlementStatusState.responseCode==401){
+
+                                //Session Management
+
+                                Toast.makeText(requireContext(), getSettlementStatusState.responseMsg, Toast.LENGTH_SHORT).show()
+
+
+                            }
+
+
+
+                        } ?:   Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
+
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun getSavedSalaryRangeIdFromDB(): String {
         val sharedPreferences = requireContext().getSharedPreferences("UserPreferences", Activity.MODE_PRIVATE)

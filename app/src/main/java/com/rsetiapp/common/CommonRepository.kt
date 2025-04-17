@@ -31,6 +31,7 @@ import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
+import com.rsetiapp.common.model.request.SettleStatusRequest
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
 import com.rsetiapp.common.model.response.BankIFSCSearchRes
@@ -54,6 +55,7 @@ import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.SalaryRangeRes
+import com.rsetiapp.common.model.response.SettleStatusResponse
 import com.rsetiapp.core.data.local.database.AppDatabase
 import com.rsetiapp.core.data.remote.AppLevelApi
 import com.rsetiapp.core.di.AppModule
@@ -245,6 +247,9 @@ class CommonRepository @Inject constructor(
     }
 
 
-
-
+    suspend fun  getSettlementStatusAPI(settleStatusRequest: SettleStatusRequest) : Flow<Resource<out SettleStatusResponse>>{
+        return  networkBoundResourceWithoutDb {
+            appLevelApi.candidateSettleStatus(settleStatusRequest)
+        }
+    }
 }

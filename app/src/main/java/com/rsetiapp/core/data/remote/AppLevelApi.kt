@@ -22,6 +22,7 @@ import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
+import com.rsetiapp.common.model.request.SettleStatusRequest
 import com.rsetiapp.common.model.request.StateListReq
 import com.rsetiapp.common.model.request.VillageReq
 import com.rsetiapp.common.model.response.BankIFSCSearchRes
@@ -47,6 +48,7 @@ import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.SalaryRangeRes
+import com.rsetiapp.common.model.response.SettleStatusResponse
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
@@ -70,19 +72,24 @@ interface AppLevelApi {
     @POST("stateList")
     suspend fun getStateListAPI(@Body stateListReq: StateListReq): StateDataResponse
 
+
     @POST("districtList")
     suspend fun getDistrictListAPI(@Body districtReq: DistrictReq): DistrictResponse
 
+
     @POST("blockList")
     suspend fun getBlockListAPI(@Body blockReq: BlockReq): BlockResponse
+
 
 
     @POST("gramPanchayatList")
     suspend fun getGpListAPI(@Body gramPanchayatReq: GramPanchayatReq): grampanchayatResponse
 
 
+
     @POST("villageList")
     suspend fun getVillageListAPI(@Body villageReq: VillageReq): VillageResponse
+
 
 
     @POST("program")
@@ -92,33 +99,43 @@ interface AppLevelApi {
     @POST("eapautofetch")
     suspend fun getEapAutoFetchListAPI(@Body eapAutofetchReq: EapAutofetchReq): EapAutoFetchRes
 
+
     @POST("insertEap")
     suspend fun insertEAPAPI(@Body eapInsertRequest: EAPInsertRequest): EAPInsertResponse
+
 
     @POST("verifiyMobile")
     suspend fun generateOtpAPI(@Body otpGenerateRequest: OtpGenerateRequest): OtpGenerateResponse
 
+
     @POST("forgetPassword")
     suspend fun forgetPasswordAPI(@Body fogotPaasReq: FogotPaasReq): ForgotPassresponse
+
 
     @POST("batchList")
     suspend fun getFollowUpBatchListAPI(@Body batchListReq: BatchListReq): BatchListResponse
 
+
     @POST("batchCandidateList")
     suspend fun getFollowUpCandidateListAPI(@Body candidateListReq: CandidateListReq): CandidateListResponse
+
 
     @POST("candidateList")
     suspend fun candidateSearchListAPI(@Body candidateSearchReq: CandidateSearchReq): CandidateSearchResp
 
 
+
     @POST("candidateDetails")
     suspend fun candidateDetailsAPI(@Body candidateDetailsReq: CandidateDetailsReq): CandidateDetailsRes
+
 
     @POST("eapDetails")
     suspend fun eapDetailsAPI(@Body eapListReq: EapListReq): EapListResponse
 
+
     @POST("followUpType")
     suspend fun getFollowTypeListAPI(@Body followUpTypeReq: FollowUpTypeReq): FollowUpTypeResp
+
 
     @POST("followUpStatus")
     suspend fun getFollowStatusListAPI(@Body followUpTypeReq: FollowUpTypeReq): FollowUpStatusResp
@@ -129,23 +146,39 @@ interface AppLevelApi {
     suspend fun bankIFSCAPI(@Body bankIFSCSearchReq: BankIFSCSearchReq): BankIFSCSearchRes
 
 
+
     @POST("onGoingBatchList")
     suspend fun getAttendanceBatch(@Body attendanceBatchReq: AttendanceBatchReq): AttendanceBatchRes
+
+
 
     @POST("onGoingBatchCandidateList")
     suspend fun getAttendanceCandidate(@Body attendanceCandidateReq: AttendanceCandidateReq): AttendanceCandidateRes
 
+
+
     @POST("insertFollowUp")
     suspend fun insertFollowUpAPI(@Body followUpInsertReq: FollowUpInsertReq): FollowUpInsertRes
+
 
     @POST("attandanceCheck")
     suspend fun getAttendanceCheckStatus( @Body attendanceCheckReq: AttendanceCheckReq): AttendanceCheckRes
 
 
+
     @POST("insertAttandance")
     suspend fun getInsertAttendance( @Body attendanceInsertReq: AttendanceInsertReq): AttendanceInsertRes
+
+
+
     @POST("salaryRange")
     suspend fun salaryRangeDetails(@Body salaryRangeReq: SalaryRangeReq) : SalaryRangeRes
+
+
+
+    @POST("candidateSettleStatus")
+    suspend fun candidateSettleStatus(@Body settleStatusRequest: SettleStatusRequest) : SettleStatusResponse
+
 
     @POST
     suspend fun postOnAUAFaceAuthNREGA(

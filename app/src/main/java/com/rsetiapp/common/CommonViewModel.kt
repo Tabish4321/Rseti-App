@@ -23,6 +23,7 @@ import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
+import com.rsetiapp.common.model.request.SettleStatusRequest
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
 import com.rsetiapp.common.model.response.AttendanceCheckRes
@@ -45,10 +46,14 @@ import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.SalaryRangeRes
+import com.rsetiapp.common.model.response.SettleStatusResponse
 import com.rsetiapp.core.util.Resource
+import com.rsetiapp.core.util.networkBoundResourceWithoutDb
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -408,6 +413,26 @@ private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>
             }
         }
     }
+
+
+    // Private mutable state
+    private var _getSettlementStatusState = MutableStateFlow<Resource<out SettleStatusResponse>>(Resource.Loading())
+    val getSettlementStatusState = _getSettlementStatusState.asStateFlow()
+
+    // Function to fetch the data
+
+    fun getSettlementStatus(settleStatusRequest: SettleStatusRequest) {
+        viewModelScope.launch {
+            commonRepository.getSettlementStatusAPI(settleStatusRequest).collectLatest {
+                _getSettlementStatusState.emit(it)
+            }
+        }
+    }
+
+
+
+
+
 
 
 
