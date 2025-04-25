@@ -44,9 +44,6 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         userPreferences = UserPreferences(requireContext())
-
-
-
         init()
         handleBackPress()
     }

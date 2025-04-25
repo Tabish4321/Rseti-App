@@ -21,6 +21,10 @@ android {
 
         // ✅ Ensure this is correctly set for Android instrumented tests
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // ✅ Correct Kotlin DSL syntax for keeping all language resources
+        resourceConfigurations += listOf("en", "hi", "as", "bn", "gu", "kn", "ml", "mr", "or", "pa", "ta", "te", "ur")
+
     }
 
     buildTypes {
