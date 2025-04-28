@@ -1,6 +1,9 @@
 package com.rsetiapp.common.fragments
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -206,7 +209,8 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                                 }
 
                                 301 -> {
-                                    showSnackBar(getLoginResponse.responseDesc)
+                                  //  showSnackBar(getLoginResponse.responseDesc)
+                                    showUpdateDialog()
                                 }
 
                                 else -> {
@@ -284,5 +288,29 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
             }
         }
     }
+    private fun showUpdateDialog() {
+        val builder = AlertDialog.Builder(requireContext()) // 🔥 use requireContext() inside Fragment
+        builder.setTitle("Update Available")
+        builder.setMessage("A new version of the app is available. Please update to continue.")
 
+        builder.setPositiveButton("Update") { dialog, _ ->
+            val appPackageName = "com.kaushalpanjee"
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName"))
+                intent.setPackage("com.android.vending")
+                startActivity(intent)
+            } catch (e: Exception) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName&hl=en_IN"))
+                startActivity(intent)
+            }
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.setCancelable(false)
+        builder.create().show()
+    }
 }
