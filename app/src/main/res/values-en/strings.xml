@@ -81,7 +81,6 @@
     <string name="delete">Delete</string>
     <string name="delete_candidate">Delete Candidate?</string>
     <string name="submit_details">Submit Details</string>
-
     <string name="statush">Status</string>
     <string name="selectForInvestment">Select For Investment Type</string>
     <string name="SelfInvestment">Self Investment</string>
@@ -171,4 +170,5 @@
     <string name="_00_00_am">00:00 AM</string>
     <string name="attendance_mode">Attendance Mode<font color='#FF0000'>*</font></string>
     <string name="select_attendance_mode">Select Attendance Mode</string>
+    <string name="select_branch_name">Select Branch Name</string>
 </resources>

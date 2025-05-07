@@ -58,6 +58,7 @@ import com.rsetiapp.common.model.request.Candidate
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.response.Program
 import com.rsetiapp.core.util.AppUtil
+import com.rsetiapp.core.util.AppUtil.getCurrentDate
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.core.util.visible
@@ -223,6 +224,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     @SuppressLint("SetTextI18n")
     private fun listener(){
 
+        val currentDate= getCurrentDate()
+        binding.tvDate.text = currentDate
 
         binding.eapIdName.text= eapId
         //Submit Button
@@ -374,6 +377,11 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         binding.spinnerState.setOnItemClickListener { parent, view, position, id ->
             selectedStateItem = parent.getItemAtPosition(position).toString()
             if (position in state.indices) {
+
+               block.clear()
+                gp.clear()
+                village.clear()
+
                 selectedStateCodeItem = stateCode[position]
                 selectedStateLgdCodeItem = stateLgdCode[position]
                 commonViewModel.getDistrictListApi(AppUtil.getSavedTokenPreference(requireContext()),selectedStateCodeItem,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
@@ -418,6 +426,10 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         binding.spinnerDistrict.setOnItemClickListener { parent, view, position, id ->
             selectedDistrictItem = parent.getItemAtPosition(position).toString()
             if (position in district.indices) {
+
+                gp.clear()
+                village.clear()
+
                 selectedDistrictCodeItem = districtCode[position]
                 selectedDistrictLgdCodeItem = districtLgdCode[position]
                 commonViewModel.getBlockListApi(AppUtil.getSavedTokenPreference(requireContext()),selectedDistrictCodeItem,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
@@ -453,6 +465,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         binding.spinnerBlock.setOnItemClickListener { parent, view, position, id ->
             selectedBlockItem = parent.getItemAtPosition(position).toString()
             if (position in block.indices) {
+                village.clear()
                 selectedBlockCodeItem = blockCode[position]
                 selectedbBlockLgdCodeItem = blockLgdCode[position]
                 commonViewModel.getGpListApi(AppUtil.getSavedTokenPreference(requireContext()),selectedBlockCodeItem,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
@@ -523,11 +536,9 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
 
 
-        binding.tvDate.setOnClickListener {
 
-            showDatePicker(binding.tvDate)
 
-        }
+
 
 
         binding.image1.setOnClickListener {

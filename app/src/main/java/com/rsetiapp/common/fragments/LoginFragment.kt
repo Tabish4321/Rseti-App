@@ -138,6 +138,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                     AppUtil.getSavedLanguagePreference(requireContext())
                 )
 
+
             if (binding.etEmail.text.isNotEmpty() && binding.etPassword.text.isNotEmpty()) {
                 userName = binding.etEmail.text.toString().uppercase()
                 password = binding.etPassword.text.toString()

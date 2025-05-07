@@ -31,7 +31,6 @@ class AttendanceCandidateFragment  :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         userPreferences = UserPreferences(requireContext())
-
         batchId = arguments?.getString("batchId").toString()
         batchName = arguments?.getString("batchName").toString()
 

@@ -49,6 +49,7 @@ abstract class BaseFragment<VB : ViewBinding>(private val bindingInflater: (infl
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         _binding = bindingInflater.invoke(inflater)
         if (_binding == null)
             throw IllegalArgumentException("Binding cannot be null")

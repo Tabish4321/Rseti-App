@@ -118,6 +118,7 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         return inflater.inflate(R.layout.settlement_bottomsheet_layout, container, false)
     }
 
@@ -125,6 +126,7 @@ class MySattelementBottomSheet: BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
 
         commonViewModel.getSalaryRange(AppUtil.getSavedTokenPreference(requireContext()),SalaryRangeReq(BuildConfig.VERSION_NAME,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()))
 

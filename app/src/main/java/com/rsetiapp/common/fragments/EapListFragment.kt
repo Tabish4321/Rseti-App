@@ -21,7 +21,11 @@ import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.databinding.EapListFragmentBinding
 import kotlinx.coroutines.launch
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBinding::inflate) {
     private val commonViewModel: CommonViewModel by activityViewModels()
@@ -65,53 +69,47 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
 
     @SuppressLint("SuspiciousIndentation", "DefaultLocale")
     private fun getValue(eapItem: EapList) {
-
         eapIdValue = eapItem.eapID
-        eapDateValue = eapItem.monthYear // Example: "08/2025"
+        eapDateValue = eapItem.monthYear // Example: "24/05/2024"
         eapStatusValue = eapItem.status
 
-        // Get current month and year
-        val calendar = Calendar.getInstance()
-        val currentMonth = String.format("%02d", calendar.get(Calendar.MONTH) + 1) // Ensure two digits (01, 02, ..., 12)
-        val currentYear = calendar.get(Calendar.YEAR).toString()
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        sdf.isLenient = false
 
-        // Extract month and year from eapDateValue
-        val parts = eapDateValue.split("/")
-        val eapMonth = parts[0]  // "08"
-        val eapYear = parts[1]   // "2025"
-/*
-         //Changes for testing
-        // For Open all Eap List testing
-        findNavController().navigate(
-            EapListFragmentDirections.actionEapListFragmentToEAPAwarnessFormFragment(
-                formName,
-                eapIdValue
-            )
-        )*/
-        // Check both conditions: status must be Active & date must match current month/year
-        if (eapStatusValue == "Active" && eapMonth == currentMonth && eapYear == currentYear) {
-            findNavController().navigate(
-                EapListFragmentDirections.actionEapListFragmentToEAPAwarnessFormFragment(
-                    formName,
-                    eapIdValue
+        val currentDate = sdf.format(Date()) // Gets today's date in dd/MM/yyyy format
+
+        try {
+            val eapDate = sdf.parse(eapDateValue)
+            val todayDate = sdf.parse(currentDate)
+
+            if (eapStatusValue == "Active" && eapDate == todayDate) {
+                findNavController().navigate(
+                    EapListFragmentDirections.actionEapListFragmentToEAPAwarnessFormFragment(
+                        formName,
+                        eapIdValue
+                    )
                 )
-            )
-        }
-        else if (eapStatusValue == "Expired"){
-
-            AppUtil.showAlertDialog(requireContext(),"Alert","Eap Expired")
-
-        }
-        else if (eapStatusValue == "Completed"){
-
-            AppUtil.showAlertDialog(requireContext(),"Alert","Eap Completed")
-
-        }
-
-        else {
-            showMismatchAlert(requireContext(), eapMonth, eapYear, currentMonth, currentYear)
+            } else if (eapStatusValue == "Expired") {
+                AppUtil.showAlertDialog(requireContext(), "Alert", "Eap Expired")
+            } else if (eapStatusValue == "Completed") {
+                AppUtil.showAlertDialog(requireContext(), "Alert", "Eap Completed")
+            } else {
+                showMismatchAlert(requireContext(), eapDateValue, currentDate)
+            }
+        } catch (e: ParseException) {
+            AppUtil.showAlertDialog(requireContext(), "Error", "Invalid date format in EAP data.")
         }
     }
+
+    private fun showMismatchAlert(context: Context, eapDate: String, currentDate: String) {
+        AlertDialog.Builder(context)
+            .setTitle("Alert")
+            .setMessage("You can only proceed on the date: $eapDate.\nToday's date: $currentDate.")
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .create()
+            .show()
+    }
+
 
 
     @SuppressLint("NotifyDataSetChanged")
@@ -143,12 +141,5 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
             }
         }
     }
-    private fun showMismatchAlert(context: Context, eapMonth: String, eapYear: String, currentMonth: String, currentYear: String) {
-        AlertDialog.Builder(context)
-            .setTitle("Alert")
-            .setMessage("You can only proceed in the month: $eapMonth/$eapYear.\nCurrent date: $currentMonth/$currentYear.")
-            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-            .create()
-            .show()
-    }
+
 }

@@ -24,7 +24,13 @@ android {
 
         // ✅ Correct Kotlin DSL syntax for keeping all language resources
         resourceConfigurations += listOf("en", "hi", "as", "bn", "gu", "kn", "ml", "mr", "or", "pa", "ta", "te", "ur")
+    }
 
+    // ✅ Prevent Google Play from splitting languages (needed for in-app switching)
+    bundle {
+        language {
+            enableSplit = false
+        }
     }
 
     buildTypes {

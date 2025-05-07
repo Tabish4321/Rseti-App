@@ -119,7 +119,6 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     private val attendanceTypeList =
         listOf("Aadhaar Attendance","Offline Attendance")
     private var attendanceStatusRes: List<AttendanceData> = mutableListOf()
-
     private lateinit var geofenceHelper: GeofenceHelper
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -213,9 +212,27 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
 
                 if (attendanceFlag=="checkin" && selectedAttendanceTypeItem=="Aadhaar Attendance"){
+                    //for audit
+                  //  showProgressBar()
+                 //   invokeCaptureIntent()
 
-                    showProgressBar()
-                    invokeCaptureIntent()
+                    val currentDate = LocalDate.now()
+                    val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                    val currentTime = LocalTime.now()
+                    val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("hh:mma"))
+                    val timeFormatter = DateTimeFormatter.ofPattern("hh:mma")
+
+
+
+                    if (attendanceFlag== "checkin"){
+
+
+                        commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
+                            BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkin",
+                            formattedTime,"","",candidateName))
+                        collectAttendanceInsertResponse()
+
+                    }
 
                 }
                 else{
@@ -249,8 +266,29 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                 if (attendanceFlag=="checkout" && selectedAttendanceTypeItem=="Aadhaar Attendance"){
 
-                    showProgressBar()
-                    invokeCaptureIntent()
+                    //for audit
+                    //  showProgressBar()
+                    //   invokeCaptureIntent()
+
+                    val currentDate = LocalDate.now()
+                    val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                    val currentTime = LocalTime.now()
+                    val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("hh:mma"))
+                    val timeFormatter = DateTimeFormatter.ofPattern("hh:mma")
+
+
+                    val checkInTime = LocalTime.parse(checkIn, timeFormatter)
+                    val checkOutTime = LocalTime.parse(formattedTime, timeFormatter)
+                    val duration = Duration.between(checkInTime, checkOutTime)
+                    val hours = duration.toHours()
+                    val minutes = duration.toMinutes() % 60
+
+                    val totalHoursValue = String.format("%02d:%02d:00", hours, minutes) // Format as HH:mm:ss
+
+                    commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkout",
+                        "",formattedTime,totalHoursValue,candidateName))
+                    collectAttendanceInsertResponse()
+
 
                 }
                 else{
@@ -270,7 +308,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
             }
 
-            //  invokeCaptureIntent()
+
 
         }
 
@@ -284,7 +322,6 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
             requestLocationPermission()
         }
     }
-
     private var intentResponse: IntentResponse? = null
     private val neededPermissions = arrayOf(Manifest.permission.CAMERA)
     private var startTime: Long = 0
@@ -638,9 +675,6 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                 ?: toastShort(getString(R.string.something_went_wrong_at_uidai_site))
                         }
 
-                        else -> {
-
-                        }
                     }
                 }
             } catch (e: Exception) {
@@ -814,6 +848,8 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                             if (getInsertAttendance.responseCode == 200) {
 
                                 showSnackBar(getInsertAttendance.responseDesc)
+                                toastLong("Attendance Marked")
+
 
                                 userPhotoUIADI?.let { showBottomSheet(it,name,gender,dob,careOf) }
 
@@ -823,7 +859,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                             else {
                                 toastLong(getInsertAttendance.responseDesc)
                             }
-                        } ?: showSnackBar("Internal Server Error")
+                        }
                     }
 
                     else -> {
