@@ -1,5 +1,6 @@
 package com.rsetiapp.common.fragments
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -7,13 +8,17 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import com.pehchaan.backend.service.AuthenticationActivity
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
@@ -41,7 +46,24 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
     private var showPassword = true
     private var isApiCalled = false
 
+   /* private val startForAuthentication =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val status = data?.getStringExtra(AppConstant.Constants.RESULT_STATUS) ?: "failure"
+                val message = data?.getStringExtra(AppConstant.Constants.RESULT_MESSAGE) ?: "Unknown error"
 
+                Log.d("", "status: $status , message $message")
+
+                if (status == "success") {
+                    toastShort("✅ Success: $message")
+                } else {
+                    toastShort("❌ Failure: $message")
+                }
+            } else {
+                toastShort("⚠️ Authentication cancelled")
+            }
+        }*/
 
     private val commonViewModel: CommonViewModel by activityViewModels()
 
@@ -87,7 +109,20 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
 
         binding.tvForgotPass.setOnClickListener {
 
+
+
+
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment())
+
+           /* val userId = binding.etEmail.text.toString().trim()
+            val userName = binding.etPassword.text.toString().trim()
+            if (userId.isNotEmpty()) {
+                startAuthentication(AppConstant.Constants.CALL_TYPE_REGISTRATION, userId)
+            } else {
+                toastShort("Please enter User ID")
+            }*/
+
+
 
         }
         binding.etPassword.onRightDrawableClicked {
@@ -324,4 +359,15 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
         builder.setCancelable(false)
         builder.create().show()
     }
+
+   /* private fun startAuthentication(callType: String, userId: String) {
+        val intent = Intent(requireContext(), AuthenticationActivity::class.java)
+        intent.putExtra(AppConstant.Constants.EXTRA_CLIENT_ID, AppConstant.Constants.YOUR_CLIENT_ID)
+        intent.putExtra(AppConstant.Constants.EXTRA_CALL_TYPE, callType)
+        intent.putExtra(AppConstant.Constants.EXTRA_USER_ID, userId)
+        if (callType == AppConstant.Constants.CALL_TYPE_REGISTRATION) {
+            intent.putExtra(AppConstant.Constants.EXTRA_USER_NAME, "TestUser")
+        }
+        startForAuthentication.launch(intent)
+    }*/
 }

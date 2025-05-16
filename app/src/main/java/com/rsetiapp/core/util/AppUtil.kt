@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
@@ -32,6 +33,7 @@ import android.provider.Settings
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.google.gson.Gson
+import com.pehchaan.backend.service.AuthenticationActivity
 import com.rsetiapp.R
 import java.security.MessageDigest
 import java.security.SecureRandom
@@ -450,4 +452,11 @@ object AppUtil {
         clipboardManager.setPrimaryClip(clipData)
 
     }
+
+
+
+
+
+
+
 }

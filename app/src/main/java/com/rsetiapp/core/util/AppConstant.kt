@@ -36,5 +36,17 @@ object AppConstant {
         var ENVIRONMENT_TAG = "P"//"S"
         var ENCRYPT_IV_KEY = "$10A80$10A80$10A";
         var ENCRYPT_KEY = "$10A80$10A80$10A";
+
+        const val EXTRA_CLIENT_ID = "client_id"
+        const val EXTRA_CALL_TYPE = "call_type"
+        const val EXTRA_USER_ID = "user_id"
+        const val EXTRA_USER_NAME = "user_name"
+        const val CALL_TYPE_LOGIN = "LOGIN"
+        const val CALL_TYPE_REGISTRATION = "REGISTRATION"
+        const val RESULT_STATUS = "status"
+        const val RESULT_MESSAGE = "message"
+        const val YOUR_CLIENT_ID = "DEMO_CLIENT_ID"
+
+
     }
 }
