@@ -31,6 +31,7 @@ import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
+import com.rsetiapp.common.model.request.SdrListReq
 import com.rsetiapp.common.model.request.TokenReq
 import com.rsetiapp.common.model.request.ValidateOtpReq
 import com.rsetiapp.common.model.response.AttendanceBatchRes
@@ -56,6 +57,7 @@ import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.SalaryRangeRes
+import com.rsetiapp.common.model.response.SdrListResp
 import com.rsetiapp.common.model.response.TokenRes
 import com.rsetiapp.core.data.local.database.AppDatabase
 import com.rsetiapp.core.data.remote.AppLevelApi
@@ -250,6 +252,14 @@ class CommonRepository @Inject constructor(
             appLevelApi.salaryRangeDetails(header,salaryRangeReq)
         }
     }
+
+
+    suspend fun getSdrListAPI(header :String,sdrListReq: SdrListReq): Flow<Resource<out SdrListResp>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.sdrListApi(header,sdrListReq)
+        }
+    }
+
 
     suspend fun getOtpValidateApi(validateOtpReq: ValidateOtpReq): Flow<Resource<out OtpGenerateResponse>>{
         return networkBoundResourceWithoutDb {

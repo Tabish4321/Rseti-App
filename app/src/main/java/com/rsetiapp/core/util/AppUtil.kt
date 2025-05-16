@@ -112,6 +112,21 @@ object AppUtil {
         return sharedPreferences.getString("token_code", "") ?: "" // Default to English
     }
 
+
+
+    fun saveUserNamePreference(context: Context, tokenCode: String) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("user_name", tokenCode)
+        editor.apply()
+    }
+
+    fun getSavedUserNamePreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("user_name", "") ?: "" // Default to English
+    }
+
+
     // Add this function to your class
     fun convertUriToBase64(uri: Uri,context: Context): String {
         val inputStream = context.contentResolver.openInputStream(uri)

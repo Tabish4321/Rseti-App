@@ -22,6 +22,7 @@ import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
+import com.rsetiapp.common.model.request.SdrListReq
 import com.rsetiapp.common.model.request.StateListReq
 import com.rsetiapp.common.model.request.TokenReq
 import com.rsetiapp.common.model.request.ValidateOtpReq
@@ -49,6 +50,7 @@ import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.SalaryRangeRes
+import com.rsetiapp.common.model.response.SdrListResp
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.response.TokenRes
 import com.rsetiapp.common.model.response.VillageResponse
@@ -176,6 +178,12 @@ interface AppLevelApi {
     @POST("salaryRange")
     suspend fun salaryRangeDetails(@Header("Authorization") token: String,
                                    @Body salaryRangeReq: SalaryRangeReq) : SalaryRangeRes
+
+    @POST("sdrList")
+    suspend fun sdrListApi(@Header("Authorization") token: String,
+                                   @Body sdrListReq: SdrListReq) : SdrListResp
+
+
     @POST("validateOtp")
     suspend fun getOtpValidateApi(@Body validateOtpReq: ValidateOtpReq):OtpGenerateResponse
     @POST

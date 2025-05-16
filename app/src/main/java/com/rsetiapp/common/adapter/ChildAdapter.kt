@@ -54,6 +54,15 @@ class ChildAdapter(
                         binding.root.findNavController().navigate(action)
 
                     }
+                    "SDR_VISIT" -> {
+
+                        val action = HomeFragmentDirections.actionHomeFrahmentToSdrListFragment(
+                            form.formName
+                        )
+                        binding.root.findNavController().navigate(action)
+
+                    }
+
                 }
             }
         }

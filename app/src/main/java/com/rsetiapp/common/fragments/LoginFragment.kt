@@ -34,6 +34,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding :: inflate ){
     private var userName = ""
+    private var userNameActual = ""
     private var password = ""
     private var token = ""
     private var saltPassword = ""
@@ -191,8 +192,17 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                                         AppUtil.saveTokenPreference(requireContext(),"Bearer "+getLoginResponse.appCode)
                                         userPreferences.updateUserId(null)
                                         userPreferences.updateUserId(userName)
-                                        userPreferences.saveUserName(getLoginResponse.wrappedList[0].loginId)
+                                        userPreferences.saveUserName(getLoginResponse.wrappedList[0].userName)
                                         AppUtil.saveLoginStatus(requireContext(), true)  // true means user is logged in
+
+                                       /* for (x in getLoginResponse.wrappedList){
+
+                                            userNameActual=  x.userName
+                                        }
+*/
+
+
+
 
                                         findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFrahment())
 

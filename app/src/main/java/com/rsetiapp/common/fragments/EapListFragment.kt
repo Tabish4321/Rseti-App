@@ -20,6 +20,7 @@ import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.databinding.EapListFragmentBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -27,6 +28,9 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+
+
+@AndroidEntryPoint
 class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBinding::inflate) {
     private val commonViewModel: CommonViewModel by activityViewModels()
 

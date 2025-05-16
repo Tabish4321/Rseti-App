@@ -53,6 +53,15 @@
                 app:argType="string" />
         </action>
 
+        <action
+            android:id="@+id/action_homeFrahment_to_sdrListFragment"
+            app:destination="@id/sdrListFragment" >
+            <argument
+                android:name="formName"
+                app:argType="string" />
+
+        </action>
+
 
     </fragment>
     <fragment
@@ -187,4 +196,31 @@
         android:label="AttendanceFragment"
         tools:layout="@layout/fragment_verify_user_attendance"
         />
+    <fragment
+        android:id="@+id/sdrVisitReport"
+        android:name="com.rsetiapp.common.fragments.SdrVisitReport"
+        android:label="SdrVisitReport"
+        tools:layout="@layout/fragment_sdr_visit_report"/>
+    <fragment
+        android:id="@+id/sdrListFragment"
+        android:name="com.rsetiapp.common.fragments.SdrListFragment"
+        android:label="SdrListFragment"
+        tools:layout="@layout/fragment_sdr_list">
+        <action
+            android:id="@+id/action_sdrListFragment_to_sdrVisitReport"
+            app:destination="@id/sdrVisitReport" >
+            <argument
+                android:name="formName"
+                app:argType="string" />
+
+            <argument
+                android:name="rsetiVisitName"
+                app:argType="string" />
+
+            <argument
+                android:name="finYear"
+                app:argType="string" />
+
+        </action>
+    </fragment>
 </navigation>

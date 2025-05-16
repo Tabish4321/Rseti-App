@@ -23,6 +23,7 @@ import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
+import com.rsetiapp.common.model.request.SdrListReq
 import com.rsetiapp.common.model.request.ValidateOtpReq
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
@@ -46,6 +47,7 @@ import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.SalaryRangeRes
+import com.rsetiapp.common.model.response.SdrListResp
 import com.rsetiapp.common.model.response.TokenRes
 import com.rsetiapp.core.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -424,6 +426,21 @@ private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>
             }
         }
     }
+
+
+
+
+    private var _getSdrListApi = MutableStateFlow<Resource<out SdrListResp>>(Resource.Loading())
+    val getSdrListApi = _getSdrListApi.asStateFlow()
+
+    fun getSdrListApi(header :String,sdrListReq: SdrListReq) {
+        viewModelScope.launch {
+            commonRepository.getSdrListAPI(header,sdrListReq).collectLatest {
+                _getSdrListApi.emit(it)
+            }
+        }
+    }
+
 
     private  var _getOtpValidateApi =  MutableStateFlow<Resource<out OtpGenerateResponse>>(Resource.Loading())
     val getOtpValidateApi = _getOtpValidateApi.asSharedFlow()
