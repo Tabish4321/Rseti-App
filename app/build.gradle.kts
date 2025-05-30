@@ -81,12 +81,12 @@ android {
             buildConfigField("String", "BASE_URL", "\"https://staging.example.com/\"")
         }
     }
-
+/*
     sourceSets {
         getByName("main") {
             jniLibs.srcDirs("libs")
         }
-    }
+    }*/
 }
 
 dependencies {
@@ -160,13 +160,14 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
+    implementation(libs.androidx.activity.compose)
 
+
+/*
 
     // Pehchaan SDK
-    implementation(files("libs/pehchaanlib.aar"))
 
 // Jetpack Compose (if you're using Compose)
-    implementation(libs.androidx.activity.compose)
     implementation(platform("androidx.compose:compose-bom:2024.04.01"))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -179,7 +180,6 @@ dependencies {
 
 // CardView
     implementation(libs.androidx.cardview)
-
 // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.10.0")
 
@@ -221,6 +221,7 @@ dependencies {
 // MediaPipe Tasks Vision
     implementation("com.google.mediapipe:tasks-vision:0.10.14")
 
+*/
 
 }
 

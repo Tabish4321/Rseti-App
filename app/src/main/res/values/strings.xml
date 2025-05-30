@@ -190,5 +190,7 @@
     <string name="whether_cd_containing_edp_inputs_in_local_language_is_available_at_the_institute">Whether CD containing EDP inputs in local language is available at the Institute</string>
     <string name="whether_details_of_the_food_served_are_displayed_in_local_language_on_the_notice_board_as_per_the_format_supplied_by_nacer">Whether Details of the food served are displayed in local language on the Notice Board as per the format supplied by NACER</string>
     <string name="location_addrress">Location:- Addrress</string>
+    <string name="fin_year">Financial Year:</string>
+    <string name="month">Month:</string>
 
 </resources>

@@ -221,6 +221,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
         val currentDate= getCurrentDate()
         binding.tvDate.text = currentDate
+        selectedDate= currentDate
 
         binding.eapIdName.text= eapId
         //Submit Button

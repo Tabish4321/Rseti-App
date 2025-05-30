@@ -19,6 +19,7 @@ import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.FollowUpTypeReq
 import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.GramPanchayatReq
+import com.rsetiapp.common.model.request.InsertSdrVisitReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
@@ -50,6 +51,7 @@ import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.SalaryRangeRes
+import com.rsetiapp.common.model.response.SdrInsertResp
 import com.rsetiapp.common.model.response.SdrListResp
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.response.TokenRes
@@ -178,6 +180,11 @@ interface AppLevelApi {
     @POST("salaryRange")
     suspend fun salaryRangeDetails(@Header("Authorization") token: String,
                                    @Body salaryRangeReq: SalaryRangeReq) : SalaryRangeRes
+
+    @POST("insertsdr")
+    suspend fun insertSdrApi(@Header("Authorization") token: String,
+                                   @Body sdrVisitReq: InsertSdrVisitReq) : SdrInsertResp
+
 
     @POST("sdrList")
     suspend fun sdrListApi(@Header("Authorization") token: String,

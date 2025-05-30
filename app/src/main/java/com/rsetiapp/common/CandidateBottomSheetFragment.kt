@@ -112,6 +112,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         candidatePicSearch = view.findViewById(R.id.candidatePicSearch)
         llCandidateSearch = view.findViewById(R.id.llSearch)
         AddCandidate = view.findViewById(R.id.btnAddCandidate)
+        userPreferences = UserPreferences(requireContext())
 
 
 
@@ -363,6 +364,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     private fun setBase64ToImageView(base64String: String?, imageView: ImageView) {
         if (base64String.isNullOrEmpty()) {
             imageView.setImageResource(R.drawable.person) // Default placeholder
+
             return
         }
         try {

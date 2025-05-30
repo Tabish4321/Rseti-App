@@ -125,14 +125,18 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     /*  private var latitude: Double = 0.0
       private var longitude: Double = 0.0
       var radius: Float = 100f*/
-    private var latitude = 28.6295826  // Example geofence latitude
-    private var longitude = 77.2189311  // Example geofence longitude
+    private var latitude = 26.2153  // Example geofence latitude
+    private var longitude = 84.3588  // Example geofence longitude
     private var radius = 500f  // 100 meters radius
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         startClock()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         userPreferences = UserPreferences(requireContext())
+        collectAttendanceStatusResponse()
+        checkLocationPermission()
+
 
         binding.tvCurrentDate.text= AppUtil.getCurrentDateForAttendance()
         candidateId = arguments?.getString("candidateId").toString()
@@ -147,8 +151,6 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         aadhaarNo = arguments?.getString("aadhaarNo").toString()
         commonViewModel.getAttendanceCheckStatus(AppUtil.getSavedTokenPreference(requireContext()),AttendanceCheckReq(BuildConfig.VERSION_NAME,batchId,candidateId
         ,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()))
-        collectAttendanceStatusResponse()
-        checkAttendanceEligibility()
 
 
         attendanceAdapter = ArrayAdapter(
@@ -174,9 +176,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
 
 
-        geofenceHelper = GeofenceHelper(requireContext())
 
-        requestLocationPermission()
 
         init()
 
@@ -312,15 +312,6 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
         }
 
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            geofenceHelper.addGeofence(latitude, longitude, radius, "ATTENDANCE_ZONE")
-        } else {
-            requestLocationPermission()
-        }
     }
     private var intentResponse: IntentResponse? = null
     private val neededPermissions = arrayOf(Manifest.permission.CAMERA)
@@ -687,77 +678,6 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     }
 
 
-    private fun requestLocationPermission() {
-        val locationPermission = registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissions ->
-            val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
-                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-
-            if (!granted) {
-                val showRationale = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
-                if (!showRationale) {
-                    // Permission is permanently denied, direct to settings
-                    AlertDialog.Builder(requireContext())
-                        .setTitle("Permission Required")
-                        .setMessage("Location permission is required to mark attendance. Please enable it in settings.")
-                        .setPositiveButton("Go to Settings") { _, _ ->
-                            val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                            intent.data = android.net.Uri.fromParts("package", requireContext().packageName, null)
-                            startActivity(intent)
-                        }
-                        .setNegativeButton("Cancel", null)
-                        .show()
-                } else {
-                    Toast.makeText(requireContext(), "Location permission required!", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        locationPermission.launch(
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-        )
-    }
-
-
-    private fun checkAttendanceEligibility() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestLocationPermission()
-            return
-        }
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-
-
-        fusedLocationClient.getCurrentLocation(
-            com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY, null
-        ).addOnSuccessListener { location: Location? ->
-            if (location != null) {
-                val distance = FloatArray(1)
-                Location.distanceBetween(location.latitude, location.longitude, latitude, longitude, distance)
-
-                if (distance[0] <= radius) {
-                    hideProgressBar()
-
-
-                } else {
-                    showAlertGeoFancingDialog(requireContext(),"Alert","Not in attendance zone!")
-                }
-
-            }
-            else
-                showAlertGeoFancingDialog(requireContext(),"Alert","Kindly Enable GPS")
-
-        }
-    }
 
 
     private fun loadBase64Image(base64String: String?, imageView: ImageView) {
@@ -801,12 +721,29 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                                     checkIn = x.checkIn//00:00
                                     totalHours = x.totalHours//00:00:00
-                                    //     latitude = x.lattitude.toDouble()
+                                    latitude = x.lattitude.toDouble()
                                     checkOut = x.checkOut
-                                    // radius = x.radius.toFloat()
+                                    radius = x.radius.toFloat()
                                     attendanceFlag = x.attendanceFlag
-                                    //   longitude = x.longitude.toDouble()
+                                    longitude = x.longitude.toDouble()
 
+
+                                    getCurrentLocation { location ->
+                                        if (location != null) {
+                                            val isInside = isUserInsideGeofence(location, latitude, longitude, radius)
+                                           // val isInside = isUserInsideGeofence(location, 26.2153, 84.3588, radius)
+                                            if (isInside) {
+
+
+                                            //    findNavController().navigate(SdrListFragmentDirections.actionSdrListFragmentToSdrVisitReport(formName,instituteName,finYear,instituteId))
+                                            } else {
+                                                showAlertGeoFancingDialog(requireContext(),"Alert","❌ You are outside the institute area")
+
+                                            }
+                                        } else {
+                                            toastLong("❌ Failed to retrieve current location")
+                                        }
+                                    }
 
                                     binding.tvCheckInValue.text= x.checkIn
                                     binding.tvCheckOutValue.text= x.checkOut
@@ -943,5 +880,51 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
         // Show the BottomSheetDialog
         bottomSheetDialog.show()
+    }
+
+
+    private fun checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                1001
+            )
+        }
+    }
+
+    private fun getCurrentLocation(onLocationResult: (Location?) -> Unit) {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            toastLong("❌ Location permission not granted")
+            return
+        }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            onLocationResult(location)
+        }.addOnFailureListener {
+            onLocationResult(null)
+        }
+    }
+
+    private fun isUserInsideGeofence(
+        currentLocation: Location,
+        lat: Double,
+        lng: Double,
+        radius: Float
+    ): Boolean {
+        val targetLocation = Location("").apply {
+            latitude = lat
+            longitude = lng
+        }
+        val distance = currentLocation.distanceTo(targetLocation)
+        return distance <= radius
     }
 }

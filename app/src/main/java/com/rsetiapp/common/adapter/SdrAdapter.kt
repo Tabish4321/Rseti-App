@@ -22,11 +22,11 @@ class SdrAdapter(
         val item = sdrList[position]
 
         holder.binding.tvInstituteName.text = item.instituteName
-        holder.binding.tvFinYear.text = "Financial Year: ${item.finYear}"
-        holder.binding.tvEapAddress.text = "Month: ${getMonthName(item.month)}"
+        holder.binding.tvFinYear.text = holder.itemView.context.getString(R.string.fin_year) + "  ${item.finYear}"
+        holder.binding.tvMonth.text = holder.itemView.context.getString(R.string.month) + "  ${getMonthName(item.month)}"
         holder.binding.tvStatus.text = item.sdrVisitStatus ?: "Not Available"
         holder.binding.statusImage.setImageResource(
-            if (item.sdrVisitStatus.equals("Completed", ignoreCase = true)) R.drawable.ic_tick_green
+            if (item.sdrVisitStatus.equals("Completed", ignoreCase = true)) R.drawable.ic_verified
             else R.drawable.baseline_pending_24
         )
 

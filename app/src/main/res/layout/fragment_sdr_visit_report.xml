@@ -219,6 +219,7 @@
             android:layout_weight="1"
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
+            android:visibility="gone"
             android:background="@drawable/captureimage"
             android:layout_marginEnd="@dimen/dp_30"
             android:layout_marginTop="@dimen/dp_10"
@@ -243,6 +244,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvLocClean"
+                android:visibility="gone"
                 android:layout_gravity="end"
                 android:text="@string/location_addrress"/>
 
@@ -287,6 +289,7 @@
             android:layout_weight="1"
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
+            android:visibility="gone"
             android:background="@drawable/captureimage"
             android:layout_marginEnd="@dimen/dp_30"
             android:layout_marginTop="@dimen/dp_10"
@@ -311,6 +314,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvLocSignBoard"
+                android:visibility="gone"
                 android:layout_gravity="end"
                 android:text="@string/location_addrress"/>
             <TextView
@@ -355,6 +359,7 @@
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
             android:background="@drawable/captureimage"
+            android:visibility="gone"
             android:layout_marginEnd="@dimen/dp_30"
             android:layout_marginTop="@dimen/dp_10"
             app:layout_constraintTop_toBottomOf="@+id/llTimetableCourse"
@@ -378,6 +383,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tvLocTimeTableCourse"
                 android:layout_gravity="end"
+                android:visibility="gone"
                 android:text="@string/location_addrress"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -420,6 +426,7 @@
             android:layout_weight="1"
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
+            android:visibility="gone"
             android:background="@drawable/captureimage"
             android:layout_marginEnd="@dimen/dp_30"
             android:layout_marginTop="@dimen/dp_10"
@@ -443,6 +450,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvLocTimeTableOnGoingCourse"
+                android:visibility="gone"
                 android:layout_gravity="end"
                 android:text="@string/location_addrress"/>
             <TextView
@@ -485,6 +493,7 @@
             android:layout_height="@dimen/dp_135"
             android:layout_weight="1"
             android:scaleType="centerCrop"
+            android:visibility="gone"
             android:adjustViewBounds="true"
             android:background="@drawable/captureimage"
             android:layout_marginEnd="@dimen/dp_30"
@@ -511,6 +520,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tvLocActionPhotoDisplayed"
                 android:layout_gravity="end"
+                android:visibility="gone"
                 android:text="@string/location_addrress"/>
 
             <TextView
@@ -553,6 +563,7 @@
             android:layout_height="@dimen/dp_135"
             android:layout_weight="1"
             android:scaleType="centerCrop"
+            android:visibility="gone"
             android:adjustViewBounds="true"
             android:background="@drawable/captureimage"
             android:layout_marginEnd="@dimen/dp_30"
@@ -578,6 +589,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tvLocActionPhotoDisplayedLocalLanguage"
                 android:layout_gravity="end"
+                android:visibility="gone"
                 android:text="@string/location_addrress"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -619,6 +631,7 @@
             android:layout_height="@dimen/dp_135"
             android:layout_weight="1"
             android:scaleType="centerCrop"
+            android:visibility="gone"
             android:adjustViewBounds="true"
             android:background="@drawable/captureimage"
             android:layout_marginEnd="@dimen/dp_30"
@@ -641,6 +654,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:id="@+id/tvLocImageOfficeTimingIsDisplayed"
                 android:layout_gravity="end"
                 android:text="@string/location_addrress"/>
@@ -699,6 +713,7 @@
                 android:layout_weight="1"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"
+                android:visibility="gone"
                 android:layout_marginTop="@dimen/dp_10"
                 android:layout_gravity="end"
                 android:background="@drawable/captureimage"
@@ -708,6 +723,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvLocTrainingKitAvailable"
+                android:visibility="gone"
                 android:layout_gravity="end"
                 android:text="@string/location_addrress"/>
 
@@ -751,6 +767,7 @@
             android:layout_height="@dimen/dp_135"
             android:layout_weight="1"
             android:scaleType="centerCrop"
+            android:visibility="gone"
             android:adjustViewBounds="true"
             android:background="@drawable/captureimage"
             android:layout_marginEnd="@dimen/dp_30"
@@ -777,6 +794,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tvLocEdpInLocalLanguage"
                 android:layout_gravity="end"
+                android:visibility="gone"
                 android:text="@string/location_addrress"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -822,6 +840,7 @@
             android:background="@drawable/captureimage"
             android:layout_marginEnd="@dimen/dp_30"
             android:layout_marginTop="@dimen/dp_10"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/llFoodDetailsInLocalLanguage"
             app:layout_constraintEnd_toEndOf="parent"
             android:padding="@dimen/dp_5"/>
@@ -831,6 +850,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/tvLocFoodDetailsInLocalLanguage"
             android:gravity="end"
+            android:visibility="gone"
             android:text="@string/location_addrress"
             app:layout_constraintTop_toBottomOf="@+id/imageFoodDetailsInLocalLanguage"
             app:layout_constraintEnd_toEndOf="parent"

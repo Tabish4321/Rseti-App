@@ -33,7 +33,6 @@ import android.provider.Settings
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.google.gson.Gson
-import com.pehchaan.backend.service.AuthenticationActivity
 import com.rsetiapp.R
 import java.security.MessageDigest
 import java.security.SecureRandom
@@ -452,11 +451,5 @@ object AppUtil {
         clipboardManager.setPrimaryClip(clipData)
 
     }
-
-
-
-
-
-
 
 }

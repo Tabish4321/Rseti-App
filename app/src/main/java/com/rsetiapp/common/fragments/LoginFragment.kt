@@ -18,7 +18,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
-import com.pehchaan.backend.service.AuthenticationActivity
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel

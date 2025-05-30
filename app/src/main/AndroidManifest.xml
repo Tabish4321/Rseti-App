@@ -41,7 +41,7 @@
         <!-- Geofence BroadcastReceiver -->
         <receiver
             android:name=".core.geoFancing.GeofenceBroadcastReceiver"
-            android:exported="true" />
+            android:exported="false" />
 
         <!-- FileProvider -->
         <provider

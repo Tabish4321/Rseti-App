@@ -214,12 +214,20 @@
                 app:argType="string" />
 
             <argument
-                android:name="rsetiVisitName"
+                android:name="rsetiInstituteName"
                 app:argType="string" />
 
             <argument
                 android:name="finYear"
                 app:argType="string" />
+            <argument
+                android:name="rsetiInstituteId"
+                app:argType="string" />
+
+            <argument
+                android:name="monthCode"
+                app:argType="string" />
+
 
         </action>
     </fragment>
