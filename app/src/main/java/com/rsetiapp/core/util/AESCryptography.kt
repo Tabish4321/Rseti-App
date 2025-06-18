@@ -89,7 +89,7 @@ object AESCryptography {
             val ivSpec = IvParameterSpec(ivKey.toByteArray(Charsets.UTF_8))
 
             // Create AES cipher instance
-            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+            val cipher = Cipher.getInstance(AppConstant.Constants.CRYPLIBAES)
             cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec)
 
             // Decode hex string to byte array

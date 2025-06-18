@@ -104,7 +104,6 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     private var candidateGender = ""
     private var candidateDob = ""
     private var candidateDp = ""
-    private var selectedAttendanceTypeItem = ""
     private var batchId = ""
     private var aadhaarNo = ""
     private var candidateRollNo = ""
@@ -113,12 +112,8 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     private var checkOut = ""
     private var attendanceFlag = ""
     private var decryptedAadhaar = ""
-    private lateinit var attendanceAdapter: ArrayAdapter<String>
 
 
-    private val attendanceTypeList =
-        listOf("Aadhaar Attendance","Offline Attendance")
-    private var attendanceStatusRes: List<AttendanceData> = mutableListOf()
     private lateinit var geofenceHelper: GeofenceHelper
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -153,13 +148,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         ,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()))
 
 
-        attendanceAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            attendanceTypeList
-        )
 
-        binding.spinnerAttendanceType.setAdapter(attendanceAdapter)
 
         decryptedAadhaar = AESCryptography.decryptIntoString(aadhaarNo,
             AppConstant.Constants.ENCRYPT_KEY,
@@ -181,9 +170,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         init()
 
 
-        binding.spinnerAttendanceType.setOnItemClickListener { parent, view, position, id ->
-            selectedAttendanceTypeItem = parent.getItemAtPosition(position).toString()
-        }
+
 
 
     }
@@ -203,18 +190,11 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         binding.btnCheckIn.setOnClickListener {
 
 
-            if (selectedAttendanceTypeItem==""){
 
-                toastShort("Kindly Select Attendance Mode First")
-
-            }
-            else{
-
-
-                if (attendanceFlag=="checkin" && selectedAttendanceTypeItem=="Aadhaar Attendance"){
+                if (attendanceFlag=="checkin"){
                     //for audit
-                  //  showProgressBar()
-                 //   invokeCaptureIntent()
+                   // showProgressBar()
+                   //invokeCaptureIntent()
 
                     val currentDate = LocalDate.now()
                     val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
@@ -223,48 +203,25 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                     val timeFormatter = DateTimeFormatter.ofPattern("hh:mma")
 
 
-
-                    if (attendanceFlag== "checkin"){
-
-
                         commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
                             BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkin",
                             formattedTime,"","",candidateName))
                         collectAttendanceInsertResponse()
 
-                    }
-
-                }
-                else{
-                    // Offline Attendance
-
-                    if (attendanceFlag=="checkin" && selectedAttendanceTypeItem=="Offline Attendance"){
-
-                        //CheckOut Offline Attendance
-                        toastShort("Offline Attendance marked checkout")
-
-                    }
-                    else
-                        AppUtil.showAlertDialog(requireContext(),"Alert","Check In Attendance Already Marked")
 
 
                 }
-            }
+
+
 
 
 
         }
 
         binding.btnCheckOut.setOnClickListener {
-            if (selectedAttendanceTypeItem==""){
 
-                toastShort("Kindly Select Mode First")
 
-            }
-
-            else{
-
-                if (attendanceFlag=="checkout" && selectedAttendanceTypeItem=="Aadhaar Attendance"){
+                if (attendanceFlag=="checkout"){
 
                     //for audit
                     //  showProgressBar()
@@ -291,22 +248,9 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
 
                 }
-                else{
 
-                    // Offline Attendance
 
-                    if (attendanceFlag=="checkout" && selectedAttendanceTypeItem=="Offline Attendance"){
 
-                        //CheckOut Offline Attendance
-                        toastShort("Offline Attendance marked")
-
-                    }
-                    else
-                        AppUtil.showAlertDialog(requireContext(),"Alert","Kindly Mark Attendance CheckIn First")
-
-                }
-
-            }
 
 
 
@@ -433,8 +377,6 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     private fun handleCaptureResponse(captureResponse: String) {
         try {
 
-
-
             // Parse the capture response XML to an object
             val response = CaptureResponse.fromXML(captureResponse)
 
@@ -445,9 +387,8 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                 // Process the response to generate the PoiType or other required fields
                 val poiType = XstreamCommonMethods.processPidBlockEkyc(
                     response.toXML(),
-                    // decryptedAadhaar
-                    //   "939625617876",
-                    "939625617876",
+                    // decryptedAadhaar,
+                    "877833331122",
                     false,
                     requireContext()
                 )
@@ -715,7 +656,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                         hideProgressBar()
                         result.data?.let { getAttendanceCheckStatus ->
                             if (getAttendanceCheckStatus.responseCode == 200) {
-                                attendanceStatusRes = getAttendanceCheckStatus.wrappedList
+                              val  attendanceStatusRes = getAttendanceCheckStatus.wrappedList
 
                                 for (x in attendanceStatusRes) {
 

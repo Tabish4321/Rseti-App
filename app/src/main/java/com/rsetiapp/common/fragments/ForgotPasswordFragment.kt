@@ -235,6 +235,7 @@ class ForgotPasswordFragment :
                                         findNavController().navigateUp()
                                     }
                                     301 -> showSnackBar("Please Update from PlayStore")
+                                    304 -> mobileVerifyRes.responseMsg?.let { showSnackBar(it) }
                                     303 -> toastLong(mobileVerifyRes.responseDesc)
                                     else -> showSnackBar(mobileVerifyRes.responseDesc)
                                 }

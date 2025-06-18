@@ -61,8 +61,8 @@
     <string name="mobile_number_man">Mobile Number<font color='#FF0000'>*</font></string>
     <string name="guardian_name">Guardian Name<font color='#FF0000'>*</font></string>
     <string name="guardian_name1">Guardian Name</string>
-    <string name="guardian_Mobile">Guardian Mobile Nuber</string>
-    <string name="guardian_Mobile_man">Guardian Mobile Nuber<font color='#FF0000'>*</font></string>
+    <string name="guardian_Mobile">Guardian Mobile Number</string>
+    <string name="guardian_Mobile_man">Guardian Mobile Number<font color='#FF0000'>*</font></string>
     <string name="gender">Gender</string>
     <string name="gender_man">Gender<font color='#FF0000'>*</font></string>
     <string name="dob">Date Of Birth</string>

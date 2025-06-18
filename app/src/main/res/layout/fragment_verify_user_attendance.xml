@@ -266,45 +266,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/currentTime"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvMode"
-            tools:viewBindingIgnore="true"
-            android:fontFamily="@font/avenir_next_demi_bold"
-            android:textSize="@dimen/sp_16"
-            android:layout_marginTop="@dimen/dp_20"
-            android:text="@string/attendance_mode"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvCurrentDate"/>
 
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/avenir_next_demi_bold"
-            android:hint="@string/select_attendance_mode"
-            android:padding="1dp"
-            android:id="@+id/AttendanceType"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvMode"
-            android:textColorHint="@color/color_dark_green"
-            app:boxStrokeColor="@color/color_dark_green">
-
-            <AutoCompleteTextView
-                android:id="@+id/spinnerAttendanceType"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:inputType="none"
-                android:textColor="@color/color_dark_green"
-                android:textSize="15sp"
-                tools:ignore="LabelFor" />
-
-        </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -314,7 +276,7 @@
             android:layout_marginTop="@dimen/dp_20"
             android:weightSum="2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/AttendanceType">
+            app:layout_constraintTop_toBottomOf="@+id/tvCurrentDate">
 
 
             -<TextView

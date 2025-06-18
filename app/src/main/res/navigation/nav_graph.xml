@@ -68,7 +68,11 @@
         android:id="@+id/EAPAwarnessFormFragment"
         android:name="com.rsetiapp.common.fragments.EAPAwarnessFormFragment"
         android:label="EAPAwarnessFormFragment"
-        tools:layout="@layout/fragment_eap_awarness" />
+        tools:layout="@layout/fragment_eap_awarness" >
+        <action
+            android:id="@+id/action_EAPAwarnessFormFragment_to_eapListFragment"
+            app:destination="@id/eapListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"
         android:name="com.rsetiapp.common.fragments.ForgotPasswordFragment"

@@ -25,6 +25,9 @@ android {
 
         // ✅ Correct Kotlin DSL syntax for keeping all language resources
         resourceConfigurations += listOf("en", "hi", "as", "bn", "gu", "kn", "ml", "mr", "or", "pa", "ta", "te", "ur")
+
+
+
     }
 
     // ✅ Prevent Google Play from splitting languages (needed for in-app switching)
@@ -37,6 +40,13 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+
+            buildConfigField("String", "ENCRYPT_IV_KEY", "\"$10A80$10A80$10A\"")  // ✅ Example BuildConfig variable
+            buildConfigField("String", "ENCRYPT_KEY", "\"$10A80$10A80$10A\"")  // ✅ Example BuildConfig variable
+            buildConfigField("String", "CRYPLIBAES", "\"AES/CBC/PKCS5PADDING\"")  // ✅ Example BuildConfig variable
+            buildConfigField("String", "CRYPT_ID", "\"8080808080808080\"")  // ✅ Example BuildConfig variable
+            buildConfigField("String", "CRYPT_IV", "\"8080808080808080\"")  // ✅ Example BuildConfig variable
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -44,7 +54,16 @@ android {
         }
         debug {
             isMinifyEnabled = false
-            buildConfigField("String", "API_KEY", "\"DEBUG_API_KEY\"")  // ✅ Example BuildConfig variable
+            buildConfigField("String", "API_KEY", "\"DEBUG_API_KEY\"")
+            buildConfigField("String", "ENCRYPT_IV_KEY", "\"$10A80$10A80$10A\"")
+            buildConfigField("String", "ENCRYPT_KEY", "\"$10A80$10A80$10A\"")
+            buildConfigField("String", "CRYPLIBAES", "\"AES/CBC/PKCS5PADDING\"")
+            buildConfigField("String", "CRYPT_ID", "\"8080808080808080\"")
+            buildConfigField("String", "CRYPT_IV", "\"8080808080808080\"")
+
+
+
+
         }
     }
 
