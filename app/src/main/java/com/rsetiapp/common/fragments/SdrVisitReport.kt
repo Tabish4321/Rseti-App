@@ -28,14 +28,23 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
+import com.rsetiapp.common.CommonViewModel
+import com.rsetiapp.common.model.request.InsertSdrVisitReq
 import com.rsetiapp.core.basecomponent.BaseFragment
+import com.rsetiapp.core.util.AppUtil
+import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.gone
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.core.util.visible
 import com.rsetiapp.databinding.FragmentSdrVisitReportBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.util.Locale
 
@@ -47,7 +56,7 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
     private val yesNoList = listOf("Yes", "No")
     private var currentImageView: ImageView? = null
 
-
+    private val commonViewModel: CommonViewModel by activityViewModels()
     private lateinit var cleanlinessAdapter: ArrayAdapter<String>
     private var selectedCleanlinessItem = ""
     private var cleanlinessImage = ""
@@ -115,6 +124,10 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
     private lateinit var foodLocalLanguageAdapter: ArrayAdapter<String>
     private var selectedFoodLocalLanguageItem = ""
     private var foodLocalLanguageImage = ""
+    private var instituteId = ""
+    private var instituteName = ""
+    private var finYear = ""
+    private var monthCode = ""
     private var foodLocalLanguageImageLat : Double? = null
     private var foodLocalLanguageImageLang : Double? = null
 
@@ -140,12 +153,98 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
     private fun listener(){
 
         val formName = arguments?.getString("formName").toString()
+         instituteId = arguments?.getString("rsetiInstituteId").toString()
+         instituteName = arguments?.getString("rsetiInstituteName").toString()
+         finYear = arguments?.getString("finYear").toString()
+         monthCode = arguments?.getString("monthCode").toString()
+
+
+        binding.tvFinancialYear.text= finYear
+        binding.tvRsetiName.text= instituteName
+
 
         binding.tvFormName.text= formName
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
 
+
+        binding.btnSubmit.setOnClickListener {
+
+
+
+
+                val missingFields = mutableListOf<String>()
+
+                if (selectedCleanlinessItem.isBlank() || cleanlinessImage.isBlank()) {
+                    missingFields.add("Cleanliness")
+                }
+                if (selectedSignBoardItem.isBlank() || signBoardImage.isBlank()) {
+                    missingFields.add("Sign Board")
+                }
+                if (selectedTimeTableDrawnItem.isBlank() || timeTableDrawnImage.isBlank()) {
+                    missingFields.add("Time Table Drawn")
+                }
+                if (selectedTimeTableOnGoingItem.isBlank() || timeTableOnGoingImage.isBlank()) {
+                    missingFields.add("Time Table On-going")
+                }
+                if (selectedActionPhotoItem.isBlank() || actionPhotoImage.isBlank()) {
+                    missingFields.add("Action Photo")
+                }
+                if (selectedSuccessActionPhotoItem.isBlank() || successActionPhotoImage.isBlank()) {
+                    missingFields.add("Success Action Photo")
+                }
+                if (selectedOfficeTimingItem.isBlank() || officeTimingImage.isBlank()) {
+                    missingFields.add("Office Timing")
+                }
+                if (selectedTrainingKitItem.isBlank() || TrainingKitImage.isBlank()) {
+                    missingFields.add("Training Kit")
+                }
+                if (selectedEdpLocalLanguageItem.isBlank() || edpLocalLanguageImage.isBlank()) {
+                    missingFields.add("EDP Local Language")
+                }
+                if (selectedFoodLocalLanguageItem.isBlank() || foodLocalLanguageImage.isBlank()) {
+                    missingFields.add("Food Local Language")
+                }
+
+                if (missingFields.isNotEmpty()) {
+                    val message = "Please fill in or upload: ${missingFields.joinToString(", ")}"
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+                } else {
+
+
+                    commonViewModel.insertSdrApi(AppUtil.getSavedTokenPreference(requireContext()),
+                        InsertSdrVisitReq(BuildConfig.VERSION_NAME,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()),instituteId.toInt(),finYear,monthCode.toInt()
+                            ,selectedCleanlinessItem,
+                            cleanlinessImage,
+                            cleanlinessImageLat.toString(),
+                            cleanlinessImageLang.toString(),selectedSignBoardItem,signBoardImage,
+                            signBoardImageLat.toString(),
+                            signBoardImageLang.toString(),selectedTimeTableDrawnItem,
+                            timeTableDrawnImage,
+                            timeTableDrawnImageLat.toString(),
+                            timeTableDrawnImageLang.toString(),selectedTimeTableOnGoingItem,timeTableOnGoingImage,
+                            timeTableOnGoingImageLat.toString(),
+                            timeTableOnGoingImageLang.toString(),
+                            selectedActionPhotoItem,actionPhotoImage,
+                            actionPhotoImageLat.toString(),
+                            actionPhotoImageLang.toString(),selectedSuccessActionPhotoItem,successActionPhotoImage,
+                            successActionPhotoImageLat.toString(),
+                            successActionPhotoImageLang.toString(),selectedOfficeTimingItem,
+                            officeTimingImage,
+                            officeTimingImageLat.toString(),
+                            officeTimingImageLang.toString(),selectedTrainingKitItem,TrainingKitImage,
+                            TrainingKitImageLat.toString(),
+                            TrainingKitImageLang.toString(),selectedEdpLocalLanguageItem,edpLocalLanguageImage,
+                            edpLocalLanguageImageLat.toString(),
+                            edpLocalLanguageImageLang.toString(),selectedFoodLocalLanguageItem,foodLocalLanguageImage,
+                            foodLocalLanguageImageLat.toString(),
+                            foodLocalLanguageImageLang.toString()
+                        )
+                    )
+                    collectSdrInsertResponse()
+                }
+            }
 
         binding.tvNameOfDirector.text= userPreferences.getUserName()
 
@@ -167,6 +266,9 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
         binding.spinnerCleanliness.setOnItemClickListener { parent, view, position, id ->
             selectedCleanlinessItem = parent.getItemAtPosition(position).toString()
 
+            binding.imageCleaniness.visible()
+            binding.tvLocClean.visible()
+
 
         }
 
@@ -187,6 +289,8 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
             selectedSignBoardItem = parent.getItemAtPosition(position).toString()
 
 
+            binding.imageSignboard.visible()
+            binding.tvLocSignBoard.visible()
 
         }
 
@@ -205,6 +309,9 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
 
         binding.spinnerTimetableCourse.setOnItemClickListener { parent, view, position, id ->
             selectedTimeTableDrawnItem = parent.getItemAtPosition(position).toString()
+
+            binding.imageTimetableCourse.visible()
+            binding.tvLocTimeTableCourse.visible()
 
 
 
@@ -226,7 +333,8 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
             selectedTimeTableOnGoingItem = parent.getItemAtPosition(position).toString()
 
 
-
+            binding.imageTimetableOnGoingCourse.visible()
+            binding.tvLocTimeTableOnGoingCourse.visible()
 
 
         }
@@ -253,6 +361,8 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
 
 
 
+            binding.imageActionPhotoDisplayed.visible()
+            binding.tvLocActionPhotoDisplayed.visible()
 
 
         }
@@ -274,6 +384,8 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
             selectedSuccessActionPhotoItem = parent.getItemAtPosition(position).toString()
 
 
+            binding.imageActionPhotoDisplayedLocalLanguage.visible()
+            binding.tvLocActionPhotoDisplayedLocalLanguage.visible()
 
         }
 
@@ -294,7 +406,8 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
             selectedOfficeTimingItem = parent.getItemAtPosition(position).toString()
 
 
-
+            binding.imageOfficeTimmingIsDisplayed.visible()
+            binding.tvLocImageOfficeTimingIsDisplayed.visible()
         }
 
         //trainingKitAdapter setting
@@ -311,6 +424,10 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
 
         binding.spinnerTrainingKitAvailable.setOnItemClickListener { parent, view, position, id ->
             selectedTrainingKitItem = parent.getItemAtPosition(position).toString()
+
+
+            binding.imageTrainingKitAvailable.visible()
+            binding.tvLocTrainingKitAvailable.visible()
 
         }
 
@@ -330,6 +447,8 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
         binding.spinnerEdpInLocalLanguage.setOnItemClickListener { parent, view, position, id ->
             selectedEdpLocalLanguageItem = parent.getItemAtPosition(position).toString()
 
+            binding.imageEdpInLocalLanguage.visible()
+            binding.tvLocEdpInLocalLanguage.visible()
 
 
         }
@@ -350,7 +469,8 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
 
         binding.spinnerFoodDetailsInLocalLanguage.setOnItemClickListener { parent, view, position, id ->
             selectedFoodLocalLanguageItem = parent.getItemAtPosition(position).toString()
-
+            binding.imageFoodDetailsInLocalLanguage.visible()
+            binding.tvLocFoodDetailsInLocalLanguage.visible()
 
         }
 
@@ -686,6 +806,41 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
         } catch (e: Exception) {
             e.printStackTrace()
             addressTextView.text = getString(R.string.error_address)
+        }
+    }
+
+
+
+    private fun collectSdrInsertResponse() {
+        lifecycleScope.launch {
+            collectLatestLifecycleFlow(commonViewModel.insertSdrApi) {
+                when (it) {
+                    is Resource.Loading -> showProgressBar()
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        showSnackBar("Internal Server Error")
+                    }
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        it.data?.let { response ->
+                            if (response.responseCode == 200) {
+
+                                toastLong("Data save successfully")
+                                findNavController().navigateUp()
+                            } else if (response.responseCode == 401) {
+                                AppUtil.showSessionExpiredDialog(findNavController(), requireContext())
+                            }
+                            else if (response.responseCode == 301) {
+                                toastLong(response.responseDesc)
+
+                            }
+                            else {
+                                toastLong(response.responseDesc)
+                            }
+                        } ?: showSnackBar("Internal Server Error")
+                    }
+                }
+            }
         }
     }
 

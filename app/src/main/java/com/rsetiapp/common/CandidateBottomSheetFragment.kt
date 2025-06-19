@@ -37,6 +37,7 @@ import android.text.TextWatcher
 import android.util.Base64
 import android.widget.ImageView
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
@@ -45,6 +46,7 @@ import com.rsetiapp.common.model.response.CandidateSearchData
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.gone
 import com.rsetiapp.core.util.toastLong
+import java.util.Calendar
 
 @AndroidEntryPoint
 class CandidateBottomSheetFragment(private val candidateList: MutableList<Candidate>, private val adapter: RecyclerView.Adapter<*>,
@@ -109,6 +111,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         candidatePicSearch = view.findViewById(R.id.candidatePicSearch)
         llCandidateSearch = view.findViewById(R.id.llSearch)
         AddCandidate = view.findViewById(R.id.btnAddCandidate)
+        userPreferences = UserPreferences(requireContext())
 
 
 
@@ -220,14 +223,22 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         isCancelable = false
     }
     private fun showDatePicker(textView: TextView) {
-        // Restrict to future dates only
+        // Get today's time in milliseconds
+        val calendar = Calendar.getInstance()
+
+        val ageLimit = AppUtil.getSavedEapCanAgeLimitPreference(requireContext())
+        // Calculate the date 15 years ago
+        calendar.add(Calendar.YEAR, ageLimit.toInt())
+        val fifteenYearsAgoMillis = calendar.timeInMillis
+
+        // Set calendar constraints: allow only dates up to 15 years ago
         val constraintsBuilder = CalendarConstraints.Builder()
-            .setValidator(DateValidatorPointForward.now()) // Only future dates
+            .setEnd(fifteenYearsAgoMillis) // 👈 Maximum selectable date
+            .setValidator(DateValidatorPointBackward.before(fifteenYearsAgoMillis)) // 👈 Only dates before or equal
 
         // Create Material Date Picker
         val datePicker = MaterialDatePicker.Builder.datePicker()
-            .setTitleText("Select a Date")
-            .setSelection(MaterialDatePicker.todayInUtcMilliseconds()) // Default today
+            .setTitleText("Select Date of Birth")
             .setCalendarConstraints(constraintsBuilder.build())
             .build()
 
@@ -235,12 +246,13 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         datePicker.show(parentFragmentManager, "DATE_PICKER")
 
         datePicker.addOnPositiveButtonClickListener { selection ->
-            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
             val formattedDate = sdf.format(Date(selection))
             textView.text = formattedDate
-            selectedDate= formattedDate
+            selectedDate = formattedDate
         }
     }
+
     private fun collectCandidateSearchResponse() {
         lifecycleScope.launch {
             commonViewModel.candidateSearchListAPI.collectLatest { it ->
@@ -361,6 +373,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     private fun setBase64ToImageView(base64String: String?, imageView: ImageView) {
         if (base64String.isNullOrEmpty()) {
             imageView.setImageResource(R.drawable.person) // Default placeholder
+
             return
         }
         try {

@@ -1,18 +1,17 @@
 package com.rsetiapp.common.fragments
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
+import android.location.Location
 import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
+import android.view.View
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.common.CommonViewModel
@@ -20,7 +19,6 @@ import com.rsetiapp.common.adapter.SdrAdapter
 import com.rsetiapp.common.model.request.SdrListReq
 import com.rsetiapp.common.model.response.VisitData
 import com.rsetiapp.core.basecomponent.BaseFragment
-import com.rsetiapp.core.geoFancing.GeofenceBroadcastReceiver
 import com.rsetiapp.core.geoFancing.GeofenceHelper
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
@@ -32,47 +30,24 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SdrListFragment : BaseFragment<FragmentSdrListBinding>(FragmentSdrListBinding::inflate) {
+
     private val commonViewModel: CommonViewModel by activityViewModels()
     private lateinit var geofenceHelper: GeofenceHelper
-    private lateinit var geofencingClient: GeofencingClient
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private lateinit var sdrAdapter: SdrAdapter
     private var sdrList: MutableList<VisitData> = mutableListOf()
     private var formName = ""
 
-    // Hold last clicked geofence data to add after permission granted
-    private var lastLatLng: Pair<Double, Double>? = null
-    private var lastRadius: Float? = null
-
-    private val locationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
-        val backgroundLocationGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            permissions[Manifest.permission.ACCESS_BACKGROUND_LOCATION] ?: false
-        } else {
-            true
-        }
-
-        if (fineLocationGranted && backgroundLocationGranted) {
-            lastLatLng?.let { (lat, lng) ->
-                lastRadius?.let { radius ->
-                    geofenceHelper.addGeofence(lat, lng, radius, "ATTENDANCE_ZONE")
-                }
-            }
-        } else {
-            Toast.makeText(requireContext(), "Location permissions are required for geofencing", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    override fun onViewCreated(view: android.view.View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         userPreferences = UserPreferences(requireContext())
         formName = arguments?.getString("formName").toString()
         geofenceHelper = GeofenceHelper(requireContext())
-        geofencingClient = LocationServices.getGeofencingClient(requireActivity())
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
+        checkLocationPermission()
         init()
     }
 
@@ -96,40 +71,37 @@ class SdrListFragment : BaseFragment<FragmentSdrListBinding>(FragmentSdrListBind
         }
 
         sdrAdapter = SdrAdapter(sdrList) { selectedItem ->
-            val lat = selectedItem.lattitude?.toDoubleOrNull() ?: return@SdrAdapter
-            val lng = selectedItem.longitude?.toDoubleOrNull() ?: return@SdrAdapter
-            val radius = 500f
+            val lat = selectedItem.lattitude.toDoubleOrNull() ?: return@SdrAdapter
+            val lng = selectedItem.longitude.toDoubleOrNull() ?: return@SdrAdapter
+            val radius = selectedItem.radius.toFloat()
+            val instituteName = selectedItem.instituteName
+            val finYear = selectedItem.finYear
+            val instituteId = selectedItem.instituteId.toString()
+            val monthCode = selectedItem.month
 
-            checkAndRequestPermissions(lat, lng, radius)
+            getCurrentLocation { location ->
+                if (location != null) {
+                    val isInside = isUserInsideGeofence(location, lat, lng, radius)
+                    // val isInside = isUserInsideGeofence(location, 26.2153, 84.3588, radius)
+
+
+                    if (isInside) {
+
+                        findNavController().navigate(SdrListFragmentDirections.actionSdrListFragmentToSdrVisitReport(formName,instituteName,finYear,instituteId,
+                            monthCode.toString()
+                        ))
+                    } else {
+                        toastLong("❌ You are outside the institute area")
+                    }
+                } else {
+                    toastLong("❌ Failed to retrieve current location")
+                }
+            }
         }
 
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = sdrAdapter
-        }
-    }
-
-    private fun checkAndRequestPermissions(lat: Double, lng: Double, radius: Float) {
-        val permissionsNeeded = mutableListOf<String>()
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                permissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-            }
-        }
-
-        if (permissionsNeeded.isEmpty()) {
-            geofenceHelper.addGeofence(lat, lng, radius, "ATTENDANCE_ZONE")
-        } else {
-            lastLatLng = Pair(lat, lng)
-            lastRadius = radius
-            locationPermissionLauncher.launch(permissionsNeeded.toTypedArray())
         }
     }
 
@@ -159,5 +131,50 @@ class SdrListFragment : BaseFragment<FragmentSdrListBinding>(FragmentSdrListBind
                 }
             }
         }
+    }
+
+    private fun checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                1001
+            )
+        }
+    }
+
+    private fun getCurrentLocation(onLocationResult: (Location?) -> Unit) {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            toastLong("❌ Location permission not granted")
+            return
+        }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            onLocationResult(location)
+        }.addOnFailureListener {
+            onLocationResult(null)
+        }
+    }
+
+    private fun isUserInsideGeofence(
+        currentLocation: Location,
+        lat: Double,
+        lng: Double,
+        radius: Float
+    ): Boolean {
+        val targetLocation = Location("").apply {
+            latitude = lat
+            longitude = lng
+        }
+        val distance = currentLocation.distanceTo(targetLocation)
+        return distance <= radius
     }
 }

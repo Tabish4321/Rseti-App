@@ -13,5 +13,6 @@ data class Organization(
     val instituteCode: String,
     val designation: String,
     val officialName: String,
-    val instituteName: String
+    val instituteName: String,
+    val ageLimit: Int
 )

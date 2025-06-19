@@ -41,7 +41,7 @@
         <!-- Geofence BroadcastReceiver -->
         <receiver
             android:name=".core.geoFancing.GeofenceBroadcastReceiver"
-            android:exported="true" />
+            android:exported="false" />
 
         <!-- FileProvider -->
         <provider
@@ -53,6 +53,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
 
         <!-- Welcome Activity -->
         <activity

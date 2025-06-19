@@ -28,6 +28,7 @@ import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.common.model.request.FormRequest
+import com.rsetiapp.common.model.request.InsertSdrVisitReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
@@ -58,6 +59,7 @@ import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.SalaryRangeRes
+import com.rsetiapp.common.model.response.SdrInsertResp
 import com.rsetiapp.common.model.response.SdrListResp
 import com.rsetiapp.common.model.response.SettleStatusResponse
 import com.rsetiapp.common.model.response.TokenRes
@@ -252,6 +254,14 @@ class CommonRepository @Inject constructor(
     suspend fun getSalaryDetailsAPI(header :String,salaryRangeReq: SalaryRangeReq): Flow<Resource<out SalaryRangeRes>> {
         return networkBoundResourceWithoutDb {
             appLevelApi.salaryRangeDetails(header,salaryRangeReq)
+        }
+    }
+
+
+
+    suspend fun insertSdrApi(header :String,sdrInsertSdrVisitReq: InsertSdrVisitReq): Flow<Resource<out SdrInsertResp>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.insertSdrApi(header,sdrInsertSdrVisitReq)
         }
     }
 

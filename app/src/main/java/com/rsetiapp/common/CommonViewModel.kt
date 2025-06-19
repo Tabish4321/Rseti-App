@@ -20,6 +20,7 @@ import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.FollowUpInsertReq
+import com.rsetiapp.common.model.request.InsertSdrVisitReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
@@ -48,6 +49,7 @@ import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.SalaryRangeRes
+import com.rsetiapp.common.model.response.SdrInsertResp
 import com.rsetiapp.common.model.response.SdrListResp
 import com.rsetiapp.common.model.response.SettleStatusResponse
 import com.rsetiapp.common.model.response.TokenRes
@@ -436,7 +438,16 @@ private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>
             }
         }
     }
+    private var _insertSdrApi = MutableStateFlow<Resource<out SdrInsertResp>>(Resource.Loading())
+    val insertSdrApi = _insertSdrApi.asStateFlow()
 
+    fun insertSdrApi(header :String,insertSdrVisitReq: InsertSdrVisitReq) {
+        viewModelScope.launch {
+            commonRepository.insertSdrApi(header,insertSdrVisitReq).collectLatest {
+                _insertSdrApi.emit(it)
+            }
+        }
+    }
 
 
 

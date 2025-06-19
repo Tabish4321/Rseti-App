@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
@@ -30,10 +31,11 @@ import java.util.Locale
 import java.util.TimeZone
 import android.content.res.Configuration
 import android.provider.Settings
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.google.gson.Gson
-import com.pehchaan.backend.service.AuthenticationActivity
 import com.rsetiapp.R
 import java.security.MessageDigest
 import java.security.SecureRandom
@@ -43,11 +45,34 @@ import java.time.format.TextStyle
 
 object AppUtil {
 
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    val storagePermissions = arrayOf(
+        android.Manifest.permission.READ_MEDIA_IMAGES,
+        android.Manifest.permission.READ_MEDIA_VIDEO,
+        android.Manifest.permission.READ_MEDIA_AUDIO
+    )
+    val legacyStoragePermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+
+
+
     @SuppressLint("HardwareIds")
     fun getAndroidId(context: Context) : String{
 
         return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
+
+
+     fun hasStoragePermission(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            storagePermissions.all {
+                ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+            }
+        } else {
+            ContextCompat.checkSelfPermission(context, legacyStoragePermission) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
 
     fun sha512Hash(input: String): String {
         val digest = MessageDigest.getInstance("SHA-512")
@@ -116,16 +141,18 @@ object AppUtil {
 
 
 
-    fun saveUserNamePreference(context: Context, tokenCode: String) {
+
+
+    fun saveEapCanAgeLimitPreference(context: Context, tokenCode: Int) {
         val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        editor.putString("user_name", tokenCode)
+        editor.putString("eap_canAge", tokenCode.toString())
         editor.apply()
     }
 
-    fun getSavedUserNamePreference(context: Context): String {
+    fun getSavedEapCanAgeLimitPreference(context: Context): String {
         val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("user_name", "") ?: "" // Default to English
+        return sharedPreferences.getString("eap_canAge", "") ?: "" // Default to English
     }
 
 
@@ -452,11 +479,5 @@ object AppUtil {
         clipboardManager.setPrimaryClip(clipData)
 
     }
-
-
-
-
-
-
 
 }

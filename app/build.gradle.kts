@@ -25,6 +25,9 @@ android {
 
         // ✅ Correct Kotlin DSL syntax for keeping all language resources
         resourceConfigurations += listOf("en", "hi", "as", "bn", "gu", "kn", "ml", "mr", "or", "pa", "ta", "te", "ur")
+
+
+
     }
 
     // ✅ Prevent Google Play from splitting languages (needed for in-app switching)
@@ -37,6 +40,13 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+
+            buildConfigField("String", "ENCRYPT_IV_KEY", "\"$10A80$10A80$10A\"")  // ✅ Example BuildConfig variable
+            buildConfigField("String", "ENCRYPT_KEY", "\"$10A80$10A80$10A\"")  // ✅ Example BuildConfig variable
+            buildConfigField("String", "CRYPLIBAES", "\"AES/CBC/PKCS5PADDING\"")  // ✅ Example BuildConfig variable
+            buildConfigField("String", "CRYPT_ID", "\"8080808080808080\"")  // ✅ Example BuildConfig variable
+            buildConfigField("String", "CRYPT_IV", "\"8080808080808080\"")  // ✅ Example BuildConfig variable
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -44,7 +54,16 @@ android {
         }
         debug {
             isMinifyEnabled = false
-            buildConfigField("String", "API_KEY", "\"DEBUG_API_KEY\"")  // ✅ Example BuildConfig variable
+            buildConfigField("String", "API_KEY", "\"DEBUG_API_KEY\"")
+            buildConfigField("String", "ENCRYPT_IV_KEY", "\"$10A80$10A80$10A\"")
+            buildConfigField("String", "ENCRYPT_KEY", "\"$10A80$10A80$10A\"")
+            buildConfigField("String", "CRYPLIBAES", "\"AES/CBC/PKCS5PADDING\"")
+            buildConfigField("String", "CRYPT_ID", "\"8080808080808080\"")
+            buildConfigField("String", "CRYPT_IV", "\"8080808080808080\"")
+
+
+
+
         }
     }
 
@@ -81,12 +100,12 @@ android {
             buildConfigField("String", "BASE_URL", "\"https://staging.example.com/\"")
         }
     }
-
+/*
     sourceSets {
         getByName("main") {
             jniLibs.srcDirs("libs")
         }
-    }
+    }*/
 }
 
 dependencies {
@@ -160,13 +179,14 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
+    implementation(libs.androidx.activity.compose)
 
+
+/*
 
     // Pehchaan SDK
-    implementation(files("libs/pehchaanlib.aar"))
 
 // Jetpack Compose (if you're using Compose)
-    implementation(libs.androidx.activity.compose)
     implementation(platform("androidx.compose:compose-bom:2024.04.01"))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -179,7 +199,6 @@ dependencies {
 
 // CardView
     implementation(libs.androidx.cardview)
-
 // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.10.0")
 
@@ -221,6 +240,7 @@ dependencies {
 // MediaPipe Tasks Vision
     implementation("com.google.mediapipe:tasks-vision:0.10.14")
 
+*/
 
 }
 

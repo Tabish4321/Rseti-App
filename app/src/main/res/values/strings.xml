@@ -61,8 +61,8 @@
     <string name="mobile_number_man">Mobile Number<font color='#FF0000'>*</font></string>
     <string name="guardian_name">Guardian Name<font color='#FF0000'>*</font></string>
     <string name="guardian_name1">Guardian Name</string>
-    <string name="guardian_Mobile">Guardian Mobile Nuber</string>
-    <string name="guardian_Mobile_man">Guardian Mobile Nuber<font color='#FF0000'>*</font></string>
+    <string name="guardian_Mobile">Guardian Mobile Number</string>
+    <string name="guardian_Mobile_man">Guardian Mobile Number<font color='#FF0000'>*</font></string>
     <string name="gender">Gender</string>
     <string name="gender_man">Gender<font color='#FF0000'>*</font></string>
     <string name="dob">Date Of Birth</string>
@@ -190,5 +190,7 @@
     <string name="whether_cd_containing_edp_inputs_in_local_language_is_available_at_the_institute">Whether CD containing EDP inputs in local language is available at the Institute</string>
     <string name="whether_details_of_the_food_served_are_displayed_in_local_language_on_the_notice_board_as_per_the_format_supplied_by_nacer">Whether Details of the food served are displayed in local language on the Notice Board as per the format supplied by NACER</string>
     <string name="location_addrress">Location:- Addrress</string>
+    <string name="fin_year">Financial Year:</string>
+    <string name="month">Month:</string>
 
 </resources>

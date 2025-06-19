@@ -1,9 +1,11 @@
 package com.rsetiapp.common.fragments
+import android.Manifest
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.gms.location.*
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -29,19 +31,26 @@ import java.util.Locale
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Geocoder
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import java.io.ByteArrayOutputStream
 import android.util.Base64
 import android.widget.ImageView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavOptions
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.rsetiapp.BuildConfig
@@ -54,6 +63,7 @@ import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.response.Program
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.AppUtil.getCurrentDate
+import com.rsetiapp.core.util.AppUtil.hasStoragePermission
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.core.util.visible
@@ -81,6 +91,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private lateinit var adapter: CandidateAdapter
     private val candidateList = mutableListOf<Candidate>()
     private val commonViewModel: CommonViewModel by activityViewModels()
+    private lateinit var locationSettingLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     //State Var
     private lateinit var stateAdapter: ArrayAdapter<String>
@@ -169,12 +180,28 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
     private fun init(){
 
+
+        locationSettingLauncher = registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // GPS was enabled by the user
+            } else {
+                // GPS was not enabled
+            }
+        }
+        checkAndRequestStoragePermissions()
+
+        checkAndPromptGPS()
+
+        // checkAndRequestPermissions()
         val recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerView)
         val candidateCountTextView = view?.findViewById<TextView>(R.id.candidteCount)
 
         @SuppressLint("SetTextI18n")
         fun updateCandidateCount(count: Int) {
-            candidateCountTextView?.text = count.toString()
+            candidateCountTextView?.text = "Candidates: "+count.toString()
+            counts=count.toString()
 
 
 
@@ -222,6 +249,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
         val currentDate= getCurrentDate()
         binding.tvDate.text = currentDate
+        selectedDate= currentDate
 
         binding.eapIdName.text= eapId
         //Submit Button
@@ -538,6 +566,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
 
         binding.image1.setOnClickListener {
+
             openCamera(binding.image1)
         }
         binding.image2.setOnClickListener {
@@ -572,7 +601,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                                     instituteCode= x.instituteCode
                                     officialName= x.officialName
                                     designationName= x.designation
-
+                                    AppUtil.saveEapCanAgeLimitPreference(requireContext(),x.ageLimit)
                                     binding.tvOrganizationName.text=orgName
                                     binding.tvInstituteName.text=instituteName
                                     binding.tvparticipatingOfficialName.text=officialName
@@ -659,7 +688,14 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             if (insertApiResp.responseCode == 200) {
 
                                 showSnackBar("Success")
-                                findNavController().navigateUp()
+
+                                findNavController().navigate(
+                                    R.id.eapListFragment,
+                                    null,
+                                    NavOptions.Builder()
+                                        .setPopUpTo(R.id.EAPAwarnessFormFragment, true)
+                                        .build()
+                                )
 
 
 
@@ -1005,7 +1041,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
     private fun openCamera(imageView: ImageView) {
         checkAndRequestPermissions()
-
         currentImageView = imageView
 
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA)
@@ -1131,8 +1166,60 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
     @SuppressLint("SetTextI18n")
     fun updateCandidateCount(count: Int) {
-        binding.candidteCount.text = "$count"
+        binding.candidteCount.text = "Candidates: $count"
+        counts=count.toString()
+
+    }
+    private val storagePermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.entries.all { it.value }
+        if (allGranted) {
+            Toast.makeText(requireContext(), "Permission granted", Toast.LENGTH_SHORT).show()
+            // proceed with file/media access
+        } else {
+            Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun checkAndRequestStoragePermissions() {
+        if (!hasStoragePermission(requireContext())) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                storagePermissionLauncher.launch(AppUtil.storagePermissions)
+            } else {
+                storagePermissionLauncher.launch(arrayOf(AppUtil.legacyStoragePermission))
+            }
+        } else {
+            // Permissions already granted, continue your logic
+        }
     }
 
+
+    private fun checkAndPromptGPS() {
+        val locationRequest = LocationRequest.create().apply {
+            priority = Priority.PRIORITY_HIGH_ACCURACY
+        }
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+            .setAlwaysShow(true)
+
+        val settingsClient = LocationServices.getSettingsClient(requireActivity())
+        val task = settingsClient.checkLocationSettings(builder.build())
+
+        task.addOnSuccessListener {
+            // GPS is already enabled
+        }
+
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    val intentSenderRequest = IntentSenderRequest.Builder(exception.resolution).build()
+                    locationSettingLauncher.launch(intentSenderRequest)
+                } catch (e: IntentSender.SendIntentException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
 
 }

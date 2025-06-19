@@ -313,9 +313,8 @@
                     style="@style/EditText"
                     android:background="@drawable/edittext_background"
                     android:hint="@string/enter_loan_account_number"
-                    android:inputType="number"
+                    android:inputType="numberPassword"
                     android:padding="12dp"
-                    android:maxLength="15"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
             </LinearLayout>

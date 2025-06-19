@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Geocoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -46,6 +47,7 @@ import com.rsetiapp.common.model.response.SalaryRange
 import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.AppUtil.getCurrentDate
+import com.rsetiapp.core.util.AppUtil.hasStoragePermission
 import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.toastLong
@@ -140,6 +142,9 @@ class FollowUpFormFragment :
         candidate = arguments?.getSerializable("candidate") as CandidateDetail
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         userPreferences = UserPreferences(requireContext())
+
+        checkAndRequestStoragePermissions()
+
 
         if (candidate.candidateProfilePic == "NA" || candidate.candidateProfilePic?.isEmpty() ?: true) {
             Glide.with(binding.root.context).load(R.drawable.person).into(binding.candidateImage)
@@ -747,6 +752,29 @@ class FollowUpFormFragment :
         Log.d("FormData", "Status: $selectedStatus, Self Investment: $selfInvestmentItem, Credit From Bank: $creditFromBankItem")
     }
 
+    private fun checkAndRequestStoragePermissions() {
+        if (!hasStoragePermission(requireContext())) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                storagePermissionLauncher.launch(AppUtil.storagePermissions)
+            } else {
+                storagePermissionLauncher.launch(arrayOf(AppUtil.legacyStoragePermission))
+            }
+        } else {
+            // Permissions already granted, continue your logic
+        }
+    }
+
+    private val storagePermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.entries.all { it.value }
+        if (allGranted) {
+            Toast.makeText(requireContext(), "Permission granted", Toast.LENGTH_SHORT).show()
+            // proceed with file/media access
+        } else {
+            Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
 
 

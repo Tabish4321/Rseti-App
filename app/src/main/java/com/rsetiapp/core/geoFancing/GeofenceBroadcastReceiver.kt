@@ -8,37 +8,49 @@ import android.content.Intent
 import android.graphics.Color
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.google.android.gms.location.Geofence
 
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d("GeofenceReceiver", "onReceive called") // Add this
+        Log.d("GeofenceReceiver", "onReceive called")
+
         if (context == null || intent == null) {
             Log.e("GeofenceReceiver", "Context or Intent is null")
             return
         }
 
         val geofencingEvent = com.google.android.gms.location.GeofencingEvent.fromIntent(intent)
-        if (geofencingEvent != null) {
-            if (geofencingEvent.hasError()) {
-                if (geofencingEvent != null) {
-                    Log.e("GeofenceReceiver", "Error code: ${geofencingEvent.errorCode}")
-                }
-                return
-            }
+
+        if (geofencingEvent == null) {
+            Log.e("GeofenceReceiver", "GeofencingEvent is null")
+            return
         }
 
-        when (val transition = geofencingEvent?.geofenceTransition) {
-            com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER -> {
+        if (geofencingEvent.hasError()) {
+            Log.e("GeofenceReceiver", "Geofence error code: ${geofencingEvent.errorCode}")
+            return
+        }
+
+        val transition = geofencingEvent.geofenceTransition
+        Log.d("GeofenceReceiver", "Transition type: $transition")
+
+        val triggeringGeofences = geofencingEvent.triggeringGeofences
+        triggeringGeofences?.forEach {
+            Log.d("GeofenceReceiver", "Triggered geofence ID: ${it.requestId}")
+        }
+
+        when (transition) {
+            Geofence.GEOFENCE_TRANSITION_ENTER -> {
                 sendNotification(context, "You entered the institute zone!")
                 Log.d("GeofenceReceiver", "ENTERED geofence")
             }
-            com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT -> {
+            Geofence.GEOFENCE_TRANSITION_EXIT -> {
                 sendNotification(context, "You exited the institute zone!")
                 Log.d("GeofenceReceiver", "EXITED geofence")
             }
             else -> {
-                Log.d("GeofenceReceiver", "Unknown geofence transition: $transition")
+                Log.w("GeofenceReceiver", "Unknown geofence transition: $transition")
             }
         }
     }
