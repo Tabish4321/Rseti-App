@@ -18,7 +18,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
-import com.pehchaan.backend.service.AuthenticationActivity
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
@@ -191,14 +190,8 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
 
             } else
                 showSnackBar("Please enter id and password")
-
-
         }
-
     }
-
-
-
     private fun collectLoginResponse() {
         lifecycleScope.launch {
             collectLatestLifecycleFlow(commonViewModel.getLoginAPI) {
@@ -210,7 +203,6 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                             toastShort(baseErrorResponse.message)
                         }
                     }
-
                     is Resource.Success -> {
                         hideProgressBar()
                         it.data?.let { getLoginResponse ->

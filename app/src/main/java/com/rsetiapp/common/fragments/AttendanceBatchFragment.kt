@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 
 class AttendanceBatchFragment :
     BaseFragment<AttendanceBatchFragmentBinding>(AttendanceBatchFragmentBinding::inflate)  {
+
     private lateinit var batchAdapter: AttendanceBatchAdapter
     private var AttendanceBatchList = mutableListOf<AttendanceBatch>()
     private val commonViewModel: CommonViewModel by activityViewModels()
@@ -86,6 +87,4 @@ class AttendanceBatchFragment :
             }
         }
     }
-
-
     }

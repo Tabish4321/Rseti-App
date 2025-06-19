@@ -39,29 +39,27 @@ class AttendanceCandidateFragment  :
 
         init()
         setupRecyclerView()
-
-
     }
-
     private fun init(){
         listener()
     }
 
+
+
     private fun listener(){
 
         binding.backButton.setOnClickListener {
+
             findNavController().navigateUp()
+
         }
-
-
     }
     private fun setupRecyclerView() {
+
         candidateListAdapter = AttendanceCandidateAdapter(AttendanceCandidateList)
         binding.recyclerViewCandidates.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewCandidates.adapter = candidateListAdapter
-
     }
-
     @SuppressLint("NotifyDataSetChanged")
     private fun collectAttendanceBatchResponse() {
         lifecycleScope.launch {

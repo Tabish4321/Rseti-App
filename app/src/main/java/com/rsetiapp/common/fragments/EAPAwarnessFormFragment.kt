@@ -168,6 +168,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     }
 
     private fun init(){
+
         val recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerView)
         val candidateCountTextView = view?.findViewById<TextView>(R.id.candidteCount)
 
