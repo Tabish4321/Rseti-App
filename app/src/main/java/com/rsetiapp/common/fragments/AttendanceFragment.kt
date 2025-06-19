@@ -164,7 +164,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         loadBase64Image(candidateDp, binding.circleImageView)
 
 
-
+//Hi
 
 
         init()
