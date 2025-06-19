@@ -65,7 +65,6 @@
 
 
     </LinearLayout>
-
     <LinearLayout
         android:id="@+id/llselfinvestment"
         android:layout_width="match_parent"

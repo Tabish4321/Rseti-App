@@ -24,6 +24,7 @@ import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.request.SdrListReq
+import com.rsetiapp.common.model.request.SettleStatusRequest
 import com.rsetiapp.common.model.request.StateListReq
 import com.rsetiapp.common.model.request.TokenReq
 import com.rsetiapp.common.model.request.ValidateOtpReq
@@ -53,6 +54,7 @@ import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.common.model.response.SdrInsertResp
 import com.rsetiapp.common.model.response.SdrListResp
+import com.rsetiapp.common.model.response.SettleStatusResponse
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.response.TokenRes
 import com.rsetiapp.common.model.response.VillageResponse
@@ -69,6 +71,7 @@ interface AppLevelApi {
 
     @POST("generateToken")
     suspend fun getToken(@Body tokenReq: TokenReq): TokenRes
+
     @POST("login")
     suspend fun getLoginAPI(@Body loginReq: LoginReq): LoginRes
 
@@ -114,15 +117,13 @@ interface AppLevelApi {
                              @Body eapInsertRequest: EAPInsertRequest): EAPInsertResponse
 
     @POST("verifiyMobile")
-    suspend fun generateOtpAPI(
-                               @Body otpGenerateRequest: OtpGenerateRequest): OtpGenerateResponse
+    suspend fun generateOtpAPI(@Body otpGenerateRequest: OtpGenerateRequest): OtpGenerateResponse
 
     @POST("forgetPassword")
-    suspend fun forgetPasswordAPI(
-                                  @Body fogotPaasReq: FogotPaasReq): ForgotPassresponse
+    suspend fun forgetPasswordAPI(@Body fogotPaasReq: FogotPaasReq): ForgotPassresponse
 
     @POST("batchList")
-    suspend fun getFollowUpBatchListAPI(@Header("Authorization") token: String,
+    suspend fun getFollowUpBatchListAPI(@Header("Authorization") token : String,
                                         @Body batchListReq: BatchListReq): BatchListResponse
 
     @POST("batchCandidateList")
@@ -197,4 +198,10 @@ interface AppLevelApi {
     suspend fun postOnAUAFaceAuthNREGA(
         @Url url: String, @Body request: UidaiKycRequest
     ): Response<UidaiResp>
+
+
+    @POST("candidateSettleStatus")
+    suspend fun getSettleStatusApi(@Body  settleStatusRequest: SettleStatusRequest ) : SettleStatusResponse
+
+
 }

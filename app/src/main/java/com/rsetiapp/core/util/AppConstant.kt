@@ -31,6 +31,10 @@ object AppConstant {
         const val CAPTURE_INTENT_REQUEST = "request"
         const val CAPTURE_INTENT = "in.gov.uidai.rdservice.face.CAPTURE"
         const val PRODUCTION: String = "P"
+        const val ENGLISH: String = "english"
+        const val STAGING_CODE: String = "S"
+        const val PRE_PRODUCTION_CODE: String = "PP"
+        const val CURRENT_ENVIRONMENT_CODE = PRE_PRODUCTION_CODE;
         const val WADH_KEY = "sgydIC09zzy6f8Lb3xaAqzKquKe9lFcNR9uTvYxFp+A="
         var LANGUAGE = "en"
         var ENVIRONMENT_TAG = "P"

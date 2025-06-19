@@ -25,6 +25,7 @@ import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.request.SdrListReq
+import com.rsetiapp.common.model.request.SettleStatusRequest
 import com.rsetiapp.common.model.request.ValidateOtpReq
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
@@ -50,6 +51,7 @@ import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.common.model.response.SdrInsertResp
 import com.rsetiapp.common.model.response.SdrListResp
+import com.rsetiapp.common.model.response.SettleStatusResponse
 import com.rsetiapp.common.model.response.TokenRes
 import com.rsetiapp.core.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -92,13 +94,23 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
                 _getLoginAPI.emit(it)
             }
         }
-
-
     }
+
+/*
+    private var _getDemAPI = MutableStateFlow<Resource<out DemRes>>(Resource.Loading())
+    val getDemAPI = _getDemAPI.asStateFlow()
+
+    fun getDemAPI(demReq : DemReq){
+        viewModelScope.launch {
+            commonRepository.getDemAPI(demReq).collectLatest{
+                _getDemAPI.emit(it)
+            }
+        }
+    }
+*/
 
     private var _getFormAPI = MutableStateFlow<Resource<out FormResponse>>(Resource.Loading())
     val getFormAPI = _getFormAPI.asStateFlow()
-
 
 
     fun getFormAPI(header :String,appVersion:String , login:String, imeiNo :String){
@@ -107,8 +119,6 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
                 _getFormAPI.emit(it)
             }
         }
-
-
     }
 
     private var _stateList =  MutableStateFlow<Resource<out StateDataResponse>>(Resource.Loading())
@@ -122,6 +132,7 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
             }
         }
     }
+
 
     private var _districtList =  MutableStateFlow<Resource<out DistrictResponse>>(Resource.Loading())
     val getDistrictList = _districtList.asStateFlow()
@@ -227,14 +238,13 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
                 _generateOtpAPI.emit(it)
             }
         }
-
-
     }
+
 
     private  var _forgetPasswordAPI =  MutableStateFlow<Resource<out ForgotPassresponse>>(Resource.Loading())
     val forgetPasswordAPI = _forgetPasswordAPI.asStateFlow()
 
-    fun forgetPasswordAPI(fogotPaasReq: FogotPaasReq) {
+    fun forgetPasswordAPI(fogotPaasReq : FogotPaasReq) {
         viewModelScope.launch {
             commonRepository.forgetPasswordAPI(fogotPaasReq).collectLatest {
                 _forgetPasswordAPI.emit(it)
@@ -465,6 +475,17 @@ private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>
         }
 
 
+    }
+
+    private var _getSettleStatusApi = MutableStateFlow<Resource<out  SettleStatusResponse>>(Resource.Loading())
+    val getSettleStatusApi = _getSettleStatusApi.asSharedFlow()
+
+    fun getSettleStatusApi(settleStatusRequest: SettleStatusRequest){
+        viewModelScope.launch {
+            commonRepository.getSettleStatusApi(settleStatusRequest).collectLatest {
+                _getSettleStatusApi.emit(it)
+            }
+        }
     }
 
 

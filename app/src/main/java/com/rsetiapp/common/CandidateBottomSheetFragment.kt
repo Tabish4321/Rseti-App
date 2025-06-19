@@ -76,9 +76,6 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     private lateinit var etDob: TextView
     lateinit var userPreferences: UserPreferences
 
-
-
-
     private var candidateSearchList: List<CandidateSearchData> = listOf()
     private var candidateDetailsList: List<CandidateData> = listOf()
 
@@ -165,6 +162,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
 
 
         btnAdd.setOnClickListener {
+
             candidateName = etCandidateName.text.toString()
             candidateGender = etGender.text.toString()
             candidateGuardianName = etGuardianName.text.toString()

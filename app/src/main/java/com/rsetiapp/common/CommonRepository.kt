@@ -33,6 +33,7 @@ import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.request.SdrListReq
+import com.rsetiapp.common.model.request.SettleStatusRequest
 import com.rsetiapp.common.model.request.TokenReq
 import com.rsetiapp.common.model.request.ValidateOtpReq
 import com.rsetiapp.common.model.response.AttendanceBatchRes
@@ -60,6 +61,7 @@ import com.rsetiapp.common.model.response.ProgramResponse
 import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.common.model.response.SdrInsertResp
 import com.rsetiapp.common.model.response.SdrListResp
+import com.rsetiapp.common.model.response.SettleStatusResponse
 import com.rsetiapp.common.model.response.TokenRes
 import com.rsetiapp.core.data.local.database.AppDatabase
 import com.rsetiapp.core.data.remote.AppLevelApi
@@ -82,9 +84,9 @@ class CommonRepository @Inject constructor(
             appLevelApi.getToken(TokenReq(appVersion,imeiNo))
         }
     }
+
     suspend fun getLoginAPI(loginReq: LoginReq): Flow<Resource<out LoginRes>>{
         return networkBoundResourceWithoutDb {
-
             appLevelApi.getLoginAPI(loginReq)
         }
     }
@@ -275,6 +277,14 @@ class CommonRepository @Inject constructor(
         return networkBoundResourceWithoutDb {
 
             appLevelApi.getOtpValidateApi(validateOtpReq)
+        }
+    }
+
+
+
+    suspend fun getSettleStatusApi(settleStatusRequest: SettleStatusRequest) : Flow<Resource<out SettleStatusResponse>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getSettleStatusApi(settleStatusRequest)
         }
     }
 

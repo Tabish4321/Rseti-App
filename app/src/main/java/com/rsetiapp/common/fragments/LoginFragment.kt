@@ -190,14 +190,8 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
 
             } else
                 showSnackBar("Please enter id and password")
-
-
         }
-
     }
-
-
-
     private fun collectLoginResponse() {
         lifecycleScope.launch {
             collectLatestLifecycleFlow(commonViewModel.getLoginAPI) {
@@ -209,7 +203,6 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                             toastShort(baseErrorResponse.message)
                         }
                     }
-
                     is Resource.Success -> {
                         hideProgressBar()
                         it.data?.let { getLoginResponse ->
