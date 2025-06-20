@@ -135,6 +135,48 @@
             <argument
                 android:name="eapId"
                 app:argType="string" />
+
+            <argument
+                android:name="stateNme"
+                app:argType="string" />
+
+
+            <argument
+                android:name="stateCode"
+                app:argType="string" />
+            <argument
+                android:name="districtCode"
+                app:argType="string" />
+            <argument
+                android:name="districtName"
+                app:argType="string" />
+            <argument
+                android:name="blockName"
+                app:argType="string" />
+            <argument
+                android:name="blockCode"
+                app:argType="string" />
+            <argument
+                android:name="gpName"
+                app:argType="string" />
+            <argument
+                android:name="gpCode"
+                app:argType="string" />
+            <argument
+                android:name="villageName"
+                app:argType="string" />
+            <argument
+                android:name="villageCode"
+                app:argType="string" />
+            <argument
+                android:name="eapName"
+                app:argType="string" />
+            <argument
+                android:name="programCode"
+                app:argType="string" />
+
+
+
         </action>
     </fragment>
     <fragment

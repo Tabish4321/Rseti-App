@@ -10,6 +10,7 @@ data class LoginRes(
 
 data class LoginDetails(
     val loginId: String,
-    val userName: String
+    val userName: String,
+    val entityCode: String
 )
 

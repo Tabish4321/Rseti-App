@@ -70,6 +70,7 @@ import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.networkBoundResourceWithoutDb
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
+import retrofit2.http.Header
 import javax.inject.Inject
 
 
@@ -124,11 +125,7 @@ class CommonRepository @Inject constructor(
         }
     }
 
-    suspend fun getProgramListAPI(header :String,appVersion: String, login :String, imeiNo :String): Flow<Resource<out ProgramResponse>>{
-        return networkBoundResourceWithoutDb {
-            appLevelApi.getProgramListAPI(header,StateListReq( appVersion,imeiNo,login))
-        }
-    }
+
 
     suspend fun getEapAutoFetchListAPI(header :String,login : String, appVersion: String, imeiNo :String): Flow<Resource<out EapAutoFetchRes>>{
         return networkBoundResourceWithoutDb {
@@ -155,9 +152,9 @@ class CommonRepository @Inject constructor(
         }
     }
 
-    suspend fun getBatchAPI(header :String,appVersion : String,login :String,imeiNo :String): Flow<Resource<out BatchListResponse>> {
+    suspend fun getBatchAPI(header :String,appVersion : String,login :String,imeiNo :String,entityCode:String): Flow<Resource<out BatchListResponse>> {
         return networkBoundResourceWithoutDb {
-            appLevelApi.getFollowUpBatchListAPI(header,BatchListReq(appVersion,imeiNo,login))
+            appLevelApi.getFollowUpBatchListAPI(header,BatchListReq(appVersion,imeiNo,login,entityCode))
         }
     }
 
@@ -282,9 +279,9 @@ class CommonRepository @Inject constructor(
 
 
 
-    suspend fun getSettleStatusApi(settleStatusRequest: SettleStatusRequest) : Flow<Resource<out SettleStatusResponse>>{
+    suspend fun getSettleStatusApi(token: String, settleStatusRequest: SettleStatusRequest) : Flow<Resource<out SettleStatusResponse>>{
         return networkBoundResourceWithoutDb {
-            appLevelApi.getSettleStatusApi(settleStatusRequest)
+            appLevelApi.getSettleStatusApi(token,settleStatusRequest)
         }
     }
 

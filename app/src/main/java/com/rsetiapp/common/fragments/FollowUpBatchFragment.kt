@@ -121,7 +121,7 @@ class FollowUpBatchFragment :
 
     @SuppressLint("NotifyDataSetChanged")
     private fun collectBatchesData() {
-        commonViewModel.getBatchAPI(AppUtil.getSavedTokenPreference(requireContext()),BuildConfig.VERSION_NAME, userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
+        commonViewModel.getBatchAPI(AppUtil.getSavedTokenPreference(requireContext()),BuildConfig.VERSION_NAME, userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()),AppUtil.getSavedEntityPreference(requireContext()))
         lifecycleScope.launch {
             commonViewModel.getBatchAPI.collectLatest { resource ->
                 when (resource) {

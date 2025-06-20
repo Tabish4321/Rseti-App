@@ -41,8 +41,18 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
     private var eapStatusValue=""
     private var eapDateValue=""
     private var formName=""
-
-
+    private var stateNme=""
+    private var stateCode=""
+    private var districtCode=""
+    private var districtName=""
+    private var blockName=""
+    private var blockCode=""
+    private var gpName=""
+    private var gpCode=""
+    private var villageName=""
+    private var villageCode=""
+    private var eapName=""
+    private var programCode=""
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -73,9 +83,24 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
 
     @SuppressLint("SuspiciousIndentation", "DefaultLocale")
     private fun getValue(eapItem: EapList) {
-        eapIdValue = eapItem.eapID
+        eapIdValue = eapItem.eapID.toString()
         eapDateValue = eapItem.monthYear // Example: "24/05/2024"
         eapStatusValue = eapItem.status
+        stateNme = eapItem.stateNme
+        stateCode = eapItem.stateCode
+        districtCode = eapItem.districtCode
+        districtName = eapItem.districtName
+        blockName = eapItem.blockName
+        blockCode = eapItem.blockCode
+        gpName = eapItem.gpName
+        gpCode = eapItem.gpCode
+        villageName = eapItem.villageName
+        villageCode = eapItem.villageCode
+        eapName = eapItem.eapName
+        programCode = eapItem.programCode.toString()
+
+
+
 
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         sdf.isLenient = false
@@ -90,7 +115,8 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
                 findNavController().navigate(
                     EapListFragmentDirections.actionEapListFragmentToEAPAwarnessFormFragment(
                         formName,
-                        eapIdValue
+                        eapIdValue,
+                        stateNme,stateCode,districtCode,districtName,blockName,blockCode,gpName,gpCode,villageName,villageCode,eapName,programCode
                     )
                 )
             } else if (eapStatusValue == "Expired") {

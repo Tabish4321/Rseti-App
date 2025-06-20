@@ -192,5 +192,6 @@
     <string name="location_addrress">Location:- Addrress</string>
     <string name="fin_year">Financial Year:</string>
     <string name="month">Month:</string>
+    <string name="program_name1">Program Name</string>
 
 </resources>

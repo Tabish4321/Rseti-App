@@ -138,6 +138,17 @@ object AppUtil {
         val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
         return sharedPreferences.getString("token_code", "") ?: "" // Default to English
     }
+    fun saveEntityPreference(context: Context, entityCode: String) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("entity_code", entityCode)
+        editor.apply()
+    }
+
+    fun getSavedEntityPreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("entity_code", "") ?: "" // Default to English
+    }
 
 
 

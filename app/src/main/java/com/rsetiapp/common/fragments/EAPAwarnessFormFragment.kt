@@ -60,6 +60,9 @@ import com.rsetiapp.common.CandidateUpdateListener
 import com.rsetiapp.common.adapter.CandidateAdapter
 import com.rsetiapp.common.model.request.Candidate
 import com.rsetiapp.common.model.request.EAPInsertRequest
+import com.rsetiapp.common.model.response.AutoFetch
+import com.rsetiapp.common.model.response.EapList
+import com.rsetiapp.common.model.response.Institute
 import com.rsetiapp.common.model.response.Program
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.AppUtil.getCurrentDate
@@ -76,6 +79,21 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
     private var formName=""
     private var eapId=""
+
+    private var stateNme=""
+    private var stateCode=""
+    private var districtCode=""
+    private var districtName=""
+    private var blockName=""
+    private var blockCode=""
+    private var gpName=""
+    private var gpCode=""
+    private var villageName=""
+    private var villageCode=""
+    private var eapName=""
+    private var programCode=""
+
+
     private var selectedDate=""
     private var selectedTotalParticipants=""
     private var selectedNameOfNGO=""
@@ -90,54 +108,20 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var adapter: CandidateAdapter
     private val candidateList = mutableListOf<Candidate>()
+
+    private var institute: MutableList<Institute> = mutableListOf()
+    private var eapData: MutableList<AutoFetch> = mutableListOf()
+
+
+
     private val commonViewModel: CommonViewModel by activityViewModels()
     private lateinit var locationSettingLauncher: ActivityResultLauncher<IntentSenderRequest>
 
-    //State Var
-    private lateinit var stateAdapter: ArrayAdapter<String>
-    private var stateList: MutableList<WrappedList> = mutableListOf()
-    private var state = ArrayList<String>()
-    private var stateCode = ArrayList<String>()
-    private var stateLgdCode = ArrayList<String>()
-    private var selectedStateCodeItem = ""
-    private var selectedStateLgdCodeItem = ""
-    private var selectedStateItem = ""
+
+
     private var counts = ""
     private var latitude : Double? = null
     private var longitude : Double? = null
-
-    // district var
-    private var districtList: MutableList<DistrictList> = mutableListOf()
-    private lateinit var districtAdapter: ArrayAdapter<String>
-    private var district = ArrayList<String>()
-    private var districtCode = ArrayList<String>()
-    private var districtLgdCode = ArrayList<String>()
-    private var selectedDistrictCodeItem = ""
-    private var selectedDistrictLgdCodeItem = ""
-    private var selectedDistrictItem = ""
-
-
-    //block var
-    private var blockList: MutableList<BlockList> = mutableListOf()
-    private lateinit var blockAdapter: ArrayAdapter<String>
-    private var block = ArrayList<String>()
-    private var blockCode = ArrayList<String>()
-    private var blockLgdCode = ArrayList<String>()
-    private var selectedBlockCodeItem = ""
-    private var selectedbBlockLgdCodeItem = ""
-    private var selectedBlockItem = ""
-
-
-    //GP var
-    private var gpList: MutableList<GrampanchayatList> = mutableListOf()
-    private lateinit var gpAdapter: ArrayAdapter<String>
-    private var gp = ArrayList<String>()
-    private var gpCode = ArrayList<String>()
-    private var gpLgdCode = ArrayList<String>()
-    private var selectedGpCodeItem = ""
-    private var selectedbGpLgdCodeItem = ""
-    private var selectedGpItem = ""
-
 
     private var orgCode = ""
     private var orgName = ""
@@ -146,24 +130,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private var officialName = ""
     private var designationName = ""
 
-    //Village var
-    private var villageList: MutableList<VillageList> = mutableListOf()
-    private lateinit var villageAdapter: ArrayAdapter<String>
-    private var village = ArrayList<String>()
-    private var villageCode = ArrayList<String>()
-    private var villageLgdCode = ArrayList<String>()
-    private var selectedVillageCodeItem = ""
-    private var selectedbVillageLgdCodeItem = ""
-    private var selectedVillageItem = ""
-
-
-    //Program name var
-    private var programNameList: List<Program> = mutableListOf()
-    private lateinit var programNameAdapter: ArrayAdapter<String>
-    private var programName = ArrayList<String>()
-    private var programNameCode = ArrayList<String>()
-    private var selectedprogramNameCodeItem = ""
-    private var selectedprogramNameItem = ""
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -172,6 +138,27 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
         formName = arguments?.getString("formName").toString()
         eapId = arguments?.getString("eapId").toString()
+        stateNme=  arguments?.getString("stateNme").toString()
+         stateCode= arguments?.getString("stateCode").toString()
+        districtCode= arguments?.getString("districtCode").toString()
+       districtName= arguments?.getString("districtName").toString()
+        blockName= arguments?.getString("blockName").toString()
+         blockCode= arguments?.getString("blockCode").toString()
+         gpName= arguments?.getString("gpName").toString()
+        gpCode= arguments?.getString("gpCode").toString()
+         villageName= arguments?.getString("villageName").toString()
+        villageCode= arguments?.getString("villageCode").toString()
+        eapName= arguments?.getString("eapName").toString()
+         programCode= arguments?.getString("programCode").toString()
+
+
+        binding.spinnerAutoState.text= stateNme
+        binding.districValue.text= districtName
+        binding.blockValue.text= blockName
+        binding.gpValue.text= gpName
+        binding.villageValue.text= villageName
+
+
         userPreferences = UserPreferences(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         init()
@@ -234,14 +221,9 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
         commonViewModel.getStateListApi(AppUtil.getSavedTokenPreference(requireContext()),userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
         commonViewModel.getEapAutoFetchListAPI(AppUtil.getSavedTokenPreference(requireContext()),userPreferences.getUseID(), BuildConfig.VERSION_NAME,AppUtil.getAndroidId(requireContext()))
-        commonViewModel.getProgramListAPI(AppUtil.getSavedTokenPreference(requireContext()),userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
-        collectProgramNameResponse()
+
         collectEapAutoFetchResponse()
-        collectStateResponse()
-        collectDistrictResponse()
-        collectBlockResponse()
-        collectGpResponse()
-        collectVillageResponse()
+
         listener()
     }
     @SuppressLint("SetTextI18n")
@@ -266,9 +248,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
 
 
-            if (selectedDate.isNotEmpty()&& selectedTotalParticipants.isNotEmpty()&& selectedNameOfNGO.isNotEmpty() && selectedprogramNameCodeItem.isNotEmpty() &&
-                selectedStateCodeItem.isNotEmpty() &&  selectedDistrictCodeItem.isNotEmpty() &&  selectedBlockCodeItem.isNotEmpty() && selectedGpCodeItem.isNotEmpty()&&
-                selectedVillageCodeItem.isNotEmpty() && selectedNoOfAppExpectedNextMonth.isNotEmpty() && selectedBrief.isNotEmpty()&& image1Base64.isNotEmpty()&&
+            if (selectedDate.isNotEmpty()&& selectedTotalParticipants.isNotEmpty()&& selectedNameOfNGO.isNotEmpty()
+                && selectedNoOfAppExpectedNextMonth.isNotEmpty() && selectedBrief.isNotEmpty()&& image1Base64.isNotEmpty()&&
                 image2Base64.isNotEmpty()){
 
 
@@ -285,7 +266,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                 else{
 
                     commonViewModel.insertEAPAPI(AppUtil.getSavedTokenPreference(requireContext()),EAPInsertRequest(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
-                        selectedprogramNameCodeItem,selectedStateCodeItem,selectedDistrictCodeItem,selectedBlockCodeItem,selectedGpCodeItem,selectedVillageCodeItem,
+                        programCode,stateCode,districtCode,blockCode,gpCode,villageCode,
                         selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
                         latitude.toString(),
                         longitude.toString(),candidateList))
@@ -331,232 +312,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         }
 
 
-        //Adapter Program
-
-        programNameAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            programName
-        )
-
-        binding.spinnerProgramName.setAdapter(programNameAdapter)
-
-        //Adapter State
-
-        stateAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            state
-        )
-
-        binding.spinnerState.setAdapter(stateAdapter)
-        //Adapter District setting
-
-        districtAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            district
-        )
-
-        binding.spinnerDistrict.setAdapter(districtAdapter)
-
-
-        //Adapter Block setting
-
-        blockAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            block
-        )
-
-        binding.spinnerBlock.setAdapter(blockAdapter)
-
-        //Adapter GP setting
-
-        gpAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            gp
-        )
-
-        binding.spinnerGp.setAdapter(gpAdapter)
-
-
-        //Adapter Village setting
-
-        villageAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            village
-        )
-
-        binding.spinnerVillage.setAdapter(villageAdapter)
-
-
-
-
-        //Selection Of State,and so on
-
-
-        binding.spinnerState.setOnItemClickListener { parent, view, position, id ->
-            selectedStateItem = parent.getItemAtPosition(position).toString()
-            if (position in state.indices) {
-
-               block.clear()
-                gp.clear()
-                village.clear()
-
-                selectedStateCodeItem = stateCode[position]
-                selectedStateLgdCodeItem = stateLgdCode[position]
-                commonViewModel.getDistrictListApi(AppUtil.getSavedTokenPreference(requireContext()),selectedStateCodeItem,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
-                districtAdapter.notifyDataSetChanged()
-
-
-
-                selectedDistrictCodeItem = ""
-                selectedDistrictLgdCodeItem = ""
-                selectedDistrictItem = ""
-                binding.spinnerDistrict.clearFocus()
-                binding.spinnerDistrict.setText("", false)
-
-
-                selectedBlockCodeItem = ""
-                selectedbBlockLgdCodeItem = ""
-                selectedBlockItem = ""
-                binding.spinnerBlock.clearFocus()
-                binding.spinnerBlock.setText("", false)
-
-                selectedGpCodeItem = ""
-                selectedbGpLgdCodeItem = ""
-                selectedGpItem = ""
-                binding.spinnerGp.clearFocus()
-                binding.spinnerGp.setText("", false)
-
-
-                selectedVillageCodeItem = ""
-                selectedbVillageLgdCodeItem = ""
-                selectedVillageItem = ""
-                binding.spinnerVillage.clearFocus()
-                binding.spinnerVillage.setText("", false)
-
-
-
-            } else {
-                Toast.makeText(requireContext(), "Invalid selection", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        //District selection
-        binding.spinnerDistrict.setOnItemClickListener { parent, view, position, id ->
-            selectedDistrictItem = parent.getItemAtPosition(position).toString()
-            if (position in district.indices) {
-
-                gp.clear()
-                village.clear()
-
-                selectedDistrictCodeItem = districtCode[position]
-                selectedDistrictLgdCodeItem = districtLgdCode[position]
-                commonViewModel.getBlockListApi(AppUtil.getSavedTokenPreference(requireContext()),selectedDistrictCodeItem,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
-                gpAdapter.notifyDataSetChanged()
-
-                selectedBlockCodeItem = ""
-                selectedbBlockLgdCodeItem = ""
-                selectedBlockItem = ""
-                binding.spinnerBlock.clearFocus()
-                binding.spinnerBlock.setText("", false)
-
-
-                selectedGpCodeItem = ""
-                selectedbGpLgdCodeItem = ""
-                selectedGpItem = ""
-                binding.spinnerGp.clearFocus()
-                binding.spinnerGp.setText("", false)
-
-
-                selectedVillageCodeItem = ""
-                selectedbVillageLgdCodeItem = ""
-                selectedVillageItem = ""
-                binding.spinnerVillage.clearFocus()
-                binding.spinnerVillage.setText("", false)
-
-            } else {
-                Toast.makeText(requireContext(), "Invalid selection", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
-        //Block Spinner
-        binding.spinnerBlock.setOnItemClickListener { parent, view, position, id ->
-            selectedBlockItem = parent.getItemAtPosition(position).toString()
-            if (position in block.indices) {
-                village.clear()
-                selectedBlockCodeItem = blockCode[position]
-                selectedbBlockLgdCodeItem = blockLgdCode[position]
-                commonViewModel.getGpListApi(AppUtil.getSavedTokenPreference(requireContext()),selectedBlockCodeItem,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
-                selectedGpCodeItem = ""
-                selectedbGpLgdCodeItem = ""
-                selectedGpItem = ""
-                binding.spinnerGp.clearFocus()
-                binding.spinnerGp.setText("", false)
-                selectedVillageCodeItem = ""
-                selectedbVillageLgdCodeItem = ""
-                selectedVillageItem = ""
-                binding.spinnerVillage.clearFocus()
-                binding.spinnerVillage.setText("", false)
-
-
-            } else {
-                Toast.makeText(requireContext(), "Invalid selection", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
-        //GP Spinner
-        binding.spinnerGp.setOnItemClickListener { parent, view, position, id ->
-            selectedGpItem = parent.getItemAtPosition(position).toString()
-
-            if (position in gp.indices) {
-                selectedGpCodeItem = gpCode[position]
-                selectedbGpLgdCodeItem = gpLgdCode[position]
-                commonViewModel.getVillageListApi(AppUtil.getSavedTokenPreference(requireContext()),selectedGpCodeItem,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
-
-                selectedVillageCodeItem = ""
-                selectedbVillageLgdCodeItem = ""
-                selectedVillageItem = ""
-                binding.spinnerVillage.clearFocus()
-                binding.spinnerVillage.setText("", false)
-
-            } else {
-                Toast.makeText(requireContext(), "Invalid selection", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
-        //Village Spinner
-        binding.spinnerVillage.setOnItemClickListener { parent, view, position, id ->
-            selectedVillageItem = parent.getItemAtPosition(position).toString()
-            if (position in village.indices) {
-                selectedVillageCodeItem = villageCode[position]
-                selectedbVillageLgdCodeItem = villageLgdCode[position]
-
-
-            } else {
-                Toast.makeText(requireContext(), "Invalid selection", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
-
-        binding.spinnerProgramName.setOnItemClickListener { parent, view, position, id ->
-            selectedprogramNameItem = parent.getItemAtPosition(position).toString()
-            if (position in programName.indices) {
-                selectedprogramNameCodeItem = programNameCode[position]
-
-
-            } else {
-                Toast.makeText(requireContext(), "Invalid Selection", Toast.LENGTH_SHORT).show()
-            }
-        }
 
 
 
@@ -595,71 +350,49 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
                                 for (x in getEapAutoFetchListAPI.wrappedList){
 
+                                   institute= x.instituteData.toMutableList()
+                                    eapData= x.autoFetchData.toMutableList()
+
+
+                                }
+
+                                for (x in institute){
+
+
+
+                                    instituteName= x.instituteName
+                                    instituteCode= x.instituteCode.toString()
+
+
+
+                                    binding.tvInstituteName.text=instituteName
+
+
+                                }
+
+                                for (x in eapData){
                                     orgCode= x.orgCode
                                     orgName= x.orgName
-                                    instituteName= x.instituteName
-                                    instituteCode= x.instituteCode
                                     officialName= x.officialName
                                     designationName= x.designation
+
                                     AppUtil.saveEapCanAgeLimitPreference(requireContext(),x.ageLimit)
                                     binding.tvOrganizationName.text=orgName
-                                    binding.tvInstituteName.text=instituteName
                                     binding.tvparticipatingOfficialName.text=officialName
                                     binding.tvdesiginationName.text=designationName
+
 
                                 }
 
 
-                                stateAdapter.notifyDataSetChanged()
                             } else if (getEapAutoFetchListAPI.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
                             }   else if (getEapAutoFetchListAPI.responseCode==401){
                                 AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
                             }
                             else {
-                                toastLong(getEapAutoFetchListAPI.responseDesc)
+                               // toastLong(getEapAutoFetchListAPI.responseDesc)
                             }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-
-                }
-            }
-        }
-    }
-    private fun collectProgramNameResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getProgramListAPI) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            toastShort(baseErrorResponse.message)
-                        }
-                    }
-
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { getProgramListAPI ->
-                            if (getProgramListAPI.responseCode == 200) {
-                                programNameList = getProgramListAPI.wrappedList
-                                programName.clear()
-                                programNameCode.clear()
-
-                                for (x in programNameList) {
-                                    programName.add(x.programName)
-                                    programNameCode.add(x.programCode)
-                                }
-
-                                stateAdapter.notifyDataSetChanged()
-                            } else if (getProgramListAPI.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            }  else if (getProgramListAPI.responseCode == 401) {
-                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
-
-
-                            }
-                            else toastLong(getProgramListAPI.responseDesc)
                         } ?: showSnackBar("Internal Server Error")
                     }
 
@@ -722,232 +455,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         }
     }
 
-
-    private fun collectStateResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getStateList) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            showSnackBar("Internal Server Error111")
-                        }
-                    }
-
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { getStateResponse ->
-                            if (getStateResponse.responseCode == 200) {
-                                stateList = getStateResponse.stateList
-                                state.clear()
-                                stateCode.clear()
-                                stateLgdCode.clear()
-
-                                for (x in stateList) {
-                                    state.add(x.stateName)
-                                    stateCode.add(x.stateCode)
-                                    stateLgdCode.add(x.lgdStateCode)
-                                }
-
-                                stateAdapter.notifyDataSetChanged()
-                            } else if (getStateResponse.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            }   else if (getStateResponse.responseCode==401){
-                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
-                            }
-                            else {
-                                toastLong(getStateResponse.responseDesc)
-                            }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-
-                    else -> { showSnackBar("Internal Server Error")}
-                }
-            }
-        }
-    }
-    private fun collectDistrictResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getDistrictList) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            showSnackBar("Internal Server Error111")
-                        }
-                    }
-
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { getDistrictResponse ->
-                            if (getDistrictResponse.responseCode == 200) {
-                                districtList = getDistrictResponse.districtList
-
-                                districtLgdCode.clear()
-                                district.clear()
-                                districtCode.clear()
-
-                                for (x in districtList) {
-                                    district.add(x.districtName)
-                                    districtCode.add(x.districtCode)
-                                    districtLgdCode.add(x.lgdDistrictCode)
-                                }
-
-
-
-
-
-                                withContext(Dispatchers.Main) {
-                                    districtAdapter.notifyDataSetChanged()
-
-                                }
-                            } else if (getDistrictResponse.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            }   else if (getDistrictResponse.responseCode==401){
-                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
-                            }
-                            else {
-                                toastLong(getDistrictResponse.responseDesc)
-                            }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-
-                    else -> { showSnackBar("Internal Server Error")}
-                }
-            }
-        }
-    }
-    private fun collectBlockResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getBlockList) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            showSnackBar("Internal Server Error111")
-                        }
-                    }
-
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { getBlockResponse ->
-                            if (getBlockResponse.responseCode == 200) {
-                                blockList = getBlockResponse.blockList
-                                block.clear()
-                                blockCode.clear()
-                                blockLgdCode.clear()
-
-                                for (x in blockList) {
-                                    block.add(x.blockName)
-                                    blockCode.add(x.blockCode) // Replace with actual field
-                                    blockLgdCode.add(x.lgdBlockCode) // Replace with actual field
-                                }
-                                blockAdapter.notifyDataSetChanged()
-                            } else if (getBlockResponse.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            }  else if (getBlockResponse.responseCode==401){
-                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
-                            }
-                            else {
-                                toastLong(getBlockResponse.responseDesc)
-                            }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-
-                    else -> { showSnackBar("Internal Server Error")}
-                }
-            }
-        }
-    }
-    private fun collectGpResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getGpList) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            showSnackBar("Internal Server Error111")
-                        }
-                    }
-
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { getGpResponse ->
-                            if (getGpResponse.responseCode == 200) {
-                                gpList = getGpResponse.grampanchayatList
-                                gp.clear()
-                                gpCode.clear()
-                                gpLgdCode.clear()
-
-                                for (x in gpList) {
-                                    gp.add(x.gpName)
-                                    gpCode.add(x.gpCode) // Replace with actual field
-                                    gpLgdCode.add(x.lgdGpCode) // Replace with actual field
-                                }
-                                blockAdapter.notifyDataSetChanged()
-                            } else if (getGpResponse.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            }  else if (getGpResponse.responseCode==401){
-                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
-                            }
-                            else {
-                                toastLong(getGpResponse.responseDesc)
-                            }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-
-                    else -> { showSnackBar("Internal Server Error")}
-                }
-            }
-        }
-    }
-    private fun collectVillageResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getVillageList) { result ->
-                when (result) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        showSnackBar(result.error?.message ?: "Error fetching data")
-                    }
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        result.data?.let { getVillageResponse ->
-                            if (getVillageResponse.responseCode == 200) {
-                                villageList = getVillageResponse.villageList
-
-                                village.clear()
-                                villageCode.clear()
-                                villageLgdCode.clear()
-
-                                for (x in villageList) {
-                                    village.add(x.villageName)
-                                    villageCode.add(x.villageCode)
-                                    villageLgdCode.add(x.lgdVillageCode)
-                                }
-
-                                // ✅ Update UI after data is set
-                                withContext(Dispatchers.Main) {
-                                    villageAdapter.notifyDataSetChanged()
-                                }
-                            }  else if (getVillageResponse.responseCode==401){
-                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
-                            }
-                            else {
-                                toastLong(getVillageResponse.responseDesc)
-                            }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-
-                    else -> { showSnackBar("Internal Server Error")}
-                }
-            }
-        }
-    }
 
 
     private fun showDatePicker(textView: TextView) {

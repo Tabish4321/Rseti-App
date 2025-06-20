@@ -1,18 +1,28 @@
 package com.rsetiapp.common.model.response
 
 data class EapAutoFetchRes(
-    val wrappedList: List<Organization>,  // List of organization objects
+    val wrappedList: List<WrappedItem>,
     val responseCode: Int,
     val responseDesc: String,
-    val responseMsg: String? // Nullable since it can be null
+    val responseMsg: String?,
+    val appCode: String?
 )
 
-data class Organization(
+
+data class WrappedItem(
+    val instituteData: List<Institute>,
+    val autoFetchData: List<AutoFetch>
+)
+
+data class Institute(
+    val instituteCode: Int,
+    val instituteName: String
+)
+
+data class AutoFetch(
+    val ageLimit: Int,
     val orgName: String,
     val orgCode: String,
-    val instituteCode: String,
     val designation: String,
-    val officialName: String,
-    val instituteName: String,
-    val ageLimit: Int
+    val officialName: String
 )

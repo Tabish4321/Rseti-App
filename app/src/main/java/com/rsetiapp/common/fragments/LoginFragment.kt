@@ -221,6 +221,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                                         userPreferences.updateUserId(userName)
                                         userPreferences.saveUserName(getLoginResponse.wrappedList[0].userName)
                                         AppUtil.saveLoginStatus(requireContext(), true)  // true means user is logged in
+                                        AppUtil.saveEntityPreference(requireContext(),getLoginResponse.wrappedList[0].entityCode)
 
                                        /* for (x in getLoginResponse.wrappedList){
 

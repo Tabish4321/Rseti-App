@@ -50,7 +50,7 @@
             app:boxStrokeColor="@color/color_dark_green">
 
             <AutoCompleteTextView
-                android:id="@+id/spinnerStatus"
+                android:id="@+id/spinnerStatusBottom"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:focusable="false"

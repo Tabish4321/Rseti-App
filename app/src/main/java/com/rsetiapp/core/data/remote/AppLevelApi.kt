@@ -103,9 +103,6 @@ interface AppLevelApi {
                                   @Body villageReq: VillageReq): VillageResponse
 
 
-    @POST("program")
-    suspend fun getProgramListAPI(@Header("Authorization") token: String,
-                                  @Body stateListReq: StateListReq): ProgramResponse
 
 
     @POST("eapautofetch")
@@ -201,7 +198,7 @@ interface AppLevelApi {
 
 
     @POST("candidateSettleStatus")
-    suspend fun getSettleStatusApi(@Body  settleStatusRequest: SettleStatusRequest ) : SettleStatusResponse
+    suspend fun getSettleStatusApi(@Header("Authorization") token: String,@Body  settleStatusRequest: SettleStatusRequest ) : SettleStatusResponse
 
 
 }

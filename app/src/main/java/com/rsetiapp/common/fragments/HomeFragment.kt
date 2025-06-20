@@ -3,6 +3,8 @@ package com.rsetiapp.common.fragments
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.GravityCompat
@@ -22,6 +24,7 @@ import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.core.util.toastShort
 import com.rsetiapp.databinding.FragmentHomeBinding
+import com.rsetiapp.databinding.NavigationHeaderBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -42,6 +45,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         collectModulesData()
         handleBackPress()
 
+
+        // First, get the header view using getHeaderView()
+        val headerView = binding.navigationView.getHeaderView(0)
+
+        // Now, bind the header layout using the generated ViewBinding for the header
+        val headerBinding = NavigationHeaderBinding.bind(headerView)
+
+        // Access the ImageView from the header layout
+        val headerImageView: ImageView = headerBinding.circleImageView
+        val headerIdView: TextView = headerBinding.loginId
+
+        headerIdView.text = userPreferences.getUseID()
 
         binding.profilePic.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)

@@ -62,6 +62,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import retrofit2.http.Header
 import javax.inject.Inject
 
 
@@ -185,19 +186,7 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
 
     }
 
-    private  var _getProgramListAPI =  MutableStateFlow<Resource<out ProgramResponse>>(Resource.Loading())
-    val getProgramListAPI = _getProgramListAPI.asStateFlow()
 
-
-    fun getProgramListAPI(header :String, login :String, imeiNo :String) {
-        viewModelScope.launch {
-            commonRepository.getProgramListAPI( header,BuildConfig.VERSION_NAME,login,imeiNo).collectLatest {
-                _getProgramListAPI.emit(it)
-            }
-        }
-
-
-    }
 
 
     private  var _getEapAutoFetchListAPI =  MutableStateFlow<Resource<out EapAutoFetchRes>>(Resource.Loading())
@@ -257,9 +246,9 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
     private var _getBatchAPI = MutableStateFlow<Resource<out BatchListResponse>>(Resource.Loading())
     val getBatchAPI = _getBatchAPI.asStateFlow()
 
-    fun getBatchAPI(header :String,appVersion:String , login:String,imeiNo: String){
+    fun getBatchAPI(header :String,appVersion:String , login:String,imeiNo: String,entityCode:String){
         viewModelScope.launch {
-            commonRepository.getBatchAPI(header,appVersion,login,imeiNo).collectLatest {
+            commonRepository.getBatchAPI(header,appVersion,login,imeiNo,entityCode).collectLatest {
                 _getBatchAPI.emit(it)
             }
         }
@@ -480,9 +469,9 @@ private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>
     private var _getSettleStatusApi = MutableStateFlow<Resource<out  SettleStatusResponse>>(Resource.Loading())
     val getSettleStatusApi = _getSettleStatusApi.asSharedFlow()
 
-    fun getSettleStatusApi(settleStatusRequest: SettleStatusRequest){
+    fun getSettleStatusApi( token: String, settleStatusRequest: SettleStatusRequest){
         viewModelScope.launch {
-            commonRepository.getSettleStatusApi(settleStatusRequest).collectLatest {
+            commonRepository.getSettleStatusApi(token,settleStatusRequest).collectLatest {
                 _getSettleStatusApi.emit(it)
             }
         }
