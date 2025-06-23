@@ -473,7 +473,7 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
         spinnerSettleStatus.setOnItemClickListener { parent, view, position, id ->
             selectedStatusItem = parent.getItemAtPosition(position) as String
             selectedStatusId = statusId[position]
-            Log.d("FollowUpFra", "Status: $selectedStatusItem, Self Investment: $selectedStatusId")
+            Log.d("FollowUpFra", "Status: $selectedStatusItem, SelectedReason: $selectedStatusId")
 
 
             // Check if the selected item is "Settled In service"

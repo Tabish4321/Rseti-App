@@ -439,7 +439,7 @@ class FollowUpFormFragment :
                             passbookCopy = passbookCopy,
                             appointmentLetter = appointmentLetter,
                             salaryRange = "",
-                            settlementReason = settlementPhoto
+                            settlementReason = selectedReason
 
                         )
                     )
@@ -780,9 +780,10 @@ class FollowUpFormFragment :
             employmentGiven = bundle.getString("selectedEmploymentGiven").orEmpty()
             familyMemberPartTime =
                 bundle.getString("selectedFamilyMemberPartTime").orEmpty()
-            settlementPhoto = bundle.getString("selectedSettlementPhoto").orEmpty()
-            passbookCopy = bundle.getString("selectedPassbookCopy").orEmpty()
-            appointmentLetter = bundle.getString("selectedAppointmentLetter").orEmpty()
+            settlementPhoto = bundle.getString("selectedSettlementPhoto").orEmpty().replace("\\s".toRegex(), "")
+            passbookCopy = bundle.getString("selectedPassbookCopy").orEmpty().replace("\\s".toRegex(), "")
+            appointmentLetter = bundle.getString("selectedAppointmentLetter").orEmpty().replace("\\s".toRegex(), "")
+
             Log.d("FollowUpFra", "Status: $selectedStatus, Self Investment: $city, Credit From Bank: $loanAcc")
 
         }
