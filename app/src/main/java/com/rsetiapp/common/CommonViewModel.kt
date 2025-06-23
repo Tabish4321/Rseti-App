@@ -1,6 +1,8 @@
 
 package com.rsetiapp.common
 
+import android.os.Bundle
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rsetiapp.core.uidai.ekyc.UidaiKycRequest
@@ -478,5 +480,6 @@ private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>
     }
 
 
+    val settlementData = MutableLiveData<Bundle>()
 
 }

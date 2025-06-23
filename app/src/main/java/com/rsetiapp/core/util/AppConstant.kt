@@ -9,8 +9,8 @@ object AppConstant {
 
     object StaticURL{
 
-        //  const val baseUrl= "http://10.197.183.177:8002/rsetiapp/"             //local
-          const val baseUrl= "https://kaushal.rural.gov.in/demobackend/rsetiapp/"             //demo
+         const val baseUrl= "http://10.197.183.177:8002/rsetiapp/"             //local
+          //const val baseUrl= "https://kaushal.rural.gov.in/demobackend/rsetiapp/"             //demo
       //  const val baseUrl= "https://nrlm.gov.in/kaushalpanjee/rsetiapp/"      // live
        // const val FACE_AUTH_UIADI= "https://nregarep2.nic.in/Netnrega/StateServices/Uid_Face_Auth.svc/PostOnAUA_Face_auth"
         const val FACE_AUTH_UIADI= "https://nregarep2.nic.in/netnrega/stateServices/Uid_Face_Auth_DDUGKY.svc/PostOnAUA_Face_auth"

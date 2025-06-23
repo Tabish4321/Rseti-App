@@ -107,6 +107,7 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
     var SelectedBranchCode = 0
     var accLenghth = 0
     private var selectedStatusItem = ""
+    private var selectedStatusId = ""
     private var selectedSelfInvestmentItem = ""
     private var SelectedCreditFromBankItem = ""
     private var selectedTotal = 0
@@ -255,32 +256,7 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
         })
         // save form data
 
-        fun saveFormData() {
-
-            val sharedPreferences =
-                requireContext().getSharedPreferences("UserFormData", Activity.MODE_PRIVATE)
-            with(sharedPreferences.edit()) {
-
-                putString("selectedStatusItem", selectedStatusItem)
-                putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
-                putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
-                putInt("selectedTotal", selectedTotal)
-                putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
-                putString("selectedLoanAcc", selectedLoanAcc)
-                putString("selectedCity", selectedCity)
-                putString("selectedReason", selectedReason)
-                putString("selectdeAccountStatus", selectdeAccountStatus)
-                putString("selectedEmploymentGiven", selectedEmploymentGiven)
-                putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
-                putString("selectedSettlementPhoto", selectedSettlementPhoto)
-                putString("selectedPassbookCopy", selectedPassbookCopy)
-                putString("selectedAppointmentLetter", selectedAppointmentLetter)
-                putString("selectedSalaryRange", selectedRangeId)
-                apply()
-            }
-        }
         // submit button
-
         btnSettledSubmit.setOnClickListener {
             selectedSelfInvestmentItem = etSelfInvestment.text.toString()
             SelectedCreditFromBankItem = etCreditFromBank.text.toString()
@@ -293,7 +269,8 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
             if (selectedStatusItem.isEmpty()) {
                 Toast.makeText(requireContext(), "Please select status.", Toast.LENGTH_SHORT)
                     .show()
-            } else if (selectedStatusItem == "Self Settled") {
+            }
+            else if (selectedStatusItem == "Self Settled") {
                 if (selectedSelfInvestmentItem.isNotEmpty() &&
                     SelectedCreditFromBankItem.isNotEmpty() &&
                     selectedUpperCaseIfscText.isNotEmpty() &&
@@ -309,55 +286,8 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
                     selectedAppointmentLetter.isNotEmpty()
                 ) {
 
-                    // ✅ Create a result bundle with all selected data
                     val result = Bundle().apply {
-                        putString("selectedStatusItem", selectedStatusItem)
-                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
-                        putString("selectedTotalItem", selectedTotal.toString())
-                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
-                        putInt("selectedTotal", selectedTotal)
-                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
-                        putString("selectedLoanAcc", selectedLoanAcc)
-                        putString("selectedCity", selectedCity)
-                        putString("selectedReason", selectedReason)
-                        putString("selectdeAccountStatus", selectdeAccountStatus)
-                        putString("selectedRangeId", selectedRangeId)
-                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
-                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
-                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
-                        putString("selectedPassbookCopy", selectedPassbookCopy)
-                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
-                    }
-
-                    // ✅ Send result back to the calling fragment
-                    setFragmentResult("settlement_result", result)
-
-                    // ✅ Dismiss the bottom sheet
-                    dismiss()
-                } else {
-                    // Show success message when all fields are filled
-                    Toast.makeText(
-                        requireContext(),
-                        "Kindly fill all details",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } else if (selectedStatusItem == "Settled In service") {
-                if (selectedUpperCaseIfscText.isNotEmpty() &&
-                    selectedLoanAcc.isNotEmpty() &&
-                    selectedCity.isNotEmpty() &&
-                    selectedReason.isNotEmpty() &&
-                    selectdeAccountStatus.isNotEmpty() &&
-                    selectedRangeId.isNotEmpty() &&
-                    selectedEmploymentGiven.isNotEmpty() &&
-                    selectedFamilyMemberPartTime.isNotEmpty() &&
-                    selectedSettlementPhoto.isNotEmpty() &&
-                    selectedPassbookCopy.isNotEmpty() &&
-                    selectedAppointmentLetter.isNotEmpty()
-                ) {
-
-                    val result = Bundle().apply {
-                        putString("selectedStatusItem", selectedStatusItem)
+                        putString("selectedStatusItem", selectedStatusId)
                         putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
                         putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
                         putInt("selectedTotal", selectedTotal)
@@ -375,10 +305,53 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
                         putString("selectedPassbookCopy", selectedPassbookCopy)
                         putString("selectedAppointmentLetter", selectedAppointmentLetter)
                     }
-                    // ✅ Send result back to the calling fragment
-                    setFragmentResult("settlement_result", result)
+                    commonViewModel.settlementData.value=result
 
                     // ✅ Dismiss the bottom sheet
+                    dismiss()
+                } else {
+                    // Show success message when all fields are filled
+                    Toast.makeText(
+                        requireContext(),
+                        "Kindly fill all details",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            else if (selectedStatusItem == "Settled in service") {
+                if (selectedUpperCaseIfscText.isNotEmpty() &&
+                    selectedLoanAcc.isNotEmpty() &&
+                    selectedCity.isNotEmpty() &&
+                    selectedReason.isNotEmpty() &&
+                    selectdeAccountStatus.isNotEmpty() &&
+                    selectedRangeId.isNotEmpty() &&
+                    selectedEmploymentGiven.isNotEmpty() &&
+                    selectedFamilyMemberPartTime.isNotEmpty() &&
+                    selectedPassbookCopy.isNotEmpty() &&
+                    selectedAppointmentLetter.isNotEmpty()
+                ) {
+
+                    val result = Bundle().apply {
+                        putString("selectedStatusItem", selectedStatusId)
+                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
+                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
+                        putInt("selectedTotal", selectedTotal)
+                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
+                        putString("selectedBankCode", selectedBankCode.toString())
+                        putString("selectedBranchCode", SelectedBranchCode.toString())
+                        putString("selectedLoanAcc", selectedLoanAcc)
+                        putString("selectedCity", selectedCity)
+                        putString("selectedReason", selectedReason)
+                        putString("selectdeAccountStatus", selectdeAccountStatus)
+                        putString("selectedRangeId", selectedRangeId)
+                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
+                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
+                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
+                        putString("selectedPassbookCopy", selectedPassbookCopy)
+                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
+                    }
+                    commonViewModel.settlementData.value=result
+
                     dismiss()
 
                 } else
@@ -401,13 +374,12 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
                     selectedRangeId.isNotEmpty() &&
                     selectedEmploymentGiven.isNotEmpty() &&
                     selectedFamilyMemberPartTime.isNotEmpty() &&
-                    selectedSettlementPhoto.isNotEmpty() &&
                     selectedPassbookCopy.isNotEmpty() &&
                     selectedAppointmentLetter.isNotEmpty()
                 ) {
 
                     val result = Bundle().apply {
-                        putString("selectedStatusItem", selectedStatusItem)
+                        putString("selectedStatusItem", selectedStatusId)
                         putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
                         putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
                         putInt("selectedTotal", selectedTotal)
@@ -425,8 +397,7 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
                         putString("selectedPassbookCopy", selectedPassbookCopy)
                         putString("selectedAppointmentLetter", selectedAppointmentLetter)
                     }
-                    // ✅ Send result back to the calling fragment
-                    setFragmentResult("settlement_result", result)
+                    commonViewModel.settlementData.value=result
 
                     // ✅ Dismiss the bottom sheet
                     dismiss()
@@ -438,7 +409,8 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
                         Toast.LENGTH_SHORT
                     ).show()
 
-            } else if (selectedStatusItem == "Bank") {
+            }
+            else if (selectedStatusItem == "Bank") {
                 if (selectedUpperCaseIfscText.isNotEmpty() &&
                     selectedLoanAcc.isNotEmpty() &&
                     selectedCity.isNotEmpty() &&
@@ -447,13 +419,12 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
                     selectedRangeId.isNotEmpty() &&
                     selectedEmploymentGiven.isNotEmpty() &&
                     selectedFamilyMemberPartTime.isNotEmpty() &&
-                    selectedSettlementPhoto.isNotEmpty() &&
                     selectedPassbookCopy.isNotEmpty() &&
                     selectedAppointmentLetter.isNotEmpty()
                 ) {
 
                     val result = Bundle().apply {
-                        putString("selectedStatusItem", selectedStatusItem)
+                        putString("selectedStatusItem", selectedStatusId)
                         putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
                         putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
                         putInt("selectedTotal", selectedTotal)
@@ -471,8 +442,7 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
                         putString("selectedPassbookCopy", selectedPassbookCopy)
                         putString("selectedAppointmentLetter", selectedAppointmentLetter)
                     }
-                    // ✅ Send result back to the calling fragment
-                    setFragmentResult("settlement_result", result)
+                    commonViewModel.settlementData.value=result
 
                     // ✅ Dismiss the bottom sheet
                     dismiss()
@@ -502,6 +472,9 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
         // Rohit
         spinnerSettleStatus.setOnItemClickListener { parent, view, position, id ->
             selectedStatusItem = parent.getItemAtPosition(position) as String
+            selectedStatusId = statusId[position]
+            Log.d("FollowUpFra", "Status: $selectedStatusItem, Self Investment: $selectedStatusId")
+
 
             // Check if the selected item is "Settled In service"
             if (selectedStatusItem.equals("Settled In service", ignoreCase = true)) {
@@ -612,7 +585,7 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
 
                                 Toast.makeText(
                                     requireContext(),
-                                    getBankDetails.responseMsg,
+                                    getBankDetails.responseDesc,
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 bankName.text = ""

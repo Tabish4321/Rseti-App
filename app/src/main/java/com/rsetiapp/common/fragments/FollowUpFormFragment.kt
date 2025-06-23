@@ -25,6 +25,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -131,6 +132,35 @@ class FollowUpFormFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+       /* parentFragmentManager.setFragmentResultListener("settlement_result", this) { _, bundle ->
+            selectedStatus = bundle.getString("selectedStatusItem").orEmpty()
+            selfInvestmentItem =
+                bundle.getString("selectedSelfInvestmentItem").orEmpty()
+            creditFromBankItem =
+                bundle.getString("SelectedCreditFromBankItem").orEmpty()
+            totalV = bundle.getInt("selectedTotal").toString()
+            upperCaseIfscTextV = bundle.getString("selectedUpperCaseIfscText").orEmpty()
+            bankCode = bundle.getString("selectedBankCode").orEmpty()
+            branchCode = bundle.getString("selectedBranchCode").orEmpty()
+            loanAcc = bundle.getString("selectedLoanAcc").orEmpty()
+            city = bundle.getString("selectedCity").orEmpty()
+            selectedReason = bundle.getString("selectedReason").orEmpty()
+            selectdeAccountStatus = bundle.getString("selectdeAccountStatus").orEmpty()
+            selectedRangeId = bundle.getString("selectedRangeId").orEmpty()
+            employmentGiven = bundle.getString("selectedEmploymentGiven").orEmpty()
+            familyMemberPartTime =
+                bundle.getString("selectedFamilyMemberPartTime").orEmpty()
+            settlementPhoto = bundle.getString("selectedSettlementPhoto").orEmpty()
+            passbookCopy = bundle.getString("selectedPassbookCopy").orEmpty()
+            appointmentLetter = bundle.getString("selectedAppointmentLetter").orEmpty()
+
+            Log.d("ResultDebug", "Received result in MyFragment: $selectedStatus")
+
+        }*/
+
+
+
         userPreferences = UserPreferences(requireContext())
 
         init()
@@ -356,7 +386,7 @@ class FollowUpFormFragment :
                 }
 
 
-                else if (selectedFollowUpType != null && selectedFollowUpStatus != null && selectedFollowUpStatus!!.statusId == 2 && image1Base64.isNotEmpty() )
+                else if (selectedFollowUpType != null && selectedFollowUpStatus != null &&  selectedFollowUpStatus?.statusId == 2 && image1Base64.isNotEmpty())
                 {
 
 
@@ -364,7 +394,8 @@ class FollowUpFormFragment :
                     getFormData()
 
 
-                    commonViewModel.insertFollowUpAPI(AppUtil.getSavedTokenPreference(requireContext()),
+
+                        commonViewModel.insertFollowUpAPI(AppUtil.getSavedTokenPreference(requireContext()),
                         FollowUpInsertReq(AppUtil.getAndroidId(requireContext())
                             ,userPreferences.getUseID(),
                             appVersion = BuildConfig.VERSION_NAME,
@@ -730,26 +761,34 @@ class FollowUpFormFragment :
         }
 
     fun getFormData() {
-        val sharedPreferences = requireContext().getSharedPreferences("UserFormData", Activity.MODE_PRIVATE)
+        commonViewModel.settlementData.observe(viewLifecycleOwner) { bundle ->
 
-         selectedStatus = sharedPreferences.getString("selectedStatusItem", "").toString()
-         selfInvestmentItem = sharedPreferences.getString("selectedSelfInvestmentItem", "").toString()
-         creditFromBankItem = sharedPreferences.getString("SelectedCreditFromBankItem", "").toString()
-         totalV = sharedPreferences.getInt("selectedTotal", 0).toString()
-         upperCaseIfscTextV = sharedPreferences.getString("selectedUpperCaseIfscText", "").toString()
-         loanAcc = sharedPreferences.getString("selectedLoanAcc", "").toString()
-         city = sharedPreferences.getString("selectedCity", "").toString()
-        selectedReason  = sharedPreferences.getString("selectedReason", "").toString()
-         selectdeAccountStatus = sharedPreferences.getString("selectdeAccountStatus", "").toString()
-         employmentGiven = sharedPreferences.getString("selectedEmploymentGiven", "").toString()
-         familyMemberPartTime = sharedPreferences.getString("selectedFamilyMemberPartTime", "").toString()
-         settlementPhoto = sharedPreferences.getString("selectedSettlementPhoto", "").toString()
-         passbookCopy = sharedPreferences.getString("selectedPassbookCopy", "").toString()
-        appointmentLetter = sharedPreferences.getString("selectedAppointmentLetter", "").toString()
-        selectedRangeId = sharedPreferences.getString("selectedSalaryRange", "").toString()
+            selectedStatus = bundle.getString("selectedStatusItem").orEmpty()
+            selfInvestmentItem =
+                bundle.getString("selectedSelfInvestmentItem").orEmpty()
+            creditFromBankItem =
+                bundle.getString("SelectedCreditFromBankItem").orEmpty()
+            totalV = bundle.getInt("selectedTotal").toString()
+            upperCaseIfscTextV = bundle.getString("selectedUpperCaseIfscText").orEmpty()
+            bankCode = bundle.getString("selectedBankCode").orEmpty()
+            branchCode = bundle.getString("selectedBranchCode").orEmpty()
+            loanAcc = bundle.getString("selectedLoanAcc").orEmpty()
+            city = bundle.getString("selectedCity").orEmpty()
+            selectedReason = bundle.getString("selectedReason").orEmpty()
+            selectdeAccountStatus = bundle.getString("selectdeAccountStatus").orEmpty()
+            selectedRangeId = bundle.getString("selectedRangeId").orEmpty()
+            employmentGiven = bundle.getString("selectedEmploymentGiven").orEmpty()
+            familyMemberPartTime =
+                bundle.getString("selectedFamilyMemberPartTime").orEmpty()
+            settlementPhoto = bundle.getString("selectedSettlementPhoto").orEmpty()
+            passbookCopy = bundle.getString("selectedPassbookCopy").orEmpty()
+            appointmentLetter = bundle.getString("selectedAppointmentLetter").orEmpty()
+            Log.d("FollowUpFra", "Status: $selectedStatus, Self Investment: $city, Credit From Bank: $loanAcc")
+
+        }
+
 
         // Example usage: print values
-        Log.d("FormData", "Status: $selectedStatus, Self Investment: $selfInvestmentItem, Credit From Bank: $creditFromBankItem")
     }
 
     private fun checkAndRequestStoragePermissions() {

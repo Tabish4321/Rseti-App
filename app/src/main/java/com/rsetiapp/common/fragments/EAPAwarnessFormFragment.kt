@@ -157,6 +157,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         binding.blockValue.text= blockName
         binding.gpValue.text= gpName
         binding.villageValue.text= villageName
+        binding.eapName.text= eapName
 
 
         userPreferences = UserPreferences(requireContext())

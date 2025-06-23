@@ -519,7 +519,7 @@
                     android:id="@+id/etEmploymentGiven"
                     style="@style/EditText"
                     android:background="@drawable/edittext_background"
-                    android:inputType="textMultiLine"
+                    android:inputType="number"
                     android:hint="@string/enter_number_of_employment_given_to_others"
                     android:padding="12dp"
                     android:textColor="@android:color/black"
