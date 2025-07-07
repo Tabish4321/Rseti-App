@@ -1,0 +1,198 @@
+<resources>
+    <string name="app_name">আরসেটি অ্যাপ</string>
+    <string name="login_to_your_account">আপনার অ্যাকাউন্টে লগইন করুন</string>
+    <string name="login_id">ব্যবহারকারী আইডি লিখুন</string>
+    <string name="password">পাসওয়ার্ড</string>
+    <string name="forgot_password">পাসওয়ার্ড ভুলে গেছি?</string>
+    <string name="enter_password">পাসওয়ার্ড লিখুন</string>
+    <string name="login">লগইন করুন</string>
+    <string name="please_sign_in_to_your_account">দয়া করে আপনার অ্যাকাউন্টে সাইন ইন করুন</string>
+    <string name="userId">ব্যবহারকারী আইডি</string>
+    <string name="form_name">ফর্মের নাম</string>
+    <string name="organisation_name">সংগঠনের নাম</string>
+    <string name="institute_name">প্রতিষ্ঠানের নাম</string>
+    <string name="date">তারিখ <font color='#FF0000'>*</font></string>
+    <string name="select_date">তারিখ নির্বাচন করুন</string>
+    <string name="total_participants">মোট অংশগ্রহণকারী <font color='#FF0000'>*</font></string>
+    <string name="select_total_participants">মোট অংশগ্রহণকারীদের লিখুন</string>
+    <string name="participating_official">অংশগ্রহণকারী আধিকারিক</string>
+    <string name="designation">পদবি</string>
+    <string name="name_of_org">প্রতিষ্ঠানের নাম লিখুন</string>
+    <string name="name_of_organization">অংশগ্রহণকারী সংস্থা/এনজিও/ব্যাঙ্কগুলির নাম <font color='#FF0000'>*</font></string>
+    <string name="program_name">প্রোগ্রামের নাম <font color='#FF0000'>*</font></string>
+    <string name="select_program_name">প্রোগ্রামের নাম নির্বাচন করুন</string>
+    <string name="state">রাজ্য <font color='#FF0000'>*</font></string>
+    <string name="select_state">রাজ্য নির্বাচন করুন</string>
+    <string name="district">জেলা <font color='#FF0000'>*</font></string>
+    <string name="select_district">জেলা নির্বাচন করুন</string>
+    <string name="Block">ব্লক <font color='#FF0000'>*</font></string>
+    <string name="select_Block">ব্লক নির্বাচন করুন</string>
+    <string name="Gp">জিপি <font color='#FF0000'>*</font></string>
+    <string name="select_gp">জিপি নির্বাচন করুন</string>
+    <string name="Village">গ্রাম <font color='#FF0000'>*</font></string>
+    <string name="select_Village">গ্রাম নির্বাচন করুন</string>
+    <string name="no_of_application_expected">কৌশল পঞ্জির মাধ্যমে উৎপন্ন অ্যাপ্লিকেশনগুলির সংখ্যা <font color='#FF0000'>*</font></string>
+    <string name="enter_no_of_application_expected">কৌশল পঞ্জির মাধ্যমে তৈরি অ্যাপ্লিকেশনগুলির সংখ্যা</string>
+    <string name="brief_description">কর্মসূচির সংক্ষিপ্ত বিবরণ <font color='#FF0000'>*</font></string>
+    <string name="enter_brief_description">প্রোগ্রামের সংক্ষিপ্ত বিবরণ</string>
+    <string name="capture_image">ক্যাপচার ইমেজ <font color='#FF0000'>*</font></string>
+    <string name="submit">বিস্তারিত জমা দিন</string>
+    <string name="add_candidate">প্রার্থী যোগ করুন</string>
+    <string name="location">অবস্থানঃ -</string>
+    <string name="location_not_found">অবস্থান খুঁজে পাওয়া যায়নি</string>
+    <string name="address_not_found">ঠিকানা পাওয়া যায়নি</string>
+    <string name="address">ঠিকানাঃ -</string>
+    <string name="error_address">ঠিকানা পেতে সমস্যা</string>
+    <string name="send_again">আবার পাঠান</string>
+    <string name="verify">যাচাই করুন</string>
+    <string name="not_receive_code">কোনও কোড পায়নি!</string>
+    <string name="enter_code_msg">দয়া করে আপনার ফোন নম্বরে পাঠানো 4 অঙ্কের ওটিপি লিখুন।</string>
+    <string name="enter_code_email_msg">দয়া করে আপনার ইমেল ঠিকানায় পাঠানো 4 অঙ্কের ওটিপি লিখুন।</string>
+    <string name="enter_code">ওটিপি লিখুন</string>
+    <string name="email">ইমেল লিখুন</string>
+    <string name="enter_phone">ফোন নম্বর লিখুন</string>
+    <string name="forgot_id_and_password">আইডি এবং পাসওয়ার্ড ভুলে গেছি</string>
+    <string name="enter_id">ইউজার আইডি লিখুন</string>
+    <string name="hindi">হিন্দি</string>
+    <string name="english">ইংরেজি</string>
+    <string name="candidate_name">প্রার্থী নাম</string>
+    <string name="candidate_name_up">প্রার্থী নাম <font color='#FF0000'>*</font></string>
+    <string name="mobile_number">মোবাইল নম্বর</string>
+    <string name="mobile_number_man">মোবাইল নম্বর <font color='#FF0000'>*</font></string>
+    <string name="guardian_name">অভিভাবক নাম <font color='#FF0000'>*</font></string>
+    <string name="guardian_name1">অভিভাবক নাম</string>
+    <string name="guardian_Mobile">অভিভাবক মোবাইল নুবার</string>
+    <string name="guardian_Mobile_man">অভিভাবক মোবাইল নুবার <font color='#FF0000'>*</font></string>
+    <string name="gender">লিঙ্গ</string>
+    <string name="gender_man">লিঙ্গ <font color='#FF0000'>*</font></string>
+    <string name="dob">জন্ম তারিখ</string>
+    <string name="dob_man">জন্ম তারিখ <font color='#FF0000'>*</font></string>
+    <string name="full_address">সম্পূর্ণ ঠিকানা</string>
+    <string name="full_address_man">সম্পূর্ণ ঠিকানা <font color='#FF0000'>*</font></string>
+    <string name="eap_id">ইএপি আইডি</string>
+    <string name="close">বন্ধ করুন</string>
+    <string name="add">যোগ করুন</string>
+    <string name="search_candidate_via_kaushal_panjee">কৌশাল পান্জি আইডির মাধ্যমে প্রার্থীকে অনুসন্ধান করুন</string>
+    <string name="enter_kaushal_panjee_id">কৌশাল পান্জি আইডি এন্টার করুন</string>
+    <string name="eapName">ইএপি তালিকা</string>
+    <string name="added_candidates">যোগ করা প্রার্থীরা</string>
+    <string name="are_you_sure_you_want_to_delete_this_candidate">আপনি কি নিশ্চিত যে আপনি এই প্রার্থীটি মুছে ফেলতে চান?</string>
+    <string name="cancel">বাতিল করুন</string>
+    <string name="delete">মুছে দিন</string>
+    <string name="delete_candidate">প্রার্থীকে মুছে ফেলুন?</string>
+    <string name="submit_details">বিস্তারিত জমা দিন</string>
+    <string name="statush">অবস্থা</string>
+    <string name="selectForInvestment">বিনিয়োগের জন্য নির্বাচন করুন</string>
+    <string name="SelfInvestment">স্ব-বিনিয়োগ</string>
+    <string name="credit_linkage_bank_actuals">(ক্রেডিট লিঙ্কেজ) ব্যাঙ্ক (অ্যাক্ট্যুয়াল)</string>
+    <string name="Total">মোট</string>
+    <string name="bank_name">ব্যাঙ্কের নাম</string>
+    <string name="ifsc_code">আইএফএসসি কোড</string>
+    <string name="ifsc_code_mandate">আইএফএসসি কোড <font color='#FF0000'>*</font></string>
+    <string name="enter_ifsc_code">আইএফএসসি কোড লিখুন</string>
+    <string name="branch_name">শাখার নাম</string>
+    <string name="bank_account_number">ঋণ অ্যাকাউন্ট নম্বর</string>
+    <string name="city">শহর</string>
+    <string name="Reason">কারণ</string>
+    <string name="Reason_mandate">কারণ <font color='#FF0000'>*</font></string>
+    <string name="account_status">অ্যাকাউন্টের অবস্থা</string>
+    <string name="account_status_mandate">অ্যাকাউন্টের অবস্থা <font color='#FF0000'>*</font></string>
+    <string name="batchList">ব্যাচ</string>
+    <string name="batch_name">ব্যাচের নাম</string>
+    <string name="batch_id">ব্যাচ আইডি</string>
+    <string name="candidate_attendance">প্রার্থী তালিকা</string>
+    <string name="contact_number">যোগাযোগ নম্বর</string>
+    <string name="roll_no">রোল নং।</string>
+    <string name="name">নাম</string>
+    <string name="candidate_follow_up">প্রার্থী ফলো-আপ</string>
+    <string name="care_of">কেয়ার অফ</string>
+    <string name="follow_type">ফলো টাইপ</string>
+    <string name="select_follow_type">অনুসরণের ধরন নির্বাচন করুন</string>
+    <string name="date_nm">তারিখ</string>
+    <string name="status">অবস্থা</string>
+    <string name="select_status">স্থিতি নির্বাচন করুন</string>
+    <string name="reason">কারণ <font color='#FF0000'>*</font></string>
+    <string name="reason_nm">কারণ</string>
+    <string name="enter_reason">কারণ লিখুন</string>
+    <string name="follow_up_done_by">ফলো আপ করা হয়েছে</string>
+    <string name="select_year">নির্বাচন করুন বছর</string>
+    <string name="select_month">মাস নির্বাচন করুন</string>
+    <string name="settlement_status">নিষ্পত্তির অবস্থা</string>
+    <string name="follow_up_status">ফলো আপ স্ট্যাটাস</string>
+    <string name="status_quarter_1">এস1</string>
+    <string name="status_quarter_2">এস2</string>
+    <string name="status_quarter_3">এস 3</string>
+    <string name="status_quarter_4">এস4</string>
+    <string name="status_quarter_5">এস5</string>
+    <string name="status_quarter_6">এস6</string>
+    <string name="status_quarter_7">এস7</string>
+    <string name="status_quarter_8">এস8</string>
+    <string name="mark_attendance">উপস্থিতি চিহ্নিত করুন</string>
+    <string name="kyc_failed_msg">কেওয়াইসি ব্যর্থ হয়েছে</string>
+    <string name="something_went_wrong_at_uidai_site">UIDAI-এর পক্ষ থেকে কিছু ভুল হয়েছে।</string>
+    <string name="ok">ওকে</string>
+    <string name="date_of_birth">জন্ম তারিখঃ</string>
+    <string name="name1">নাম</string>
+    <string name="careof">কেয়ারঅফঃ</string>
+    <string name="attendance_marked">উপস্থিতি চিহ্নিত</string>
+    <string name="as_per_aadhaar">আধার ঠিকানা</string>
+    <string name="view_profile">উপস্থিতি দেখুন</string>
+    <string name="earnings_Income">উপার্জন আয়</string>
+    <string name="earnings_income_hint">আয়ের আয়</string>
+    <string name="earnings_income_mandate">উপার্জন আয় <font color='#FF0000'>*</font></string>
+    <string name="employment_given_to_others">কর্মসংস্থান অন্যদের দেওয়া হয়েছে</string>
+    <string name="enter_number">সংখ্যা লিখুন</string>
+    <string name="family_member_part_time">পরিবারের সদস্য পার্ট টাইম</string>
+    <string name="family_member_part_time_hint">ফ্যামিলি _ মেম্বার _ পার্ট _ টাইম</string>
+    <string name="upload_passbook_scan">পাসবুক কপি</string>
+    <string name="settlement_proof">নিষ্পত্তি প্রমাণ</string>
+    <string name="settlement_photo_mandate">সেটলমেন্ট ফটো <font color='#FF0000'>*</font></string>
+    <string name="employment_given_to_others_desc">অন্যদের দেওয়া কর্মসংস্থান</string>
+    <string name="appointment_letter">নিয়োগপত্র</string>
+    <string name="enter_loan_account_number">লোন অ্যাকাউন্ট নম্বর লিখুন</string>
+    <string name="enter_loan_account_number_mandate">এন্টার লোন অ্যাকাউন্ট নম্বর <font color='#FF0000'>*</font></string>
+    <string name="Enter_City_Name">শহরের নাম লিখুন</string>
+    <string name="city_mandate">সিটি <font color='#FF0000'>*</font></string>
+    <string name="Employment_given_to_others">কর্মসংস্থান অন্যদের দেওয়া হয়েছে</string>
+    <string name="family_member_part_time_job">পরিবারের সদস্য পার্ট টাইম জব</string>
+    <string name="enter_number_of_employment_given_to_others">অন্যদের দেওয়া প্রয়োগের সংখ্যা লিখুন</string>
+    <string name="Employment_given_to_others_mandate">অন্যদের দেওয়া কর্মসংস্থান <font color='#FF0000'>*</font></string>
+    <string name="family_member_part_time_job_mandate">পরিবারের সদস্য পার্ট-টাইম চাকরি <font color='#FF0000'>*</font></string>
+    <string name="bank_account_number_mandate">ব্যাঙ্ক অ্যাকাউন্ট নম্বর ম্যান্ডেট <font color='#FF0000'>*</font></string>
+    <string name="status_mandate">স্ট্যাটাস <font color='#FF0000'>*</font></string>
+    <string name="settlement_proof_mandate">নিষ্পত্তির প্রমাণ <font color='#FF0000'>*</font></string>
+    <string name="search">অনুসন্ধান</string>
+    <string name="settlement_photos">বন্দোবস্তের ছবি</string>
+    <string name="mark_today_attention">আজকের উপস্থিতি চিহ্নিত করুন</string>
+    <string name="check_in">চেক-ইন</string>
+    <string name="check_out">চেক আউট</string>
+    <string name="total_hours">মোট ঘন্টা</string>
+    <string name="_00_00_am">00:00 এএম</string>
+    <string name="attendance_mode">উপস্থিতি মোড <font color='#FF0000'>*</font></string>
+    <string name="select_attendance_mode">উপস্থিতি মোড নির্বাচন করুন</string>
+    <string name="select_branch_name">শাখার নাম নির্বাচন করুন</string>
+    <string name="name_of_the_state_director_for_rseti">Name of the State Director for RSETI</string>
+    <string name="name_of_the_rseti_visited">Name of the RSETI visited</string>
+    <string name="financial_year">Financial Year</string>
+    <string name="whether_overall_cleanliness_is_maintained_at_the_institute">Whether overall cleanliness is maintained at the Institute:</string>
+    <string name="select_cleanliness_condition">Select Cleanliness Condition</string>
+    <string name="whether_proper_signboard_is_displayed_at_the_entrance_of_the_rseti">Whether proper signboard is displayed at the entrance of the RSETI*</string>
+    <string name="select_signboard_is_displayed">Select signboard is displayed</string>
+    <string name="whether_the_time_table_is_drawn_as_per_the_course_module">Whether the time-table is drawn as per the course module</string>
+    <string name="select_time_table_is_drawn">Select Time Table is drawn</string>
+    <string name="whether_time_table_of_on_going_training_programme_as_per_the_course_module_is_displayed_on_the_notice_board">Whether time table of on-going training programme as per the \'Course Module\' is displayed on the Notice Board</string>
+    <string name="whether_action_photos_are_displayed_on_the_notice_board">Whether action photos are displayed on the Notice Board</string>
+    <string name="select_action_photos_are_displayed">Select Action Photos are Displayed</string>
+    <string name="whether_success_stories_with_action_photos_in_local_language_are_displayed_on_the_notice_board">Whether success stories with action photos in local language are displayed on the Notice Board</string>
+    <string name="select_yes_or_no">Select Yes or No</string>
+    <string name="whether_office_timings_is_displayed_at_the_entrance_of_the_institute">Whether \'office timings\' is displayed at the entrance of the Institute</string>
+    <string name="whether_the_training_kit_containing_the_materials_for_administering_behavioural_games_is_available_at_the_institute">Whether the Training Kit containing the materials for administering behavioural games is available at the institute</string>
+    <string name="whether_cd_containing_edp_inputs_in_local_language_is_available_at_the_institute">Whether CD containing EDP inputs in local language is available at the Institute</string>
+    <string name="whether_details_of_the_food_served_are_displayed_in_local_language_on_the_notice_board_as_per_the_format_supplied_by_nacer">Whether Details of the food served are displayed in local language on the Notice Board as per the format supplied by NACER</string>
+    <string name="location_addrress">Location:- Addrress</string>
+    <string name="fin_year">Financial Year:</string>
+    <string name="month">Month:</string>
+    <string name="program_name1">Program Name</string>
+    <string name="course_list">Course List</string>
+    <string name="course_list_man">Select Course List</string>
+</resources>

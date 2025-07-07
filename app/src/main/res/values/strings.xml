@@ -171,7 +171,7 @@
     <string name="attendance_mode">Attendance Mode<font color='#FF0000'>*</font></string>
     <string name="select_attendance_mode">Select Attendance Mode</string>
     <string name="select_branch_name">Select Branch Name</string>
-    <string name="name_of_the_state_director_for_rseti"><![CDATA[ Name of the State Director for RSETI]]></string>
+    <string name="name_of_the_state_director_for_rseti">Name of the State Director for RSETI</string>
     <string name="name_of_the_rseti_visited">Name of the RSETI visited</string>
     <string name="financial_year">Financial Year</string>
     <string name="whether_overall_cleanliness_is_maintained_at_the_institute">Whether overall cleanliness is maintained at the Institute:</string>
