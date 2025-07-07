@@ -158,8 +158,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         binding.gpValue.text= gpName
         binding.villageValue.text= villageName
         binding.eapName.text= eapName
-
-
         userPreferences = UserPreferences(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         init()
@@ -174,7 +172,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 // GPS was enabled by the user
-            } else {
+            }
+            else {
                 // GPS was not enabled
             }
         }
@@ -190,8 +189,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         fun updateCandidateCount(count: Int) {
             candidateCountTextView?.text = "Candidates: "+count.toString()
             counts=count.toString()
-
-
 
         }
 
@@ -244,9 +241,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
             selectedNoOfAppExpectedNextMonth =binding.etNoOfAppExpec.text.toString()
             selectedBrief =binding.etBrief.text.toString()
-
-
-
 
 
             if (selectedDate.isNotEmpty()&& selectedTotalParticipants.isNotEmpty()&& selectedNameOfNGO.isNotEmpty()

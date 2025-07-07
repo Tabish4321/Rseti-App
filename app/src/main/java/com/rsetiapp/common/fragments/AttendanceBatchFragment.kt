@@ -40,8 +40,8 @@ class AttendanceBatchFragment :
 
     private fun init(){
 
-        collectAttendanceBatchResponse()
         commonViewModel.getAttendanceBatchAPI(AppUtil.getSavedTokenPreference(requireContext()),BuildConfig.VERSION_NAME,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID())
+        collectAttendanceBatchResponse()
         listener()
 
     }

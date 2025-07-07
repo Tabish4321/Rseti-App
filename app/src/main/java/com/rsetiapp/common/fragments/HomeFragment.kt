@@ -56,7 +56,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         val headerImageView: ImageView = headerBinding.circleImageView
         val headerIdView: TextView = headerBinding.loginId
 
-        headerIdView.text = userPreferences.getUseID()
+        headerIdView.text = userPreferences.getUserName()+  " ("+userPreferences.getUseID()+")"
 
         binding.profilePic.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)

@@ -18,6 +18,7 @@ import com.rsetiapp.common.model.request.AttendanceInsertReq
 import com.rsetiapp.common.model.request.BankIFSCSearchReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
+import com.rsetiapp.common.model.request.CourseRequest
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FogotPaasReq
@@ -39,6 +40,7 @@ import com.rsetiapp.common.model.response.BatchListResponse
 import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
+import com.rsetiapp.common.model.response.CourseResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
@@ -449,6 +451,17 @@ private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>
         viewModelScope.launch {
             commonRepository.getSdrListAPI(header,sdrListReq).collectLatest {
                 _getSdrListApi.emit(it)
+            }
+        }
+    }
+
+    private var _courseEapApi = MutableStateFlow<Resource<out CourseResponse>>(Resource.Loading())
+    val courseEapApi = _courseEapApi.asStateFlow()
+
+    fun courseEapApi(header :String,courseRequest: CourseRequest) {
+        viewModelScope.launch {
+            commonRepository.courseEapApi(header,courseRequest).collectLatest {
+                _courseEapApi.emit(it)
             }
         }
     }

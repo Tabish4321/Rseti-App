@@ -14,6 +14,7 @@ import com.rsetiapp.common.model.request.BlockReq
 import com.rsetiapp.common.model.request.CandidateListReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
+import com.rsetiapp.common.model.request.CourseRequest
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
@@ -49,6 +50,7 @@ import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
+import com.rsetiapp.common.model.response.CourseResponse
 import com.rsetiapp.common.model.response.EapListResponse
 import com.rsetiapp.common.model.response.FollowUpInsertRes
 import com.rsetiapp.common.model.response.FollowUpStatusResp
@@ -268,6 +270,15 @@ class CommonRepository @Inject constructor(
             appLevelApi.sdrListApi(header,sdrListReq)
         }
     }
+
+
+
+    suspend fun courseEapApi(header :String,courseRequest: CourseRequest): Flow<Resource<out CourseResponse>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.courseEapApi(header,courseRequest)
+        }
+    }
+
 
 
     suspend fun getOtpValidateApi(validateOtpReq: ValidateOtpReq): Flow<Resource<out OtpGenerateResponse>>{

@@ -463,6 +463,8 @@ class FollowUpFormFragment :
                 collectLatestLifecycleFlow(commonViewModel.getFollowTypeList) {
                     when (it) {
                         is Resource.Loading -> showProgressBar()
+
+
                         is Resource.Error -> {
                             hideProgressBar()
                             it.error?.let { baseErrorResponse ->

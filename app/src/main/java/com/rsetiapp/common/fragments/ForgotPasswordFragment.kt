@@ -1,5 +1,6 @@
 package com.rsetiapp.common.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
@@ -31,7 +32,6 @@ class ForgotPasswordFragment :
 
     private val commonViewModel: CommonViewModel by activityViewModels()
     private var countDownTimer: CountDownTimer? = null
-    private var otp = ""
     private var mobileNo = ""
     private var userId = ""
 
@@ -90,7 +90,6 @@ class ForgotPasswordFragment :
             userId = binding.etId.text.toString()
 
             if (mobileNo.isNotEmpty() && userId.isNotEmpty()) {
-                otp = AppUtil.generateOTP().toString()
                 commonViewModel.generateOtpAPI(OtpGenerateRequest(BuildConfig.VERSION_NAME, userId, mobileNo,AppUtil.getAndroidId(requireContext())))
                 collectOtpAndMobileVerifyResponse()
             } else {
@@ -117,17 +116,6 @@ class ForgotPasswordFragment :
         }.start()
     }
 
-    private fun validateAndNavigate() {
-        val enteredOtp = "${binding.et1.text}${binding.et2.text}${binding.et3.text}${binding.et4.text}"
-        if (enteredOtp == otp) {
-            binding.clForgotOTP.gone()
-            commonViewModel.forgetPasswordAPI(FogotPaasReq(BuildConfig.VERSION_NAME, userId))
-            collectForgotPassSendResponse()
-        } else {
-            toastLong("Invalid OTP")
-            setOtpFieldError()
-        }
-    }
 
     private fun collectOtpAndMobileVerifyResponse() {
         otpJob?.cancel() // ✅ Cancel the previous job before starting a new one
@@ -146,7 +134,6 @@ class ForgotPasswordFragment :
                                 when (mobileVerifyRes.responseCode) {
                                     200 -> {
                                         toastShort(mobileVerifyRes.responseDesc)
-                                        showSnackBar(otp)
                                         binding.clForgotOTP.visible()
                                         binding.tvVerify.visible()
                                         binding.etPhone.gone()
@@ -186,6 +173,7 @@ class ForgotPasswordFragment :
             showVerifyButtonUI()
         }
     }
+    @SuppressLint("SuspiciousIndentation")
     private fun otpUI() {
         binding.et1.setOnClickListener {
             showKeyboard(binding.et1)
@@ -213,8 +201,6 @@ class ForgotPasswordFragment :
 
         }
     }
-
-
     private fun collectForgotPassSendResponse() {
         forgotPassJob?.cancel() // ✅ Cancel the previous job before starting a new one
         forgotPassJob = viewLifecycleOwner.lifecycleScope.launch {

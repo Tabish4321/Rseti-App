@@ -10,6 +10,7 @@ import com.rsetiapp.common.model.request.BlockReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateListReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
+import com.rsetiapp.common.model.request.CourseRequest
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
@@ -39,6 +40,7 @@ import com.rsetiapp.common.model.response.BlockResponse
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.CandidateSearchResp
+import com.rsetiapp.common.model.response.CourseResponse
 import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
@@ -187,6 +189,11 @@ interface AppLevelApi {
     @POST("sdrList")
     suspend fun sdrListApi(@Header("Authorization") token: String,
                                    @Body sdrListReq: SdrListReq) : SdrListResp
+
+
+    @POST("eapCourse")
+    suspend fun courseEapApi(@Header("Authorization") token: String,
+                           @Body courseRequest: CourseRequest) : CourseResponse
 
 
     @POST("validateOtp")

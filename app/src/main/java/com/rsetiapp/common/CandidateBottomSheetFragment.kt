@@ -1,6 +1,7 @@
 package com.rsetiapp.common
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -35,14 +36,23 @@ import android.graphics.BitmapFactory
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Base64
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.ImageView
+import android.widget.ListView
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.textfield.TextInputLayout
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
+import com.rsetiapp.common.model.request.CourseRequest
+import com.rsetiapp.common.model.request.SdrListReq
 import com.rsetiapp.common.model.response.CandidateData
 import com.rsetiapp.common.model.response.CandidateSearchData
+import com.rsetiapp.common.model.response.CourseItem
+import com.rsetiapp.common.model.response.CourseResponse
+import com.rsetiapp.common.model.response.SalaryRange
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.gone
 import com.rsetiapp.core.util.toastLong
@@ -63,6 +73,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     private var candidateAddress= ""
     private var candidateMobileNo= ""
     private var candidateDob= ""
+    private var selectedCourseId= ""
     private lateinit var candidateNameSearch: TextView
     private lateinit var candidatePicSearch: ShapeableImageView
     private lateinit var llCandidateSearch: LinearLayout
@@ -74,11 +85,21 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     private lateinit var etAddress: EditText
     private lateinit var etMobileNo: EditText
     private lateinit var etDob: TextView
+    private lateinit var etCourse: TextView
+    private lateinit var spinnerGender: AutoCompleteTextView
+    private lateinit var genderHiding: TextInputLayout
     lateinit var userPreferences: UserPreferences
 
     private var candidateSearchList: List<CandidateSearchData> = listOf()
     private var candidateDetailsList: List<CandidateData> = listOf()
 
+
+    private lateinit var genderAdapterr: ArrayAdapter<String>
+    private val genderList = listOf("Male", "Female","Others")
+    private val selectedIndices = mutableSetOf<Int>()
+    private var courseList: List<CourseItem> = listOf()
+    private var courseNameList = ArrayList<String>()
+    private var courseIdList = ArrayList<String>()
 
 
 
@@ -101,7 +122,10 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         etCandidateName = view.findViewById(R.id.etCandidateName)
         etMobileNo = view.findViewById(R.id.etMobileNo)
         etDob = view.findViewById(R.id.etDob)
+        etCourse = view.findViewById(R.id.etCourse)
         etGender = view.findViewById(R.id.etGender)
+        spinnerGender = view.findViewById(R.id.spinnerGender)
+        genderHiding = view.findViewById(R.id.genderHiding)
         etGuardianName = view.findViewById(R.id.etGuardianName)
         etGuardianMobile = view.findViewById(R.id.etGuardianMobile)
         etAddress = view.findViewById(R.id.etAddress)
@@ -113,6 +137,85 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         AddCandidate = view.findViewById(R.id.btnAddCandidate)
         userPreferences = UserPreferences(requireContext())
 
+
+
+        commonViewModel.courseEapApi(
+            AppUtil.getSavedTokenPreference(requireContext()),
+            CourseRequest(
+                userPreferences.getUseID(),
+                BuildConfig.VERSION_NAME,
+                AppUtil.getAndroidId(requireContext())
+
+            )
+        )
+
+        collectCourseResponse()
+        //account adapter
+        genderAdapterr = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            genderList
+        )
+        spinnerGender.setAdapter(genderAdapterr)
+
+
+
+        spinnerGender.setOnItemClickListener { parent, view, position, id ->
+            candidateGender = parent.getItemAtPosition(position).toString()
+        }
+
+
+
+        etCourse.setOnClickListener {
+            val listView = ListView(requireContext()).apply {
+                adapter = ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_list_item_multiple_choice,
+                    courseNameList
+                )
+                choiceMode = ListView.CHOICE_MODE_MULTIPLE
+
+                // Initialize checked items based on previous selections
+                selectedIndices.forEach { setItemChecked(it, true) }
+            }
+
+            val dialog = AlertDialog.Builder(requireContext())
+                .setTitle("Select up to 3 courses")
+                .setView(listView)
+                .setPositiveButton("OK") { _, _ ->
+                    // Update selectedIndices based on current checked state
+                    selectedIndices.clear()
+                    for (i in 0 until courseNameList.size) {
+                        if (listView.isItemChecked(i)) {
+                            selectedIndices.add(i)
+                        }
+                    }
+                    // Reflect in TextView
+                    etCourse.text = selectedIndices.map { courseNameList[it] }.joinToString(", ")
+                    selectedCourseId = selectedIndices.map { courseIdList[it] }.joinToString(", ")
+                    Toast.makeText(requireContext(), selectedCourseId, Toast.LENGTH_SHORT).show()
+
+                }
+                .setNegativeButton("Cancel", null)
+                .create()
+
+            listView.setOnItemClickListener { _, _, position, _ ->
+                // If already selected, deselect
+                if (selectedIndices.contains(position)) {
+                    selectedIndices.remove(position)
+                } else {
+                    if (selectedIndices.size >= 3) {
+                        // Prevent selecting more than 3
+                        listView.setItemChecked(position, false)
+                        Toast.makeText(requireContext(), "Only 3 selections allowed", Toast.LENGTH_SHORT).show()
+                    } else {
+                        selectedIndices.add(position)
+                    }
+                }
+            }
+
+            dialog.show()
+        }
 
 
 
@@ -164,7 +267,10 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         btnAdd.setOnClickListener {
 
             candidateName = etCandidateName.text.toString()
-            candidateGender = etGender.text.toString()
+
+            if (etGender.text.toString()!=""){
+                candidateGender = etGender.text.toString()
+            }
             candidateGuardianName = etGuardianName.text.toString()
             candidateGuardianMobile = etGuardianMobile.text.toString()
             candidateAddress = etAddress.text.toString()
@@ -179,26 +285,35 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
                 if (AppUtil.isValidMobileNumber(etMobileNo.text.toString()) &&
                     AppUtil.isValidMobileNumber(etGuardianMobile.text.toString())
                 ) {
-                    val candidate = Candidate(
-                        candidateId,
-                        candidateName,
-                        candidateGender,
-                        candidateGuardianName,
-                        candidateGuardianMobile,
-                        candidateAddress,
-                        candidateMobileNo,
-                        candidateDob,
-                        ""
-                    )
+                    // Check if candidateId already exists in the list
+                    val isDuplicate = candidateList.any { it.candidateId == candidateId }
 
-                    candidateList.add(candidate)
-                    adapter.notifyItemInserted(candidateList.size - 1)
+                    if (isDuplicate) {
+                        Toast.makeText(requireContext(), "Candidate ID already added", Toast.LENGTH_SHORT).show()
+                    } else {
+                        val candidate = Candidate(
+                            candidateId,
+                            candidateName,
+                            candidateGender,
+                            candidateGuardianName,
+                            candidateGuardianMobile,
+                            candidateAddress,
+                            candidateMobileNo,
+                            candidateDob,
+                            "",
+                            selectedCourseId
+                        )
 
-                    // Update the candidate count in the parent fragment
-                    updateCandidateCount(candidateList.size)
+                        candidateList.add(candidate)
+                        adapter.notifyItemInserted(candidateList.size - 1)
 
-                    Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
-                    dismiss()
+                        // Update the candidate count in the parent fragment
+                        updateCandidateCount(candidateList.size)
+
+                        Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
+                        dismiss()
+                    }
+
                 } else {
                     Toast.makeText(requireContext(), "Mobile number is invalid", Toast.LENGTH_SHORT).show()
                 }
@@ -329,7 +444,6 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
                                     etAddress.setText(x.candidateAddress)
                                     etMobileNo.setText(x.mobileNo)
                                     etDob.text = x.dob
-
                                     candidateName= x.candidateName
                                     candidateGender =x.gender
                                     candidateGuardianName =x.guardianName
@@ -340,6 +454,9 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
                                     candidateId= x.candidateId
 
                                 }
+                                etGender.visible()
+                                genderHiding.gone()
+
 
 
                             }
@@ -385,6 +502,76 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
             imageView.setImageResource(R.drawable.person)
         }
     }
+
+
+    private fun collectCourseResponse() {
+        lifecycleScope.launch {
+            commonViewModel.courseEapApi.collectLatest { it ->
+                when (it) {
+                    is Resource.Loading -> Toast.makeText(requireContext(), "", Toast.LENGTH_SHORT)
+                        .show()
+
+                    //showProgressBar()
+                    is Resource.Error -> {
+                        //  hideProgressBar()
+                        Toast.makeText(
+                            requireContext(),
+                            "Internal Server Error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                    }
+
+                    is Resource.Success -> {
+                        //  hideProgressBar()
+                        it.data?.let { getCourseDetails ->
+                            if (getCourseDetails.responseCode == 200) {
+                                courseList = getCourseDetails.wrappedList
+
+
+
+                                for (x in courseList) {
+                                    courseNameList.add(x.courseName)
+                                    courseIdList.add(x.courseCode)
+                                }
+
+                            }
+                            else if (getCourseDetails.responseCode == 301) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    getCourseDetails.responseMsg,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else if (getCourseDetails.responseCode == 401) {
+                                AppUtil.showSessionExpiredDialog(
+                                    findNavController(),
+                                    requireContext()
+                                )
+                            }
+
+                            else if (getCourseDetails.responseCode == 202) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    getCourseDetails.responseDesc,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+
+                            else toastLong(getCourseDetails.responseDesc)
+
+                        } ?: Toast.makeText(
+                            requireContext(),
+                            "Internal Server Error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                    }
+                }
+            }
+        }
+    }
+
 
 
 }

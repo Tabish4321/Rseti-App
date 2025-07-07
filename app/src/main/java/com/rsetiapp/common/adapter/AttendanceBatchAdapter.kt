@@ -27,7 +27,7 @@ class AttendanceBatchAdapter ( private val batchList: List<AttendanceBatch>
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(batch: AttendanceBatch) {
-            binding.tvBatchIdName.text = batch.batchCode.toString()
+            binding.tvBatchIdName.text = batch.batchRegNumber
             binding.tvBatchName.text = batch.batchName  // Show Batch Name
 
 

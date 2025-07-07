@@ -62,7 +62,7 @@
     <string name="guardian_name">Father/Husband/Guardian Name<font color='#FF0000'>*</font></string>
     <string name="guardian_name1">Father/Husband/Guardian Name</string>
     <string name="guardian_Mobile">Father/Husband/Guardian Mobile Number</string>
-    <string name="guardian_Mobile_man">Guardian Mobile Number<font color='#FF0000'>*</font></string>
+    <string name="guardian_Mobile_man">Father/Husband/Guardian Mobile Number<font color='#FF0000'>*</font></string>
     <string name="gender">Gender</string>
     <string name="gender_man">Gender<font color='#FF0000'>*</font></string>
     <string name="dob">Date Of Birth</string>
@@ -193,5 +193,7 @@
     <string name="fin_year">Financial Year:</string>
     <string name="month">Month:</string>
     <string name="program_name1">Program Name</string>
+    <string name="course_list">Course List</string>
+    <string name="course_list_man">Select Course List</string>
 
 </resources>

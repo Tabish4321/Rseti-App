@@ -35,6 +35,7 @@ data class Candidate(
     val guardianMobileNo: String,
     val candidateAddress: String,
     val mobileNo: String,
-    val emailId: String,
-    val candidateImage: String
+    val dob: String,
+    val candidateImage: String,
+    val courseCode: String,
 )

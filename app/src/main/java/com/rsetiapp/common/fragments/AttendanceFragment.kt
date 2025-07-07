@@ -183,6 +183,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
             }
         }
     }
+    @SuppressLint("SuspiciousIndentation")
     private fun init() {
         checkCameraPermission()
         initEKYC()
@@ -193,9 +194,9 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                 if (attendanceFlag=="checkin"){
                     //for audit
-                   // showProgressBar()
-                   //invokeCaptureIntent()
-
+                    showProgressBar()
+                   invokeCaptureIntent()
+/*
                     val currentDate = LocalDate.now()
                     val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
                     val currentTime = LocalTime.now()
@@ -206,7 +207,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                         commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
                             BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkin",
                             formattedTime,"","",candidateName))
-                        collectAttendanceInsertResponse()
+                        collectAttendanceInsertResponse()*/
 
 
 
@@ -224,10 +225,10 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                 if (attendanceFlag=="checkout"){
 
                     //for audit
-                    //  showProgressBar()
-                    //   invokeCaptureIntent()
+                      showProgressBar()
+                       invokeCaptureIntent()
 
-                    val currentDate = LocalDate.now()
+                  /*  val currentDate = LocalDate.now()
                     val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
                     val currentTime = LocalTime.now()
                     val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("hh:mma"))
@@ -244,7 +245,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                     commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkout",
                         "",formattedTime,totalHoursValue,candidateName))
-                    collectAttendanceInsertResponse()
+                    collectAttendanceInsertResponse()*/
 
 
                 }
@@ -387,8 +388,8 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                 // Process the response to generate the PoiType or other required fields
                 val poiType = XstreamCommonMethods.processPidBlockEkyc(
                     response.toXML(),
-                    // decryptedAadhaar,
-                    "877833331122",
+                     decryptedAadhaar,
+                   // "877833331122",
                     false,
                     requireContext()
                 )
@@ -550,13 +551,11 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
 
                                         hideProgressBar()
-                                        val currentDate = LocalDate.now()
-                                        val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+
+                                        val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
                                         val currentTime = LocalTime.now()
-                                        val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("hh:mma"))
-                                        val timeFormatter = DateTimeFormatter.ofPattern("hh:mma")
-
-
+                                        val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
+                                        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
                                         /* if (checkIn){
 
@@ -566,7 +565,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
 
                                             commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
-                                                BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkin",
+                                                BuildConfig.VERSION_NAME,batchId,candidateId,currentDate,"checkin",
                                                 formattedTime,"","",candidateName))
                                         }
                                         else{
@@ -580,7 +579,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                             val totalHoursValue = String.format("%02d:%02d:00", hours, minutes) // Format as HH:mm:ss
                                             toastLong(totalHoursValue)
 
-                                            commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkout",
+                                            commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),BuildConfig.VERSION_NAME,batchId,candidateId,currentDate,"checkout",
                                                 "",formattedTime,totalHoursValue,candidateName))
                                         }
 
