@@ -30,7 +30,7 @@ class BatchAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(batch: Batch) {
-            binding.tvBatchIdName.text = batch.batchCode
+            binding.tvBatchIdName.text = batch.batchRegNumber
             binding.tvBatchName.text = batch.batchName  // Show Batch Name
 
             // Handle Click

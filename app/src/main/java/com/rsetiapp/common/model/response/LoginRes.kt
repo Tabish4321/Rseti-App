@@ -11,6 +11,7 @@ data class LoginRes(
 data class LoginDetails(
     val loginId: String,
     val userName: String,
+    val faceRegistered: String,
     val entityCode: String
 )
 

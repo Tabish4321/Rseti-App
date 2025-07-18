@@ -9,9 +9,9 @@ object AppConstant {
 
     object StaticURL{
 
-         //const val baseUrl= "http://10.197.183.177:7002/rsetiapp/"             //local
-         // const val baseUrl= "https://kaushal.rural.gov.in/demobackend/rsetiapp/"             //demo
-        const val baseUrl= "https://kaushal.rural.gov.in/backend/rsetiapp/"      // live
+        // const val baseUrl= "http://10.197.183.106:8002/rsetiapp/"             //local
+          const val baseUrl= "https://kaushal.rural.gov.in/demobackend/rsetiapp/"             //demo
+     //   const val baseUrl= "https://kaushal.rural.gov.in/backend/rsetiapp/"      // live
        // const val FACE_AUTH_UIADI= "https://nregarep2.nic.in/Netnrega/StateServices/Uid_Face_Auth.svc/PostOnAUA_Face_auth"
         const val FACE_AUTH_UIADI= "https://nregarep2.nic.in/netnrega/stateServices/Uid_Face_Auth_DDUGKY.svc/PostOnAUA_Face_auth"
 
@@ -42,6 +42,17 @@ object AppConstant {
         var ENCRYPT_KEY = BuildConfig.ENCRYPT_KEY;
 
 
+        const val EXTRA_CLIENT_ID = "client_id"
+        const val EXTRA_FETCH_USER_EMBEDDING = "fetch_user_embeddings"
+        const val EXTRA_CALL_TYPE = "call_type"
+        const val EXTRA_USER_ID = "user_id"
+        const val EXTRA_USER_IDS = "user_ids_json"
+        const val EXTRA_USER_NAME = "user_name"
+        const val CALL_TYPE_LOGIN = "LOGIN"
+        const val CALL_TYPE_REGISTRATION = "REGISTRATION"
+        const val RESULT_STATUS = "status"
+        const val RESULT_MESSAGE = "message"
+        const val YOUR_CLIENT_ID = "RD_0725"
 
 
 

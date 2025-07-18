@@ -15,6 +15,7 @@ import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
 import com.rsetiapp.common.model.request.EapListReq
+import com.rsetiapp.common.model.request.FaceCheckReq
 import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.FollowUpTypeReq
@@ -45,6 +46,7 @@ import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FaceResponse
 import com.rsetiapp.common.model.response.FollowUpInsertRes
 import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
@@ -190,6 +192,8 @@ interface AppLevelApi {
     suspend fun sdrListApi(@Header("Authorization") token: String,
                                    @Body sdrListReq: SdrListReq) : SdrListResp
 
+    @POST("updateFaceRegistered")
+    suspend fun updateFaceApi(@Body faceCheckReq: FaceCheckReq): FaceResponse
 
     @POST("eapCourse")
     suspend fun courseEapApi(@Header("Authorization") token: String,

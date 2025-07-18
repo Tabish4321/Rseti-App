@@ -294,6 +294,16 @@
                     android:imeOptions="actionNext"
                     android:drawableEnd="@drawable/course_lists"
                     android:paddingHorizontal="@dimen/dp_20" />
+                <ImageView
+                    android:id="@+id/notIntresCandImage"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:scaleType="centerCrop"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/captureimage"
+                    android:layout_marginEnd="@dimen/dp_10"
+                    android:padding="@dimen/dp_5"/>
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

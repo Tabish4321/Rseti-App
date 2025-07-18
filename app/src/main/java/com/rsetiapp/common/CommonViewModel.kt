@@ -21,6 +21,7 @@ import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.CourseRequest
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapListReq
+import com.rsetiapp.common.model.request.FaceCheckReq
 import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.InsertSdrVisitReq
@@ -44,6 +45,7 @@ import com.rsetiapp.common.model.response.CourseResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.FaceResponse
 import com.rsetiapp.common.model.response.FollowUpInsertRes
 import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
@@ -464,6 +466,20 @@ private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>
                 _courseEapApi.emit(it)
             }
         }
+    }
+
+
+    private  var _updateFaceApi =  MutableStateFlow<Resource<out FaceResponse>>(Resource.Loading())
+    val updateFaceApi = _updateFaceApi.asSharedFlow()
+
+    fun updateFaceApi(faceCheckReq: FaceCheckReq){
+        viewModelScope.launch {
+            commonRepository.updateFaceApi(faceCheckReq).collectLatest {
+                _updateFaceApi.emit(it)
+            }
+        }
+
+
     }
 
 

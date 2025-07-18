@@ -260,14 +260,18 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
                 else{
 
-                    commonViewModel.insertEAPAPI(AppUtil.getSavedTokenPreference(requireContext()),EAPInsertRequest(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
+                    commonViewModel.insertEAPAPI(AppUtil.getSavedTokenPreference(requireContext()),
+                        EAPInsertRequest(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
+                            BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
                         programCode,stateCode,districtCode,blockCode,gpCode,villageCode,
+
                         selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
+
                         latitude.toString(),
+
                         longitude.toString(),candidateList))
+
                     collectInsertResponse()
-
-
                 }
 
             }

@@ -1,7 +1,11 @@
 package com.rsetiapp.common
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -33,6 +37,9 @@ import com.rsetiapp.core.util.visible
 import kotlinx.coroutines.flow.collectLatest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Environment
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Base64
@@ -40,6 +47,9 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.ImageView
 import android.widget.ListView
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.textfield.TextInputLayout
@@ -55,7 +65,10 @@ import com.rsetiapp.common.model.response.CourseResponse
 import com.rsetiapp.common.model.response.SalaryRange
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.gone
+import com.rsetiapp.core.util.removeAllWhitespaces
 import com.rsetiapp.core.util.toastLong
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.Calendar
 
 @AndroidEntryPoint
@@ -85,10 +98,23 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     private lateinit var etAddress: EditText
     private lateinit var etMobileNo: EditText
     private lateinit var etDob: TextView
+    private lateinit var notIntresCandImage: ImageView
     private lateinit var etCourse: TextView
     private lateinit var spinnerGender: AutoCompleteTextView
     private lateinit var genderHiding: TextInputLayout
     lateinit var userPreferences: UserPreferences
+
+    private lateinit var photoFile: File
+    private lateinit var imageUri: Uri
+    private var candidateNotInImage: String = ""
+
+    private val imageCaptureLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                notIntresCandImage.setImageURI(imageUri)
+                convertToBase64(photoFile)
+            }
+        }
 
     private var candidateSearchList: List<CandidateSearchData> = listOf()
     private var candidateDetailsList: List<CandidateData> = listOf()
@@ -109,6 +135,8 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+
 
         return inflater.inflate(R.layout.candidate_details, container, false)
     }
@@ -135,7 +163,18 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         candidatePicSearch = view.findViewById(R.id.candidatePicSearch)
         llCandidateSearch = view.findViewById(R.id.llSearch)
         AddCandidate = view.findViewById(R.id.btnAddCandidate)
+        notIntresCandImage = view.findViewById(R.id.notIntresCandImage)
         userPreferences = UserPreferences(requireContext())
+
+
+        notIntresCandImage.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+                openCamera()
+            } else {
+                requestPermissions(arrayOf(Manifest.permission.CAMERA), 101)
+            }
+        }
 
 
 
@@ -285,33 +324,71 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
                 if (AppUtil.isValidMobileNumber(etMobileNo.text.toString()) &&
                     AppUtil.isValidMobileNumber(etGuardianMobile.text.toString())
                 ) {
-                    // Check if candidateId already exists in the list
-                    val isDuplicate = candidateList.any { it.candidateId == candidateId }
+                    val isDuplicate = candidateId.isNotBlank() && candidateList.any { it.candidateId == candidateId }
 
                     if (isDuplicate) {
                         Toast.makeText(requireContext(), "Candidate ID already added", Toast.LENGTH_SHORT).show()
                     } else {
-                        val candidate = Candidate(
-                            candidateId,
-                            candidateName,
-                            candidateGender,
-                            candidateGuardianName,
-                            candidateGuardianMobile,
-                            candidateAddress,
-                            candidateMobileNo,
-                            candidateDob,
-                            "",
-                            selectedCourseId
-                        )
 
-                        candidateList.add(candidate)
-                        adapter.notifyItemInserted(candidateList.size - 1)
+                        if (candidateId.isNotBlank()){
 
-                        // Update the candidate count in the parent fragment
-                        updateCandidateCount(candidateList.size)
+                            val candidate = Candidate(
+                                candidateId,
+                                candidateName,
+                                candidateGender,
+                                candidateGuardianName,
+                                candidateGuardianMobile,
+                                candidateAddress,
+                                candidateMobileNo,
+                                candidateDob,
+                                candidateNotInImage.removeAllWhitespaces(),
+                                selectedCourseId
+                            )
 
-                        Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
-                        dismiss()
+                            candidateList.add(candidate)
+                            adapter.notifyItemInserted(candidateList.size - 1)
+
+                            // Update the candidate count in the parent fragment
+                            updateCandidateCount(candidateList.size)
+
+                            Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
+                            dismiss()
+
+                        }
+
+                        else{
+
+                            if (candidateNotInImage==""){
+                                Toast.makeText(requireContext(), "Kindly Capture candidate photo", Toast.LENGTH_SHORT).show()
+
+                            }
+                            else{
+                                val candidate = Candidate(
+                                    candidateId,
+                                    candidateName,
+                                    candidateGender,
+                                    candidateGuardianName,
+                                    candidateGuardianMobile,
+                                    candidateAddress,
+                                    candidateMobileNo,
+                                    candidateDob,
+                                    candidateNotInImage.removeAllWhitespaces(),
+                                    selectedCourseId
+                                )
+
+                                candidateList.add(candidate)
+                                adapter.notifyItemInserted(candidateList.size - 1)
+
+                                // Update the candidate count in the parent fragment
+                                updateCandidateCount(candidateList.size)
+
+                                Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
+                                dismiss()
+                            }
+
+                        }
+
+
                     }
 
                 } else {
@@ -573,7 +650,47 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     }
 
 
+    private fun openCamera() {
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (cameraIntent.resolveActivity(requireActivity().packageManager) != null) {
+            photoFile = createImageFile()
+            imageUri = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.provider",
+                photoFile
+            )
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+            imageCaptureLauncher.launch(cameraIntent)
+        }
+    }
 
+    private fun createImageFile(): File {
+        val fileName = "IMG_${System.currentTimeMillis()}"
+        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(fileName, ".jpg", storageDir)
+    }
+
+    private fun convertToBase64(file: File) {
+        try {
+            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+            val outputStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            val imageBytes = outputStream.toByteArray()
+            candidateNotInImage = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+            // You can now pass this base64 string back to the activity or ViewModel
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 101 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            openCamera()
+        } else {
+            Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
 
 
