@@ -122,7 +122,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
       var radius: Float = 100f*/
     private var latitude = 26.2153  // Example geofence latitude
     private var longitude = 84.3588  // Example geofence longitude
-    private var radius = 500f  // 100 meters radius
+    private var radius = 50000000f  // 100 meters radius
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -196,12 +196,11 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                     //for audit
                     showProgressBar()
                    invokeCaptureIntent()
-/*
-                    val currentDate = LocalDate.now()
+              /*      val currentDate = LocalDate.now()
                     val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
                     val currentTime = LocalTime.now()
-                    val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("hh:mma"))
-                    val timeFormatter = DateTimeFormatter.ofPattern("hh:mma")
+                    val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
+                    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
 
                         commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
@@ -228,11 +227,12 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                       showProgressBar()
                        invokeCaptureIntent()
 
-                  /*  val currentDate = LocalDate.now()
+                    /*val currentDate = LocalDate.now()
                     val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
                     val currentTime = LocalTime.now()
-                    val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("hh:mma"))
-                    val timeFormatter = DateTimeFormatter.ofPattern("hh:mma")
+
+                    val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
+                    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
 
                     val checkInTime = LocalTime.parse(checkIn, timeFormatter)
@@ -296,7 +296,6 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
             IntentModel::class.java
         )
 
-        collectFaceAuthResponse()
         // setConsentText()
     }
 
@@ -407,6 +406,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                     AppConstant.StaticURL.FACE_AUTH_UIADI,
                     UidaiKycRequest(poiType, authURL)
                 )
+                collectFaceAuthResponse()
                 // Handle Aadhaar authentication or additional processing here if required
             } else {
                 hideProgressBar()
@@ -573,10 +573,14 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                             val checkInTime = LocalTime.parse(checkIn, timeFormatter)
                                             val checkOutTime = LocalTime.parse(formattedTime, timeFormatter)
                                             val duration = Duration.between(checkInTime, checkOutTime)
-                                            val hours = duration.toHours()
-                                            val minutes = duration.toMinutes() % 60
 
-                                            val totalHoursValue = String.format("%02d:%02d:00", hours, minutes) // Format as HH:mm:ss
+
+                                            val hours = duration.toHours()
+                                            val minutes = (duration.toMinutes() % 60)
+                                            val seconds = (duration.seconds % 60)
+
+                                            val totalHoursValue = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+
                                             toastLong(totalHoursValue)
 
                                             commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),BuildConfig.VERSION_NAME,batchId,candidateId,currentDate,"checkout",
@@ -663,7 +667,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                     totalHours = x.totalHours//00:00:00
                                     latitude = x.lattitude.toDouble()
                                     checkOut = x.checkOut
-                                    radius = x.radius.toFloat()
+                                    //radius = x.radius.toFloat()
                                     attendanceFlag = x.attendanceFlag
                                     longitude = x.longitude.toDouble()
 
@@ -728,7 +732,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                 toastLong("Attendance Marked")
 
 
-                                userPhotoUIADI?.let { showBottomSheet(it,name,gender,dob,careOf) }
+                               showBottomSheet(userPhotoUIADI,name,gender,dob,careOf)
 
                             }   else if (getInsertAttendance.responseCode==401){
                                 AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
@@ -764,7 +768,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
     @SuppressLint("SuspiciousIndentation")
     private fun showBottomSheet(
-        image: Bitmap,
+        image: Bitmap?,
         name: String,
         gender: String,
         dateOfBirth: String,
