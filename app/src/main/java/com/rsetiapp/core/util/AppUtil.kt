@@ -151,6 +151,29 @@ object AppUtil {
     }
 
 
+    fun saveHRIdPreference(context: Context, entityCode: String) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("hrId", entityCode)
+        editor.apply()
+    }
+
+    fun getSavedHRIdPreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("hrId", "") ?: "" // Default to English
+    }
+
+    fun saveOrgIdPreference(context: Context, entityCode: String) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("orgId", entityCode)
+        editor.apply()
+    }
+
+    fun getSavedOrgIdPreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("orgId", "") ?: "" // Default to English
+    }
 
 
 

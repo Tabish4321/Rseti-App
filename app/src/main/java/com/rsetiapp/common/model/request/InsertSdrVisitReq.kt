@@ -47,6 +47,9 @@ data class InsertSdrVisitReq(
     val isServedFoodDetailsDisplayed: String,
     val servedFoodDetailsDisplayedImage: String,
     val servedFoodDetailsDisplayedImageLat: String,
-    val servedFoodDetailsDisplayedImageLong: String
+    val servedFoodDetailsDisplayedImageLong: String,
+    val entityCode: String,
+    val orgId: String,
+    val hrId: String
 )
 

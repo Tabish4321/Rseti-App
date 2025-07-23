@@ -269,7 +269,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
                         latitude.toString(),
 
-                        longitude.toString(),candidateList))
+                        longitude.toString(),AppUtil.getSavedEntityPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext()),candidateList))
 
                     collectInsertResponse()
                 }

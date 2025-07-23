@@ -24,6 +24,8 @@ data class EAPInsertRequest(
     val photoPathTwo: String,
     val latitute: String,
     val longitute: String,
+    val entityCode: String,
+    val hrId: String,
     val candidateDetails: List<Candidate>
 )
 

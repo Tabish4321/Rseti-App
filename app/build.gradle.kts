@@ -5,8 +5,6 @@ plugins {
     id("kotlin-kapt")
     id("androidx.navigation.safeargs.kotlin")
     id("kotlin-parcelize") // Add this line
-
-
 }
 
 android {
@@ -60,8 +58,6 @@ android {
             buildConfigField("String", "CRYPLIBAES", "\"AES/CBC/PKCS5PADDING\"")
             buildConfigField("String", "CRYPT_ID", "\"8080808080808080\"")
             buildConfigField("String", "CRYPT_IV", "\"8080808080808080\"")
-
-
 
 
         }

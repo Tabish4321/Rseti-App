@@ -239,7 +239,8 @@ class SdrVisitReport : BaseFragment<FragmentSdrVisitReportBinding> (FragmentSdrV
                             edpLocalLanguageImageLat.toString(),
                             edpLocalLanguageImageLang.toString(),selectedFoodLocalLanguageItem,foodLocalLanguageImage,
                             foodLocalLanguageImageLat.toString(),
-                            foodLocalLanguageImageLang.toString()
+                            foodLocalLanguageImageLang.toString(),AppUtil.getSavedEntityPreference(requireContext()),
+                            AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())
                         )
                     )
                     collectSdrInsertResponse()

@@ -11,5 +11,9 @@ data class AttendanceInsertReq(
     val checkIn: String,
     val checkOut: String,
     val totalHours: String,
-    val candidateName: String
+    val candidateName: String,
+     val entityCode: String,
+     val orgId: String,
+     val hrId: String
+
 )

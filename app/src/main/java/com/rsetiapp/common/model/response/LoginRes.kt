@@ -12,6 +12,9 @@ data class LoginDetails(
     val loginId: String,
     val userName: String,
     val faceRegistered: String,
-    val entityCode: String
+    val entityCode: String,
+    val orgId: String,
+    val hrId: String
+
 )
 

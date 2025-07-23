@@ -73,7 +73,10 @@ data class FollowUpInsertReq(
     val passbookCopy: String,
     val appointmentLetter: String,
     val salaryRange: String,
-      val settlementReason : String
+      val settlementReason : String,
+    val entityCode: String,
+    val orgId: String,
+    val hrId: String
 
 
 

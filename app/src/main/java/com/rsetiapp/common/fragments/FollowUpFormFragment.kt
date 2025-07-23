@@ -324,7 +324,8 @@ class FollowUpFormFragment :
                             passbookCopy = passbookCopy,
                             appointmentLetter = appointmentLetter,
                             salaryRange = "",
-                            settlementReason = settlementPhoto
+                            settlementReason = settlementPhoto,AppUtil.getSavedEntityPreference(requireContext()),
+                            AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())
 
                         )
                     )
@@ -378,7 +379,8 @@ class FollowUpFormFragment :
                             passbookCopy = passbookCopy,
                             appointmentLetter = appointmentLetter,
                             salaryRange = "",
-                            settlementReason = settlementPhoto
+                            settlementReason = settlementPhoto,AppUtil.getSavedEntityPreference(requireContext()),
+                            AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())
 
                         )
                     )
@@ -439,7 +441,8 @@ class FollowUpFormFragment :
                             passbookCopy = passbookCopy,
                             appointmentLetter = appointmentLetter,
                             salaryRange = "",
-                            settlementReason = selectedReason
+                            settlementReason = selectedReason,AppUtil.getSavedEntityPreference(requireContext()),
+                            AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())
 
                         )
                     )
