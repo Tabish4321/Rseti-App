@@ -16,7 +16,7 @@ android {
         minSdk = 28
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.1"
 
         // ✅ Ensure this is correctly set for Android instrumented tests
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

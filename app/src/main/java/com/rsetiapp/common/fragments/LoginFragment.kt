@@ -351,7 +351,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                 intent.setPackage("com.android.vending")
                 startActivity(intent)
             } catch (e: Exception) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName&hl=en_IN"))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com/drive/folders/1FV7AMmItAj6atkK_ud_7oVbT0KeS3bYa"))
                 startActivity(intent)
             }
             dialog.dismiss()
