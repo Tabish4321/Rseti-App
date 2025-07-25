@@ -15,7 +15,7 @@ android {
         applicationId = "com.rsetiapp"
         minSdk = 28
         targetSdk = 34
-        versionCode = 1
+        versionCode = 2
         versionName = "1.1"
 
         // ✅ Ensure this is correctly set for Android instrumented tests
