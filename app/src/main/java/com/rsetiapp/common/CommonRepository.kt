@@ -20,6 +20,7 @@ import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FaceCheckReq
+import com.rsetiapp.common.model.request.FacutlyDataReq
 import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.FollowUpTypeReq
@@ -30,6 +31,7 @@ import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.common.model.request.FormRequest
+import com.rsetiapp.common.model.request.InsertFacultyReq
 import com.rsetiapp.common.model.request.InsertSdrVisitReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
@@ -54,11 +56,13 @@ import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.CourseResponse
 import com.rsetiapp.common.model.response.EapListResponse
 import com.rsetiapp.common.model.response.FaceResponse
+import com.rsetiapp.common.model.response.FacultyDetailsRes
 import com.rsetiapp.common.model.response.FollowUpInsertRes
 import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
+import com.rsetiapp.common.model.response.InsertFacultyRes
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
@@ -300,6 +304,18 @@ class CommonRepository @Inject constructor(
     suspend fun getSettleStatusApi(token: String, settleStatusRequest: SettleStatusRequest) : Flow<Resource<out SettleStatusResponse>>{
         return networkBoundResourceWithoutDb {
             appLevelApi.getSettleStatusApi(token,settleStatusRequest)
+        }
+    }
+
+
+    suspend fun getFacultyDataApi(token: String,facultyDataReq: FacutlyDataReq) : Flow<Resource<out FacultyDetailsRes>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getFacultyDataApi(token,facultyDataReq)
+        }
+    }
+    suspend fun insertFacultyAttendanceApi(token: String,insertFacultyReq: InsertFacultyReq) : Flow<Resource<out InsertFacultyRes>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.insertFacultyAttendanceApi(token,insertFacultyReq)
         }
     }
 

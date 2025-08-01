@@ -374,7 +374,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                                     orgName= x.orgName
                                     officialName= x.officialName
                                     designationName= x.designation
-
                                     AppUtil.saveEapCanAgeLimitPreference(requireContext(),x.ageLimit)
                                     binding.tvOrganizationName.text=orgName
                                     binding.tvparticipatingOfficialName.text=officialName

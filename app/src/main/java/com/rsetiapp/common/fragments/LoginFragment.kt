@@ -255,7 +255,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                                 203 -> {
                                     commonViewModel.getToken(AppUtil.getAndroidId(requireContext()), BuildConfig.VERSION_NAME)
                                     showSnackBar(getLoginResponse.responseDesc)
-                                    showSnackBar(getLoginResponse.responseMsg)
+                                  //showSnackBar(getLoginResponse.responseMsg)
 
                                 }
 

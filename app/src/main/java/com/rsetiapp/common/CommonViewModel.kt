@@ -22,8 +22,10 @@ import com.rsetiapp.common.model.request.CourseRequest
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FaceCheckReq
+import com.rsetiapp.common.model.request.FacutlyDataReq
 import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.FollowUpInsertReq
+import com.rsetiapp.common.model.request.InsertFacultyReq
 import com.rsetiapp.common.model.request.InsertSdrVisitReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
@@ -46,11 +48,13 @@ import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
 import com.rsetiapp.common.model.response.FaceResponse
+import com.rsetiapp.common.model.response.FacultyDetailsRes
 import com.rsetiapp.common.model.response.FollowUpInsertRes
 import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
+import com.rsetiapp.common.model.response.InsertFacultyRes
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
@@ -496,6 +500,32 @@ private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>
 
 
     }
+    private  var _getFacultyDataApi =  MutableStateFlow<Resource<out FacultyDetailsRes>>(Resource.Loading())
+    val getFacultyDataApi = _getFacultyDataApi.asSharedFlow()
+
+
+    fun getFacultyDataApi(token: String, facultyDataReq: FacutlyDataReq){
+        viewModelScope.launch {
+            commonRepository.getFacultyDataApi(token,facultyDataReq).collectLatest {
+                _getFacultyDataApi.emit(it)
+            }
+        }
+    }
+    private  var _insertFacultyAttendanceApi =  MutableStateFlow<Resource<out InsertFacultyRes>>(Resource.Loading())
+    val insertFacultyAttendanceApi = _insertFacultyAttendanceApi.asSharedFlow()
+
+
+    fun insertFacultyAttendanceApi(token: String, insertFacultyReq: InsertFacultyReq){
+        viewModelScope.launch {
+            commonRepository.insertFacultyAttendanceApi(token,insertFacultyReq).collectLatest {
+                _insertFacultyAttendanceApi.emit(it)
+            }
+        }
+    }
+
+
+
+
 
     private var _getSettleStatusApi = MutableStateFlow<Resource<out  SettleStatusResponse>>(Resource.Loading())
     val getSettleStatusApi = _getSettleStatusApi.asSharedFlow()

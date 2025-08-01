@@ -122,6 +122,7 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
             } else if (eapStatusValue == "Expired") {
                 AppUtil.showAlertDialog(requireContext(), "Alert", "Eap Expired")
             } else if (eapStatusValue == "Completed") {
+
                 AppUtil.showAlertDialog(requireContext(), "Alert", "Eap Completed")
             } else {
                 showMismatchAlert(requireContext(), eapDateValue, currentDate)

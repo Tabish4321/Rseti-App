@@ -211,6 +211,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
 
                 }
+            else showSnackBar("Checkin Already marked")
 
 
 
@@ -251,6 +252,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                 }
 
 
+                else showSnackBar("Kindly mark checkin First")
 
 
 
@@ -387,8 +389,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                 // Process the response to generate the PoiType or other required fields
                 val poiType = XstreamCommonMethods.processPidBlockEkyc(
                     response.toXML(),
-                    /* decryptedAadhaar,*/
-                    "939625617876",
+                     decryptedAadhaar,
                     false,
                     requireContext()
                 )
@@ -663,11 +664,11 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                                 for (x in attendanceStatusRes) {
 
-                                    checkIn = x.checkIn//00:00
+                                        checkIn = x.checkIn//00:00
                                     totalHours = x.totalHours//00:00:00
                                     latitude = x.lattitude.toDouble()
                                     checkOut = x.checkOut
-                                    //radius = x.radius.toFloat()
+                                    radius = x.radius.toFloat()
                                     attendanceFlag = x.attendanceFlag
                                     longitude = x.longitude.toDouble()
 

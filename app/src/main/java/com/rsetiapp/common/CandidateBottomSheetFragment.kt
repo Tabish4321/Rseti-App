@@ -419,6 +419,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         val calendar = Calendar.getInstance()
 
         val ageLimit = AppUtil.getSavedEapCanAgeLimitPreference(requireContext())
+
         // Calculate the date 15 years ago
         calendar.add(Calendar.YEAR, ageLimit.toInt())
         val fifteenYearsAgoMillis = calendar.timeInMillis

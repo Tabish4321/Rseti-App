@@ -194,6 +194,16 @@
                 android:name="batchName"
                 app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_attendanceBatchFragment_to_facultyAttendance"
+            app:destination="@id/facultyAttendance" >
+            <argument
+                android:name="batchId"
+                app:argType="string" />
+            <argument
+                android:name="batchName"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/attendanceCandidateFragment"
@@ -277,4 +287,9 @@
 
         </action>
     </fragment>
+    <fragment
+        android:id="@+id/facultyAttendance"
+        android:name="com.rsetiapp.common.fragments.FacultyAttendance"
+        android:label="FacultyAttendance"
+        tools:layout="@layout/faculty_attendance_fragment"/>
 </navigation>
