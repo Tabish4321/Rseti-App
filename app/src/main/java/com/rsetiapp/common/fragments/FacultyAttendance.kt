@@ -139,17 +139,21 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
                 //for audit
                 showProgressBar()
                 invokeCaptureIntent()
-                /*      val currentDate = LocalDate.now()
-                      val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-                      val currentTime = LocalTime.now()
-                      val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
-                      val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+            /*    val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                val currentTime = LocalTime.now()
+                val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
+                val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
 
-                          commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
-                              BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkin",
-                              formattedTime,"","",candidateName))
-                          collectAttendanceInsertResponse()*/
+
+
+                    commonViewModel.insertFacultyAttendanceApi(AppUtil.getSavedTokenPreference(requireContext()),
+                        InsertFacultyReq(BuildConfig.VERSION_NAME,batchId,currentDate,"checkin",formattedTime,
+                            "","",userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()),
+                            AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext()),
+                            AppUtil.getSavedEntityPreference(requireContext())))
+
+                    collectAttendanceInsertResponse()*/
 
 
 
@@ -170,25 +174,28 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
                 //for audit
                 showProgressBar()
                 invokeCaptureIntent()
-
-                /*val currentDate = LocalDate.now()
-                val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+               /* val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
                 val currentTime = LocalTime.now()
-
                 val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
                 val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-
-
                 val checkInTime = LocalTime.parse(checkIn, timeFormatter)
                 val checkOutTime = LocalTime.parse(formattedTime, timeFormatter)
                 val duration = Duration.between(checkInTime, checkOutTime)
+
+
                 val hours = duration.toHours()
-                val minutes = duration.toMinutes() % 60
+                val minutes = (duration.toMinutes() % 60)
+                val seconds = (duration.seconds % 60)
 
-                val totalHoursValue = String.format("%02d:%02d:00", hours, minutes) // Format as HH:mm:ss
+                val totalHoursValue = String.format("%02d:%02d:%02d", hours, minutes, seconds)
 
-                commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),BuildConfig.VERSION_NAME,batchId,candidateId,formattedDate,"checkout",
-                    "",formattedTime,totalHoursValue,candidateName))
+
+                commonViewModel.insertFacultyAttendanceApi(AppUtil.getSavedTokenPreference(requireContext()),
+                    InsertFacultyReq(BuildConfig.VERSION_NAME,batchId,currentDate,"checkout","",
+                        formattedTime,totalHoursValue,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()),
+                        AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext()),
+                        AppUtil.getSavedEntityPreference(requireContext())))
+
                 collectAttendanceInsertResponse()*/
 
 
@@ -750,7 +757,7 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
         hideProgressBar()
 
         lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getInsertAttendance) { result ->
+            collectLatestLifecycleFlow(commonViewModel.insertFacultyAttendanceApi) { result ->
                 when (result) {
                     is Resource.Loading -> showProgressBar()
                     is Resource.Error -> {
@@ -761,7 +768,6 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
                         hideProgressBar()
                         result.data?.let { getInsertAttendance ->
                             if (getInsertAttendance.responseCode == 200) {
-
                                 showSnackBar(getInsertAttendance.responseDesc)
                                 toastLong("Attendance Marked")
 
