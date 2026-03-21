@@ -1,5 +1,9 @@
 package com.rsetiapp.core.data.remote
 
+import com.rsetiapp.common.compose.base.BaseResponse
+import com.rsetiapp.common.compose.model.BatchDetailsDto
+import com.rsetiapp.common.compose.model.BatchDto
+import com.rsetiapp.common.compose.model.InstituteDto
 import com.rsetiapp.common.model.request.AttendanceBatchReq
 import com.rsetiapp.common.model.request.AttendanceCandidateReq
 import com.rsetiapp.common.model.request.AttendanceCheckReq
@@ -71,8 +75,10 @@ import com.rsetiapp.core.uidai.ekyc.UidaiKycRequest
 import com.rsetiapp.core.uidai.ekyc.UidaiResp
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Query
 import retrofit2.http.Url
 
 interface AppLevelApi {
@@ -221,6 +227,22 @@ interface AppLevelApi {
 
     @POST("insertFacultyAttandance")
     suspend fun insertFacultyAttendanceApi(@Header("rsetiappauth") token: String,@Body  insertFacultyReq: InsertFacultyReq) : InsertFacultyRes
+
+    @GET("getRsetiMobileAppInstituteInfo")
+    suspend fun getInstitutes(
+        @Query("stateCode") stateCode: String
+    ): BaseResponse<List<InstituteDto>>
+
+    @GET("getRsetiMobileAppInstituteBatch")
+    suspend fun getBatches(
+        @Query("instituteId") instituteId: String
+    ): BaseResponse<List<BatchDto>>
+
+    @GET("getRsetiMobileAppInstituteBatchCandidate")
+    suspend fun getBatchDetails(
+        @Query("batchId") batchId: String,
+        @Query("instituteId") instituteId: String
+    ): BaseResponse<List<BatchDetailsDto>>
 
 
 }
