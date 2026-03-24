@@ -3,6 +3,7 @@ package com.rsetiapp.core.data.remote
 import com.rsetiapp.common.compose.base.BaseResponse
 import com.rsetiapp.common.compose.model.BatchDetailsDto
 import com.rsetiapp.common.compose.model.BatchDto
+import com.rsetiapp.common.compose.model.BatchSubmitRequest
 import com.rsetiapp.common.compose.model.InstituteDto
 import com.rsetiapp.common.model.request.AttendanceBatchReq
 import com.rsetiapp.common.model.request.AttendanceCandidateReq
@@ -230,7 +231,7 @@ interface AppLevelApi {
 
     @GET("getRsetiMobileAppInstituteInfo")
     suspend fun getInstitutes(
-        @Query("stateCode") stateCode: String
+        @Query("stateCode") stateCode: Int
     ): BaseResponse<List<InstituteDto>>
 
     @GET("getRsetiMobileAppInstituteBatch")
@@ -243,6 +244,12 @@ interface AppLevelApi {
         @Query("batchId") batchId: String,
         @Query("instituteId") instituteId: String
     ): BaseResponse<List<BatchDetailsDto>>
+
+    @POST("saveVerification")
+    suspend fun submitBatchVerification(
+        @Body request: BatchSubmitRequest
+    ): BaseResponse<Unit>
+
 
 
 }

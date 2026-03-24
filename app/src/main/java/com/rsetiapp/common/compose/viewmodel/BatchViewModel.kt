@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rsetiapp.common.compose.base.ApiResult
 import com.rsetiapp.common.compose.model.BatchDto
+import com.rsetiapp.common.compose.model.BatchSubmitRequest
 import com.rsetiapp.common.compose.model.InstituteDto
-import com.rsetiapp.common.compose.model.SaveRequest
 import com.rsetiapp.common.compose.repo.RsetiRepository
 import com.rsetiapp.common.compose.state.BatchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +27,7 @@ class BatchViewModel @Inject constructor(
     private val _state = MutableStateFlow(BatchUiState())
     val state = _state.asStateFlow()
 
-    fun load(stateCode:String) = viewModelScope.launch {
+    fun load(stateCode:Int) = viewModelScope.launch {
         _state.update { it.copy(isLoading = true) }
 
         when (val res = repo.getInstitutes(stateCode)) {
@@ -82,27 +82,26 @@ class BatchViewModel @Inject constructor(
         _state.update { it.copy(remarks = value, error = null) }
     }
 
-    fun save() = viewModelScope.launch {
 
-//        val s = state.value
-//
-//        if (s.isYesSelected == false && s.remarks.isBlank()) {
-//            _state.update { it.copy(error = "Remarks required") }
-//            return@launch
-//        }
-//
-//        _state.update { it.copy(isSaving = true) }
-//
-//        val res = repo.save(
-//            SaveRequest(s.isYesSelected == true, s.remarks, s.lat, s.lng)
-//        )
-//
-//        when (res) {
-//            is ApiResult.Success ->
-//                _state.update { it.copy(isSaving = false, success = res.data) }
-//
-//            is ApiResult.Error ->
-//                _state.update { it.copy(isSaving = false, error = res.message) }
-//        }
+
+    fun save(request: BatchSubmitRequest) = viewModelScope.launch {
+
+        _state.update { it.copy(isSaving = true) }
+
+        val res = repo.submitBatch(request)
+
+        when (res) {
+            is ApiResult.Success ->
+                _state.update { it.copy(isSaving = false,success = "Submitted Successfully") }
+
+            is ApiResult.Error ->
+                _state.update { it.copy(isSaving = false, error = res.message) }
+
+            else -> {}
+        }
+    }
+
+    fun resetSuccess() {
+        _state.update { it.copy(isSaving = false) }
     }
 }

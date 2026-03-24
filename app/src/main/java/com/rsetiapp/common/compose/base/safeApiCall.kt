@@ -18,3 +18,4 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> BaseResponse<T>): ApiResult<T
         ApiResult.Error(e.localizedMessage ?: "Something went wrong")
     }
 }
+

@@ -62,8 +62,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
         binding.changeLanguage.setOnClickListener {
-            //findNavController().navigate(HomeFragmentDirections.actionHomeFrahmentToLanguageChangeFragment())
-              findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBatchFragment())
+            findNavController().navigate(HomeFragmentDirections.actionHomeFrahmentToLanguageChangeFragment())
+             // findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBatchFragment())
         }
 
 

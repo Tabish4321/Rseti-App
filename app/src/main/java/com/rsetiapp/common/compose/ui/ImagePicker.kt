@@ -11,15 +11,22 @@ import android.util.Base64
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontLoadingStrategy.Companion.Async
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -27,25 +34,31 @@ import androidx.core.location.LocationManagerCompat.getCurrentLocation
 import coil.compose.AsyncImage
 import com.google.android.gms.location.LocationServices
 import com.rsetiapp.common.compose.model.ImageItem
+import org.jetbrains.annotations.Async
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import com.rsetiapp.R
 
 @Composable
 fun ImagePicker(
-    onImagesSelected: (List<ImageItem>) -> Unit
-) {
+    images: List<ImageItem>,
+    onImagesSelected: (List<ImageItem>) -> Unit) {
 
     val context = LocalContext.current
-    val images = remember { mutableStateListOf<ImageItem>() }
 
-    // 🔥 MULTIPLE PERMISSION
+    val imageList = remember { mutableStateListOf<ImageItem>() }
+
+    LaunchedEffect(images) {
+        imageList.clear()
+        imageList.addAll(images)
+    }
+
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { result ->
-        val granted = result.values.all { it }
-        if (!granted) {
+        if (!result.values.all { it }) {
             Toast.makeText(context, "Permission required", Toast.LENGTH_SHORT).show()
         }
     }
@@ -72,17 +85,16 @@ fun ImagePicker(
 
         fetchLocation { lat, lng ->
 
-            val watermarked = createWatermarkedBitmap(bitmap, lat, lng)
-            val uri = saveBitmapToCache(context, watermarked)
-
-            val base64 = bitmapToBase64(watermarked)
+           // val watermarked = createWatermarkedBitmap(bitmap, lat, lng)
+            val uri = saveBitmapToCache(context, bitmap)
+            val base64 = bitmapToBase64(bitmap)
 
             val time = SimpleDateFormat(
                 "dd MMM yyyy hh:mm a",
                 Locale.getDefault()
             ).format(Date())
 
-            images.add(
+            imageList.add(
                 ImageItem(
                     uri = uri,
                     lat = lat,
@@ -91,8 +103,8 @@ fun ImagePicker(
                     base64 = base64
                 )
             )
+            onImagesSelected(imageList.toList())
 
-            onImagesSelected(images)
         }
     }
 
@@ -111,87 +123,173 @@ fun ImagePicker(
         }
     }
 
-    Column {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
 
-        Text(" Geo-tag Photos")
+        // 🔹 Header
+        Text(
+            text = "Only 2 images Upload",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Normal
+        )
 
-        Spacer(Modifier.height(8.dp))
+        // 🔹 Buttons (Professional Style)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
 
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+//            OutlinedButton(
+//                onClick = {
+//                    if (hasPermissions(context)) {
+//                        galleryLauncher.launch("image/*")
+//                    } else requestPermission()
+//                },
+//                modifier = Modifier.weight(1f),
+//                shape = RoundedCornerShape(12.dp)
+//            ) {
+//                Text("Gallery")
+//            }
 
-            Button(onClick = {
-                if (hasPermissions(context)) {
-                    galleryLauncher.launch("image/*")
-                } else requestPermission()
-            }) {
-                Text("Gallery")
-            }
-
-            Button(onClick = {
-                if (hasPermissions(context)) {
-                    cameraLauncher.launch(null)
-                } else requestPermission()
-            }) {
+            OutlinedButton(
+                onClick = {
+                    if (images.size >= 2) {
+                        Toast.makeText(context, "Only 2 images allowed", Toast.LENGTH_SHORT).show()
+                    } else {
+                        if (hasPermissions(context)) {
+                            cameraLauncher.launch(null)
+                        } else requestPermission()
+                    }
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(40.dp),
+                shape = RoundedCornerShape(8.dp),
+                elevation = ButtonDefaults.buttonElevation(4.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id =R.color.light_color), // match card_background
+                    contentColor = Color.White
+                ),
+                enabled = images.size < 2
+            ) {
                 Text("Camera")
             }
         }
 
-        Spacer(Modifier.height(10.dp))
+        // 🔹 Image List
+        if (images.isNotEmpty()) {
 
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(images) { item ->
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
 
-                Box {
-                    AsyncImage(
-                        model = item.uri,
-                        contentDescription = null,
-                        modifier = Modifier.size(90.dp)
-                    )
+                items(images) { item ->
 
-                    Text(
-                        text = "❌",
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .clickable {
-                                images.remove(item)
-                                onImagesSelected(images)
+                    ElevatedCard(
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.elevatedCardElevation(5.dp)
+                    ) {
+
+                        Box {
+
+                            // 🔹 Image
+                            AsyncImage(
+                                model = item.uri,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(width = 200.dp, height = 150.dp)
+                            )
+
+                            // 🔹 Bottom Overlay (Gov Style)
+                            Column(
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .fillMaxWidth()
+                                    .background(Color.Black.copy(alpha = 0.65f))
+                                    .padding(8.dp)
+                            ) {
+
+                                Text(
+                                    text = "Lat: ${item.lat ?: "--"}",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+
+                                Text(
+                                    text = "Lng: ${item.lng ?: "--"}",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+
+                                Text(
+                                    text = item.timestamp ?: "",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
                             }
-                    )
+
+                            // 🔹 Remove Button
+                            IconButton(
+                                onClick = {
+                                    imageList.remove(item)
+                                    onImagesSelected(imageList.toList())
+                                },
+                                modifier = Modifier.align(Alignment.TopEnd)
+                            ) {
+
+                                Surface(
+                                    shape = CircleShape,
+                                    color = Color.Black.copy(alpha = 0.6f)
+                                ) {
+
+                                    Text(
+                                        "✕",
+                                        color = Color.White,
+                                        modifier = Modifier.padding(6.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-fun createWatermarkedBitmap(
-    original: Bitmap,
-    lat: Double?,
-    lng: Double?
-): Bitmap {
-
-    val result = original.copy(Bitmap.Config.ARGB_8888, true)
-    val canvas = Canvas(result)
-
-    val paint = android.graphics.Paint().apply {
-        color = android.graphics.Color.WHITE
-        textSize = 40f
-        isAntiAlias = true
-        setShadowLayer(5f, 0f, 0f, android.graphics.Color.BLACK)
-    }
-
-    val time = SimpleDateFormat("dd MMM yyyy hh:mm a", Locale.getDefault())
-        .format(Date())
-
-    val location = if (lat != null && lng != null)
-        "Lat:$lat Lng:$lng"
-    else "Location unavailable"
-
-    val text = "$time\n$location"
-
-    canvas.drawText(text, 20f, result.height - 60f, paint)
-
-    return result
-}
+//fun createWatermarkedBitmap(
+//    original: Bitmap,
+//    lat: Double?,
+//    lng: Double?
+//): Bitmap {
+//
+//    val result = original.copy(Bitmap.Config.ARGB_8888, true)
+//    val canvas = Canvas(result)
+//
+//    val paint = Paint().apply {
+//        color = Color.White.hashCode()
+//        textSize = 42f
+//        isAntiAlias = true
+//        setShadowLayer(6f, 0f, 0f, Color.Black.hashCode())
+//    }
+//
+//    val time = SimpleDateFormat("dd MMM yyyy hh:mm a", Locale.getDefault())
+//        .format(Date())
+//
+//    val locationText = if (lat != null && lng != null) {
+//        "Lat: %.5f  Lng: %.5f".format(lat, lng)
+//    } else {
+//        "Location unavailable"
+//    }
+//
+//    val text = "$time\n$locationText"
+//
+//    canvas.drawText(text, 20f, result.height - 80f, paint)
+//
+//    return result
+//}
 
 fun bitmapToBase64(bitmap: Bitmap): String {
     val stream = ByteArrayOutputStream()

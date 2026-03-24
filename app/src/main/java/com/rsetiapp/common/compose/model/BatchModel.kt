@@ -33,9 +33,3 @@ data class BatchDetailsDto(
     val candidateCount: String
 )
 
-data class SaveRequest(
-    val isCorrect: Boolean,
-    val remarks: String,
-    val lat: Double?,
-    val lng: Double?
-)

@@ -1,27 +1,27 @@
 package com.rsetiapp.common.compose.ui
 
+import android.text.Layout
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,18 +32,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rsetiapp.R
+import com.rsetiapp.common.compose.model.BatchSubmitRequest
 import com.rsetiapp.common.compose.model.ImageItem
 import com.rsetiapp.common.compose.model.VerificationItem
 import com.rsetiapp.common.compose.viewmodel.BatchViewModel
+import com.rsetiapp.core.util.AppUtil
 
 /**
  * Created by Rishi Porwal
  */
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun BatchScreen(
     vm: BatchViewModel,
@@ -53,8 +60,11 @@ fun BatchScreen(
     val state by vm.state.collectAsState()
     var selectedImages by remember { mutableStateOf<List<ImageItem>>(emptyList()) }
 
-    val data = state.batchDetails
     val context = LocalContext.current
+    val data = state.batchDetails
+
+    val isBatchEnabled = state.selectedInstitute != null
+    val isVerificationVisible = state.selectedBatch != null
 
     val verificationList = remember(data) {
         data?.let {
@@ -72,79 +82,42 @@ fun BatchScreen(
             )
         } ?: mutableStateListOf()
     }
-
+    val stateCode= AppUtil.getSavedEntityPreference(context).substringAfter("-").toIntOrNull()
     LaunchedEffect(Unit) {
-        vm.load("UP")
+        vm.load(stateCode!!)
+    }
+
+    LaunchedEffect(state.isSaving) {
+          if(state.isSaving){
+              Toast.makeText(context, "Saving...", Toast.LENGTH_SHORT).show()
+              vm.resetSuccess()
+              onBack()
+          }
+//        state.success.let {
+//              Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+//              vm.resetSuccess()
+//              onBack()
+//          }
+
     }
 
     Scaffold(
+
         topBar = {
             RsetiTopBar(
-                title = "Batch Management Varification",
+                title = "Batch Verification",
                 onBackClick = onBack
             )
-        }
+        },
 
+        bottomBar = {
 
-    ) { padding ->
+            if (isVerificationVisible) {
 
-
-        LazyColumn(
-            modifier = Modifier
-                .padding(padding)
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-
-            // ✅ 1. Institute Dropdown
-            item {
-                SectionTitle("Select Institute")
-                Dropdown(
-                    title = "",
-                    items = state.institutes,
-                    selected = state.selectedInstitute?.instituteName,
-                    onSelect = vm::selectInstitute
-                )
-            }
-
-            // ✅ 2. Batch Dropdown
-            item {
-                SectionTitle("Select Batch")
-                Dropdown(
-                    title = "",
-                    items = state.batches,
-                    selected = state.selectedBatch?.batchRegNo,
-                    onSelect = vm::selectBatch
-                )
-            }
-
-                // 🔹 Batch Details
-//                item {
-//                    SectionTitle("Batch Details")
-//                    BatchCard(data)
-//                }
-
-                // 🔹 Verification
-                item {
-                    SectionTitle("Verification")
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        verificationList.forEach {
-                            VerificationRow(it)
-                        }
-                    }
-                }
-
-                // 🔹 Image Picker
-                item {
-                    SectionTitle("Geo-tag Photos")
-
-                    ImagePicker { images ->
-                        selectedImages = images
-                    }
-                }
-
-                // 🔹 Submit Button
-                item {
+                Surface(
+                    tonalElevation = 8.dp,
+                    shadowElevation = 8.dp
+                ) {
                     Button(
                         onClick = {
 
@@ -173,62 +146,150 @@ fun BatchScreen(
                                 }
                             }
 
-                            if (hasError) return@Button
+                            if (selectedImages.size < 2) {
+                                Toast.makeText(context, "Please upload exactly 2 images", Toast.LENGTH_SHORT).show()
+                                hasError = true
+                            }
+                            if (selectedImages.size > 2) {
+                                Toast.makeText(context, "Maximum 2 images allowed", Toast.LENGTH_SHORT).show()
+                                hasError = true
 
-                            // ✅ Prepare data
-                            val verificationData = verificationList.map {
-                                mapOf(
-                                    "label" to it.label,
-                                    "value" to it.value,
-                                    "answer" to it.answer,
-                                    "remark" to if (it.answer == "NO") it.remark else ""
-                                )
                             }
 
+                            if (hasError) return@Button
+
+                            val verificationData = verificationList.map {
+                                VerificationItem(
+                                    label = it.label,
+                                    value = it.value,
+                                    answer = it.answer,
+                                    remark = if (it.answer == "NO") it.remark else "")
+                            }
                             val imageList = selectedImages.map { it.base64 }
 
-                            // ✅ API call
-                            vm.save(
-//                                instituteId = state.selectedInstitute?.instituteId,
-//                                batchId = state.selectedBatch?.batchId,
-//                                verification = verificationData,
-//                                images = imageList
+                            val request = BatchSubmitRequest(
+                                instituteId = state.selectedInstitute?.instituteId.toString(),
+                                batchId = state.selectedBatch?.batchId.toString(),
+                                verification = verificationData,
+                                images = imageList
                             )
+
+                            vm.save(request) // save api call
                         },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .padding(5.dp)
+                        ,
+                        shape = RoundedCornerShape(8.dp),
+                        elevation = ButtonDefaults.buttonElevation(4.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id =R.color.light_color), // match card_background
+                            contentColor = Color.White
+                        ),
                     ) {
-                        Text(if (state.isSaving) "Saving..." else "Submit")
+
+                        if (state.isSaving) {
+
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(18.dp),
+                                    strokeWidth = 2.dp,
+                                    color = Color.White
+                                )
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                Text("Submitting...")
+                            }
+
+                        } else {
+                            Text("Submit Verification")
+                        }
                     }
                 }
             }
         }
+
+    ) { padding ->
+
+        LazyColumn(
+            modifier = Modifier
+                .padding(padding)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+
+            // 🔹 Institute
+            item {
+                SectionTitle("Select Institute")
+                Dropdown(
+                    title = "",
+                    items = state.institutes,
+                    selected = state.selectedInstitute?.instituteName,
+                    itemLabel = { it.instituteName },
+                    onSelect = vm::selectInstitute
+                )
+            }
+
+            // 🔹 Batch (Disabled until institute selected)
+            item {
+                SectionTitle("Select Batch")
+
+                Box(
+                    modifier = Modifier.alpha(if (isBatchEnabled) 1f else 0.5f)
+                ) {
+
+                    Dropdown(
+                        title = "",
+                        items = state.batches,
+                        selected = state.selectedBatch?.batchRegNo,
+                        itemLabel = { it.tradeName +"("+ it.batchRegNo +")" },
+
+                        onSelect = {
+                            if (isBatchEnabled) vm.selectBatch(it)
+                        }
+                    )
+                }
+            }
+
+            // 🔹 Verification Section
+            if (isVerificationVisible) {
+
+                item {
+
+                    SectionTitle("Verification")
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+
+                        verificationList.forEach {
+                            ComplianceItemCard(it)
+                        }
+                    }
+                }
+
+                // 🔹 Image Picker
+                item {
+
+                    SectionTitle("Geo-tag Photos")
+                    ImagePicker(
+                        images = selectedImages,
+                        onImagesSelected = {
+                            selectedImages = it
+                        }
+                    )
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
+            }
+        }
     }
+}
 
-
-
-//{
-//    "instituteId": "101",
-//    "batchId": "201",
-//    "verification": [
-//    {
-//        "label": "Location Type",
-//        "value": "On-Campus",
-//        "answer": "YES",
-//        "remark": ""
-//    },
-//    {
-//        "label": "Coordinates",
-//        "value": "80,26",
-//        "answer": "NO",
-//        "remark": "Wrong location"
-//    }
-//    ],
-//    "images": [
-//    "base64string1",
-//    "base64string2"
-//    ]
-//}
 
 
 
@@ -240,22 +301,24 @@ fun SectionTitle(text: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp)
+            .padding(vertical = 6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-
         Text(
             text = text,
+            textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
+            color =  Color.Black,
 
         )
 
-        Spacer(modifier = Modifier.height(4.dp))
+      //  Spacer(modifier = Modifier.height(4.dp))
 
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -266,7 +329,7 @@ fun BatchScreenContentPreview() {
     val verificationList = remember {
         mutableStateListOf(
             VerificationItem("📍 Location Type", "On-Campus"),
-            VerificationItem("📌 Coordinates", "80,26"),
+            VerificationItem("📌 Coordinates", "80,26dfgdgd ,drgedgttg"),
             VerificationItem("📘 Scheme", "MoRD"),
             VerificationItem("🎓 EDP", "Training"),
             VerificationItem("🧵 Course", "Tailoring")
@@ -274,7 +337,6 @@ fun BatchScreenContentPreview() {
     }
 
     var selectedImages by remember { mutableStateOf<List<ImageItem>>(emptyList()) }
-
     LazyColumn(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -284,15 +346,22 @@ fun BatchScreenContentPreview() {
             SectionTitle("Verification")
             Column {
                 verificationList.forEach {
-                    VerificationRow(it)
+                    ComplianceItemCard(it)
                 }
+
             }
         }
 
         item {
             SectionTitle("Geo-tag Photos")
-            ImagePicker { selectedImages = it }
+            ImagePicker(
+                images = selectedImages,
+                onImagesSelected = {
+                    selectedImages = it
+                }
+            )
         }
+
 
         item {
             Button(onClick = {}) {

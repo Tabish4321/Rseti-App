@@ -154,7 +154,7 @@ object AppUtil {
     fun saveHRIdPreference(context: Context, entityCode: String) {
         val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        editor.putString("hrId", entityCode)
+        editor.putString("hrId", entityCode?:"")
         editor.apply()
     }
 

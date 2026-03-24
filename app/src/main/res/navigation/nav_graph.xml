@@ -40,7 +40,11 @@
 
         <action
             android:id="@+id/action_homeFragment_to_batchFragment"
-            app:destination="@id/batchFragment" />
+            app:destination="@id/batchFragment" >
+        <argument
+            android:name="formName"
+            app:argType="string" />
+        </action>
 
         <action
             android:id="@+id/action_homeFragment_to_FollowUpBatchFragment"

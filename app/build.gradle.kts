@@ -228,7 +228,6 @@ dependencies {
     implementation("com.google.mediapipe:tasks-vision:0.10.14")
     implementation("io.coil-kt:coil-compose:2.6.0")
 
-
 }
 
 kapt {

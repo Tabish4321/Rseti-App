@@ -9,3 +9,10 @@ data class VerificationItem(
     var answer: String? = null,   // YES / NO
     var remark: String = ""
 )
+
+data class BatchSubmitRequest(
+    val instituteId: String,
+    val batchId: String,
+    val verification: List<VerificationItem>,
+    val images: List<String>
+)
