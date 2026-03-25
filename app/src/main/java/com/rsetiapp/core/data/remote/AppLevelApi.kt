@@ -5,6 +5,7 @@ import com.rsetiapp.common.compose.model.BatchDetailsDto
 import com.rsetiapp.common.compose.model.BatchDto
 import com.rsetiapp.common.compose.model.BatchSubmitRequest
 import com.rsetiapp.common.compose.model.InstituteDto
+import com.rsetiapp.common.compose.model.SaveResponse
 import com.rsetiapp.common.model.request.AttendanceBatchReq
 import com.rsetiapp.common.model.request.AttendanceCandidateReq
 import com.rsetiapp.common.model.request.AttendanceCheckReq
@@ -248,7 +249,7 @@ interface AppLevelApi {
     @POST("saveVerification")
     suspend fun submitBatchVerification(
         @Body request: BatchSubmitRequest
-    ): BaseResponse<Unit>
+    ): SaveResponse
 
 
 

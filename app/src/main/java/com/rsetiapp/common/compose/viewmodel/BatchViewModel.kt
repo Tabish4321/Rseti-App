@@ -86,22 +86,21 @@ class BatchViewModel @Inject constructor(
 
     fun save(request: BatchSubmitRequest) = viewModelScope.launch {
 
-        _state.update { it.copy(isSaving = true) }
+        _state.update { it.copy(isLoading = true) }
 
         val res = repo.submitBatch(request)
-
         when (res) {
             is ApiResult.Success ->
-                _state.update { it.copy(isSaving = false,success = "Submitted Successfully") }
+                _state.update { it.copy(isLoading =false,isSaving = true,success = "Submitted Successfully") }
 
             is ApiResult.Error ->
-                _state.update { it.copy(isSaving = false, error = res.message) }
+                _state.update { it.copy(isLoading =false,isSaving = false, error = res.message) }
 
             else -> {}
         }
     }
 
     fun resetSuccess() {
-        _state.update { it.copy(isSaving = false) }
+        _state.update { it.copy(isLoading =false,isSaving = false) }
     }
 }

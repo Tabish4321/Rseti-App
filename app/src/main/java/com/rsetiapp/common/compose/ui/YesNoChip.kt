@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -38,16 +39,12 @@ fun YesNoChip(
     onClick: () -> Unit
 ) {
 
-    val backgroundColor = if (isSelected) {
-        selectedColor.copy(alpha = 0.12f)
-    } else {
-        MaterialTheme.colorScheme.surface
-    }
+    val backgroundColor = Color.White
 
     val borderColor = if (isSelected) {
         selectedColor
     } else {
-        MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+        MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
     }
 
     val contentColor = if (isSelected) {
@@ -57,27 +54,33 @@ fun YesNoChip(
     }
 
     OutlinedCard(
-        modifier = modifier,
-        shape = RoundedCornerShape(30.dp),
-        border = BorderStroke(1.4.dp, borderColor),
+        onClick = { onClick() }, // ✅ same logic
+        modifier = modifier
+            .height(44.dp), // 🔥 better touch size
+        shape = RoundedCornerShape(8.dp), // more modern pill
+        border = BorderStroke(1.5.dp, borderColor),
         colors = CardDefaults.outlinedCardColors(
             containerColor = backgroundColor
         ),
-        onClick = { onClick() } // ✅ FIX CLICK ISSUE
+        elevation = CardDefaults.outlinedCardElevation(
+            defaultElevation = if (isSelected) 2.dp else 0.dp
+        )
     ) {
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
+                .padding(horizontal = 14.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
 
+            // 🔹 Selection Indicator (Improved)
             if (isSelected) {
+
                 Box(
                     modifier = Modifier
-                        .size(8.dp)
+                        .size(10.dp)
                         .background(selectedColor, CircleShape)
                 )
 

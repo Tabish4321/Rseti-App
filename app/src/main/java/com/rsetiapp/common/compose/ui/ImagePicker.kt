@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,9 +20,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -40,6 +43,12 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import com.rsetiapp.R
+
+
+
+
+
+
 
 @Composable
 fun ImagePicker(
@@ -130,85 +139,83 @@ fun ImagePicker(
 
         // 🔹 Header
         Text(
-            text = "Only 2 images Upload",
+            text = "Upload 2 Geo-tagged Photos *",
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Normal
+            fontWeight = FontWeight.SemiBold
         )
 
-        // 🔹 Buttons (Professional Style)
+        // 🔹 Slots Row (ONLY 2)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-//            OutlinedButton(
-//                onClick = {
-//                    if (hasPermissions(context)) {
-//                        galleryLauncher.launch("image/*")
-//                    } else requestPermission()
-//                },
-//                modifier = Modifier.weight(1f),
-//                shape = RoundedCornerShape(12.dp)
-//            ) {
-//                Text("Gallery")
-//            }
+            repeat(2) { index ->
 
-            OutlinedButton(
-                onClick = {
-                    if (images.size >= 2) {
-                        Toast.makeText(context, "Only 2 images allowed", Toast.LENGTH_SHORT).show()
+                val item = images.getOrNull(index)
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color(0xFFF5F5F5))
+                        .border(
+                            width = 1.dp,
+                            color = Color.Gray.copy(alpha = 0.3f),
+                            shape = RoundedCornerShape(14.dp)
+                        )
+                        .clickable {
+
+                            // 👉 same logic (camera open)
+                            if (images.size >= 2 && item == null) {
+                                Toast.makeText(context, "Only 2 images allowed", Toast.LENGTH_SHORT).show()
+                            } else {
+                                if (hasPermissions(context)) {
+                                    cameraLauncher.launch(null)
+                                } else requestPermission()
+                            }
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    if (item == null) {
+
+                        // 🔹 EMPTY SLOT UI
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            Text(
+                                text = "+",
+                                style = MaterialTheme.typography.headlineMedium,
+                                color = colorResource(id = R.color.light_color),
+                            )
+
+                            Text(
+                                text = "Add Photo",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.Gray
+                            )
+                        }
+
                     } else {
-                        if (hasPermissions(context)) {
-                            cameraLauncher.launch(null)
-                        } else requestPermission()
-                    }
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .height(40.dp),
-                shape = RoundedCornerShape(8.dp),
-                elevation = ButtonDefaults.buttonElevation(4.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id =R.color.light_color), // match card_background
-                    contentColor = Color.White
-                ),
-                enabled = images.size < 2
-            ) {
-                Text("Camera")
-            }
-        }
 
-        // 🔹 Image List
-        if (images.isNotEmpty()) {
-
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-
-                items(images) { item ->
-
-                    ElevatedCard(
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.elevatedCardElevation(5.dp)
-                    ) {
-
+                        // 🔹 IMAGE UI
                         Box {
-
-                            // 🔹 Image
                             AsyncImage(
                                 model = item.uri,
                                 contentDescription = null,
-                                modifier = Modifier
-                                    .size(width = 200.dp, height = 150.dp)
+                                modifier = Modifier.fillMaxSize()
                             )
 
-                            // 🔹 Bottom Overlay (Gov Style)
+                            // 🔹 Overlay Geo Info
                             Column(
                                 modifier = Modifier
                                     .align(Alignment.BottomStart)
                                     .fillMaxWidth()
-                                    .background(Color.Black.copy(alpha = 0.65f))
-                                    .padding(8.dp)
+                                    .background(Color.Black.copy(alpha = 0.6f))
+                                    .padding(6.dp)
                             ) {
 
                                 Text(
@@ -256,6 +263,13 @@ fun ImagePicker(
                 }
             }
         }
+
+        // 🔹 Helper Text
+        Text(
+            text = "Exactly 2 photos required",
+            style = MaterialTheme.typography.labelSmall,
+            color = if (images.size == 2) Color(0xFF2E7D32) else Color.Gray
+        )
     }
 }
 

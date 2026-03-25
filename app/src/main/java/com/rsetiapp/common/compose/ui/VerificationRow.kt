@@ -38,7 +38,6 @@ fun ComplianceItemCard(
     modifier: Modifier = Modifier
 ) {
 
-    // 🔥 IMPORTANT: Local state for recomposition
     var answer by remember { mutableStateOf(item.answer) }
     var remark by remember { mutableStateOf(item.remark) }
 
@@ -69,12 +68,6 @@ fun ComplianceItemCard(
             Divider(
                 thickness = 0.5.dp,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
-            )
-
-            Text(
-                text = "Is this valid?",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             // 🔹 YES / NO

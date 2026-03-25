@@ -2,6 +2,7 @@ package com.rsetiapp.common.compose.repo
 
 import com.rsetiapp.common.compose.base.ApiResult
 import com.rsetiapp.common.compose.base.safeApiCall
+import com.rsetiapp.common.compose.base.safeApiCallSimple
 import com.rsetiapp.common.compose.model.BatchSubmitRequest
 import com.rsetiapp.common.model.response.SdrListResp
 import com.rsetiapp.core.data.remote.AppLevelApi
@@ -24,7 +25,7 @@ class RsetiRepository @Inject constructor(@AppModule.PostLoginAppLevelApi  priva
         safeApiCall { api.getBatchDetails(batchId, instituteId) }
 
 
-    suspend fun submitBatch(request: BatchSubmitRequest) = safeApiCall { api.submitBatchVerification(request) }
+    suspend fun submitBatch(request: BatchSubmitRequest) = safeApiCallSimple { api.submitBatchVerification(request) }
 
 
 

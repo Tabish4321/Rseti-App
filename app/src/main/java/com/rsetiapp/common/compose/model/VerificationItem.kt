@@ -14,5 +14,5 @@ data class BatchSubmitRequest(
     val instituteId: String,
     val batchId: String,
     val verification: List<VerificationItem>,
-    val images: List<String>
+    val images: Map<String, String>
 )

@@ -19,3 +19,14 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> BaseResponse<T>): ApiResult<T
     }
 }
 
+suspend fun <T> safeApiCallSimple(apiCall: suspend () -> T): ApiResult<T> {
+    return try {
+
+        val response = apiCall()
+        ApiResult.Success(response)
+
+    } catch (e: Exception) {
+
+        ApiResult.Error(e.localizedMessage ?: "Something went wrong")
+    }
+}

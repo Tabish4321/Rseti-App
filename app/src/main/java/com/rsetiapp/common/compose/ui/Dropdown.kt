@@ -49,7 +49,7 @@ fun <T> Dropdown(
         Text(
             text = title,
             style = MaterialTheme.typography.labelMedium,
-            color = Color.Gray
+            color = Color.Black
         )
 
         Spacer(Modifier.height(6.dp))
@@ -71,7 +71,7 @@ fun <T> Dropdown(
 
                     Text(
                         text = selected ?: "Select $title",
-                        color = if (selected == null) Color.Gray else Color.Black,
+                        color = if (selected == null) Color.DarkGray else Color.Black,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
@@ -80,7 +80,7 @@ fun <T> Dropdown(
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
                         contentDescription = null,
-                        tint = Color.Gray
+                        tint = Color.Black
                     )
                 }
             }
