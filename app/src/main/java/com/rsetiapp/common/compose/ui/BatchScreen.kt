@@ -258,7 +258,7 @@ fun BatchScreen(
 
         topBar = {
             RsetiTopBar(
-                title = "Batch Verification",
+                title = "SRLM Batch Verification",
                 onBackClick = onBack
             )
         },
