@@ -1,5 +1,6 @@
 package com.rsetiapp.common.compose.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,15 +19,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun VerificationHeader(lat: Double?, lng: Double?) {
 
     Surface(
-        shape = RoundedCornerShape(14.dp),
-        tonalElevation = 3.dp,
-        modifier = Modifier.fillMaxWidth()
+        shape = RoundedCornerShape(8.dp),
+        color = Color.White,
+
+        border = BorderStroke(
+            1.dp,
+            Color(0xFFEAEAEA)
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
 
         Column(
@@ -37,15 +45,19 @@ fun VerificationHeader(lat: Double?, lng: Double?) {
             Text(
                 text = "Verification",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
             )
 
             if (lat != null && lng != null) {
 
                 Text(
-                    text = "Current Location- Lat: %.5f, Lng: %.5f".format(lat, lng),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF2E7D32)
+                    text = "Current Location- Lat: %.5f, Lon: %.5f".format(lat, lng),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFF2E7D32),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
 
             } else {

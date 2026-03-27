@@ -66,6 +66,19 @@ import com.rsetiapp.core.util.AppUtil
  * Created by Rishi Porwal
  */
 
+object Keys {
+    const val LOCATION_TYPE = "locationType"
+    const val COORDINATES = "coordinates"
+    const val SCHEME = "scheme"
+    const val EDP = "edp"
+    const val COURSE = "course"
+    const val START_DATE = "startDate"
+    const val END_DATE = "endDate"
+    const val DST = "dst"
+    const val COORDINATOR = "coordinator"
+    const val CANDIDATES = "candidates"
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BatchScreen(
@@ -85,28 +98,95 @@ fun BatchScreen(
     var lat by remember { mutableStateOf<Double?>(null) }
     var lng by remember { mutableStateOf<Double?>(null) }
 
+    fun formatDate(inputDate: String): String {
+        return try {
+            val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+            val outputFormat = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault())
 
+            val date = inputFormat.parse(inputDate)
+            outputFormat.format(date!!)
+        } catch (e: Exception) {
+            inputDate // fallback if error
+        }
+    }
+    fun String?.orEmptySafe() = this ?: ""
 
     val verificationList = remember(data) {
+
         data?.let {
+
             mutableStateListOf(
-                VerificationItem("Location Type", it.programLocationType),
-                VerificationItem("Coordinates", it.location),
-                VerificationItem("Scheme", it.schemeType),
-                VerificationItem("EDP", it.edpType),
-                VerificationItem("Course", it.courseName),
-                VerificationItem("Start", it.startDate),
-                VerificationItem("End", it.endDate),
-                VerificationItem("DST", it.dstName),
-                VerificationItem("Coordinator", it.programCoordinator),
-                VerificationItem("Candidates", it.candidateCount)
+
+                VerificationItem(
+                    key = Keys.LOCATION_TYPE,
+                    label = "Location Type",
+                    value = it.programLocationType.orEmptySafe()
+                ),
+
+                VerificationItem(
+                    key = Keys.COORDINATES,
+                    label = "Coordinates",
+                    value = it.location.orEmptySafe()
+                ),
+
+                VerificationItem(
+                    key = Keys.SCHEME,
+                    label = "Scheme & Sponsor",
+                    value = it.schemeType.orEmptySafe()
+                ),
+
+                VerificationItem(
+                    key = Keys.EDP,
+                    label = "EDP",
+                    value = it.edpType.orEmptySafe()
+                ),
+
+                VerificationItem(
+                    key = Keys.COURSE,
+                    label = "Course",
+                    value = it.courseName.orEmptySafe()
+                ),
+
+                VerificationItem(
+                    key = Keys.START_DATE,
+                    label = "Start Date",
+                    value = formatDate(it.startDate.orEmptySafe())
+                ),
+
+                VerificationItem(
+                    key = Keys.END_DATE,
+                    label = "End Date",
+                    value = formatDate(it.endDate.orEmptySafe())
+                ),
+
+                VerificationItem(
+                    key = Keys.DST,
+                    label = "Domain Trainer",
+                    value = it.dstName.orEmptySafe()
+                ),
+
+                VerificationItem(
+                    key = Keys.COORDINATOR,
+                    label = "Non Domain Trainer",
+                    value = it.programCoordinator.orEmptySafe()
+                ),
+
+                VerificationItem(
+                    key = Keys.CANDIDATES,
+                    label = "Candidates",
+                    value = it.candidateCount.orEmptySafe()
+                )
             )
+
         } ?: mutableStateListOf()
     }
+
     val stateCode= AppUtil.getSavedEntityPreference(context).substringAfter("-").toIntOrNull()
     LaunchedEffect(Unit) {
         vm.load(stateCode!!)
     }
+
+    fun getItem(key: String) = verificationList.find { it.key == key }
 
     fun logLongJson(tag: String, message: String) {
         val chunkSize = 1000
@@ -221,26 +301,62 @@ fun BatchScreen(
 
                             if (hasError) return@Button
 
-                            val verificationData = verificationList.map {
-                                VerificationItem(
-                                    label = it.label,
-                                    value = it.value,
-                                    answer = it.answer,
-                                    remark = if (it.answer == "NO") it.remark else ""
-                                )
-                            }
-
-                            val imageMap = selectedImages.mapIndexed { index, item ->
-                                "image${index + 1}" to item.base64
-                            }.toMap()
 
                             val request = BatchSubmitRequest(
+
+                                batchId = state.selectedBatch?.batchRegNo.toString(),
                                 instituteId = state.selectedInstitute?.instituteId.toString(),
-                                batchId = state.selectedBatch?.batchId.toString(),
-                                verification = verificationData,
-                                images = imageMap
+
+
+                                verificationImageFirst = selectedImages.getOrNull(0)?.base64 ?: "",
+                                verificationImageSecond = selectedImages.getOrNull(1)?.base64 ?: "",
+
+                                locationType = getItem(Keys.LOCATION_TYPE)?.value ?: "",
+                                locationTypeAnswer = getItem(Keys.LOCATION_TYPE)?.answer,
+                                locationTypeRemark = getItem(Keys.LOCATION_TYPE)?.remark ?: "",
+
+                                coordinates = getItem(Keys.COORDINATES)?.value ?: "",
+                                coordinatesAnswer = getItem(Keys.COORDINATES)?.answer,
+                                coordinatesRemark = getItem(Keys.COORDINATES)?.remark ?: "",
+                                coordinatesValue = "${lat ?: ""},${lng ?: ""}",
+
+                                scheme = getItem(Keys.SCHEME)?.value ?: "",
+                                schemeAnswer = getItem(Keys.SCHEME)?.answer,
+                                schemeRemark = getItem(Keys.SCHEME)?.remark ?: "",
+
+                                edp = getItem(Keys.EDP)?.value ?: "",
+                                edpAnswer = getItem(Keys.EDP)?.answer,
+                                edpRemark = getItem(Keys.EDP)?.remark ?: "",
+
+                                course = getItem(Keys.COURSE)?.value ?: "",
+                                courseAnswer = getItem(Keys.COURSE)?.answer,
+                                courseRemark = getItem(Keys.COURSE)?.remark ?: "",
+
+                                startDate = getItem(Keys.START_DATE)?.value ?: "",
+                                startDateAnswer = getItem(Keys.START_DATE)?.answer,
+                                startDateRemark = getItem(Keys.START_DATE)?.remark ?: "",
+
+                                endDate = getItem(Keys.END_DATE)?.value ?: "",
+                                endDateAnswer = getItem(Keys.END_DATE)?.answer,
+                                endDateRemark = getItem(Keys.END_DATE)?.remark ?: "",
+
+                                dst = getItem(Keys.DST)?.value ?: "",
+                                dstAnswer = getItem(Keys.DST)?.answer,
+                                dstRemark = getItem(Keys.DST)?.remark ?: "",
+
+                                coordinator = getItem(Keys.COORDINATOR)?.value ?: "",
+                                coordinatorAnswer = getItem(Keys.COORDINATOR)?.answer,
+                                coordinatorRemark = getItem(Keys.COORDINATOR)?.remark ?: "",
+
+                                candidates = getItem(Keys.CANDIDATES)?.value ?: "",
+                                candidatesAnswer = getItem(Keys.CANDIDATES)?.answer,
+                                candidatesRemark = getItem(Keys.CANDIDATES)?.remark ?: ""
                             )
 
+                            val gson = GsonBuilder().setPrettyPrinting().create()
+                            val jsonString = gson.toJson(request)
+
+                            logLongJson("JSON_PRETTY", jsonString)
                             vm.save(request)
                         },
 
@@ -341,8 +457,8 @@ fun BatchScreen(
             if (isVerificationVisible) {
 
                 item {
-                   // SectionTitle("Verification")
                     VerificationHeader(lat, lng)
+                    Spacer(modifier = Modifier.height(10.dp))
                     Column(
                         verticalArrangement = Arrangement.spacedBy(14.dp)
                     ) {

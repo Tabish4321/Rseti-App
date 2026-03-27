@@ -149,7 +149,6 @@ fun ImagePicker(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-
             repeat(2) { index ->
 
                 val item = images.getOrNull(index)
@@ -225,7 +224,7 @@ fun ImagePicker(
                                 )
 
                                 Text(
-                                    text = "Lng: ${item.lng ?: "--"}",
+                                    text = "Lon: ${item.lng ?: "--"}",
                                     color = Color.White,
                                     style = MaterialTheme.typography.labelSmall
                                 )
