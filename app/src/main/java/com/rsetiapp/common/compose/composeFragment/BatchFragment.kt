@@ -12,7 +12,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.rsetiapp.common.compose.ui.BatchScreen
 import com.rsetiapp.common.compose.viewmodel.BatchViewModel
+import com.rsetiapp.core.util.UserPreferences
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Created by Rishi Porwal
@@ -21,6 +23,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class BatchFragment : Fragment() {
 
     private val viewModel: BatchViewModel by viewModels()
+
+    @Inject
+    lateinit var userPreferences: UserPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +41,7 @@ class BatchFragment : Fragment() {
 
             setContent {
                 MaterialTheme {
-                    BatchScreen(viewModel){findNavController().navigateUp()}
+                    BatchScreen(userId = userPreferences.getUseID(), vm = viewModel, onBack = {findNavController().navigateUp()})
                 }
             }
         }

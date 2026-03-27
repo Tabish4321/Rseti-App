@@ -83,7 +83,8 @@ object Keys {
 @Composable
 fun BatchScreen(
     vm: BatchViewModel,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    userId:String,
 ) {
 
     val state by vm.state.collectAsState()
@@ -306,7 +307,7 @@ fun BatchScreen(
 
                                 batchId = state.selectedBatch?.batchRegNo.toString(),
                                 instituteId = state.selectedInstitute?.instituteId.toString(),
-
+                                loginId = userId,
 
                                 verificationImageFirst = selectedImages.getOrNull(0)?.base64 ?: "",
                                 verificationImageSecond = selectedImages.getOrNull(1)?.base64 ?: "",

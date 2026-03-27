@@ -24,7 +24,7 @@ data class BatchSubmitRequest(
 
     val batchId: String,
     val instituteId: String,
-    val loginId: String = AppUtil.getSavedEntityPreference(context),
+    val loginId: String ,
 
     val verificationImageFirst: String,
     val verificationImageSecond: String,
