@@ -228,7 +228,7 @@ dependencies {
 
     // MediaPipe Tasks Vision
     implementation("com.google.mediapipe:tasks-vision:0.10.28")
-
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
 
 

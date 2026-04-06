@@ -39,6 +39,14 @@
         </action>
 
         <action
+            android:id="@+id/action_homeFragment_to_batchFragment"
+            app:destination="@id/batchFragment" >
+        <argument
+            android:name="formName"
+            app:argType="string" />
+        </action>
+
+        <action
             android:id="@+id/action_homeFragment_to_FollowUpBatchFragment"
             app:destination="@id/FollowUpBatchFragment">
             <argument
@@ -291,5 +299,10 @@
         android:id="@+id/facultyAttendance"
         android:name="com.rsetiapp.common.fragments.FacultyAttendance"
         android:label="FacultyAttendance"
+        tools:layout="@layout/faculty_attendance_fragment"/>
+    <fragment
+        android:id="@+id/batchFragment"
+        android:name="com.rsetiapp.common.compose.composeFragment.BatchFragment"
+        android:label="BatchFragment"
         tools:layout="@layout/faculty_attendance_fragment"/>
 </navigation>

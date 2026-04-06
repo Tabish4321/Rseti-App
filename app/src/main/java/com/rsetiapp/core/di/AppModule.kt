@@ -119,10 +119,10 @@ object AppModule {
             )
             .apply {
                 authenticator?.let { this.authenticator(it) }
-
-                if (BuildConfig.DEBUG){
-                    addInterceptor(logging)
-                }
+                addInterceptor(LoggingInterceptor())
+//                if (BuildConfig.DEBUG){
+//                    addInterceptor(logging)
+//                }
             }
             .build()
     }

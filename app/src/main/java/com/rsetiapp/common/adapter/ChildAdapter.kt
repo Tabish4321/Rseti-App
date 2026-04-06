@@ -63,6 +63,13 @@ class ChildAdapter(
 
                     }
 
+                    "SRLM_BATCH_VERIFICATION_FORM_APP" ->{
+                        val action = HomeFragmentDirections.actionHomeFragmentToBatchFragment(
+                            form.formName
+                        )
+                        binding.root.findNavController().navigate(action)
+                    }
+
                 }
             }
         }
