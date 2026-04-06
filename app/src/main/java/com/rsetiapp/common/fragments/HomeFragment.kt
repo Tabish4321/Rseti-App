@@ -63,8 +63,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
         binding.changeLanguage.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFrahmentToLanguageChangeFragment())
-
+             // findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBatchFragment())
         }
+
+
         // Handle item selection in the navigation menu
         binding.navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
