@@ -14,21 +14,21 @@ android {
     defaultConfig {
         applicationId = "com.rsetiapp"
         minSdk = 28
-        targetSdk = 34
-        versionCode = 4
-        versionName = "1.1"
+        targetSdk = 35
+        versionCode = 7
+        versionName = "1.2"
 
-        // ✅ Ensure this is correctly set for Android instrumented tests
+        //  Ensure this is correctly set for Android instrumented tests
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // ✅ Correct Kotlin DSL syntax for keeping all language resources
+        //  Correct Kotlin DSL syntax for keeping all language resources
         resourceConfigurations += listOf("en", "hi", "as", "bn", "gu", "kn", "ml", "mr", "or", "pa", "ta", "te", "ur")
 
 
 
     }
 
-    // ✅ Prevent Google Play from splitting languages (needed for in-app switching)
+    //  Prevent Google Play from splitting languages (needed for in-app switching)
     bundle {
         language {
             enableSplit = false
@@ -122,6 +122,8 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
 
     implementation(libs.androidx.room.runtime)
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
     kapt(libs.androidx.room.compiler)
 
     implementation(libs.androidx.datastore.preferences)
@@ -219,13 +221,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0-RC")
 
     // TensorFlow Lite
-    implementation("com.google.ai.edge.litert:litert:1.1.2")
-    implementation("com.google.ai.edge.litert:litert-gpu:1.1.2")
-    implementation("com.google.ai.edge.litert:litert-gpu-api:1.1.2")
-    implementation("com.google.ai.edge.litert:litert-support:1.2.0")
+    implementation("com.google.ai.edge.litert:litert:1.4.0")
+    implementation("com.google.ai.edge.litert:litert-gpu:1.4.0")
+    implementation("com.google.ai.edge.litert:litert-gpu-api:1.4.0")
+    implementation("com.google.ai.edge.litert:litert-support:1.4.0")
 
     // MediaPipe Tasks Vision
-    implementation("com.google.mediapipe:tasks-vision:0.10.14")
+    implementation("com.google.mediapipe:tasks-vision:0.10.28")
+
 
 
 

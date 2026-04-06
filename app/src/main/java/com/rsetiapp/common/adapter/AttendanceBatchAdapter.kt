@@ -32,19 +32,7 @@ class AttendanceBatchAdapter ( private val batchList: List<AttendanceBatch>
             binding.tvBatchName.text = batch.batchName  // Show Batch Name
 
 
-        /*    // Handle Click
-            binding.root.setOnClickListener {
-                val data = batchList[adapterPosition]
 
-
-
-                val action =
-                    AttendanceBatchFragmentDirections.actionAttendanceBatchFragmentToAttendanceCandidateFragment(
-                        (data.batchCode ?: "0").toString(), data.batchName ?: "Batch Name"
-                    )
-                binding.root.findNavController().navigate(action)
-            }
-*/
             binding.root.setOnClickListener {
                 val data = batchList[adapterPosition]
 

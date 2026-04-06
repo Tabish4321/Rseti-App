@@ -195,7 +195,7 @@
     <string name="program_name1">Program Name</string>
     <string name="course_list">Course List</string>
     <string name="course_list_man">Select Course List</string>
-
+    <string name="loginId">Login Id</string>
 
 
 </resources>

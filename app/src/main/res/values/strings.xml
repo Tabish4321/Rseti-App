@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Rseti App</string>
+    <string name="app_name">RSETI</string>
     <string name="login_to_your_account">Login to your account</string>
     <string name="login_id">Enter User id</string>
     <string name="password">Password</string>

@@ -144,6 +144,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         batchId = arguments?.getString("batchId").toString()
         candidateRollNo = arguments?.getString("candidateRollNo").toString()
         aadhaarNo = arguments?.getString("aadhaarNo").toString()
+
         commonViewModel.getAttendanceCheckStatus(AppUtil.getSavedTokenPreference(requireContext()),AttendanceCheckReq(BuildConfig.VERSION_NAME,batchId,candidateId
         ,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()))
 
@@ -164,12 +165,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         loadBase64Image(candidateDp, binding.circleImageView)
 
 
-//Hi
-
-
         init()
-
-
 
 
 
@@ -495,7 +491,8 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
     }
 
 
-    private fun collectFaceAuthResponse() {
+    private fun collectFaceAuthResponse()
+    {
         lifecycleScope.launch {
             try {
                 collectLatestLifecycleFlow(commonViewModel.postOnAUAFaceAuthNREGA) { resource ->
@@ -562,16 +559,15 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                         val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
                                         val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
-                                        /* if (checkIn){
 
-                                         }*/
 
                                         if (attendanceFlag== "checkin"){
 
 
                                             commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
                                                 BuildConfig.VERSION_NAME,batchId,candidateId,currentDate,"checkin",
-                                                formattedTime,"","",candidateName,AppUtil.getSavedEntityPreference(requireContext()),AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())))
+                                                formattedTime,"","",candidateName,AppUtil.getSavedEntityPreference(requireContext()),AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())
+                                            ))
                                         }
                                         else{
 
@@ -590,6 +586,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                                             commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),BuildConfig.VERSION_NAME,batchId,candidateId,currentDate,"checkout",
                                                 "",formattedTime,totalHoursValue,candidateName,AppUtil.getSavedEntityPreference(requireContext()),AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())))
+
                                         }
 
                                         collectAttendanceInsertResponse()
@@ -605,14 +602,14 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                                         } ?: toastShort("Try Again")
                                     }
-                                } catch (e: Exception) {
+                                }
+                                catch (e: Exception) {
                                     hideProgressBar()
                                     e.printStackTrace()
                                     log("EKYCDATA", "Error processing KYC response: ${e.message}")
                                     toastShort("Try Again")
                                 }
                             }
-                                ?: toastShort(getString(R.string.something_went_wrong_at_uidai_site))
                         }
 
                     }
@@ -740,7 +737,8 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                                showBottomSheet(userPhotoUIADI,name,gender,dob,careOf)
 
-                            }   else if (getInsertAttendance.responseCode==401){
+                            }
+                            else if (getInsertAttendance.responseCode==401){
                                 AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
                             }
                             else {

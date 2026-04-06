@@ -488,7 +488,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             textView.text = formattedDate
             selectedDate = formattedDate
         }
-    }    private fun checkAndRequestPermissions() {
+    }
+    private fun checkAndRequestPermissions() {
         val permissions = arrayOf(
             android.Manifest.permission.CAMERA,
             android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -588,7 +589,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
 
     @SuppressLint("MissingPermission")
-    private fun getCurrentLocation() {
+    private fun getCurrentLocation()
+    {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
                 latitude = location.latitude

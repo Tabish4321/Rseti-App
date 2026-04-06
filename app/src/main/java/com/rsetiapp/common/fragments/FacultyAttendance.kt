@@ -115,6 +115,7 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
     }
     private fun init(){
         checkLocationPermission()
+        binding.tvCurrentDate.text= AppUtil.getCurrentDateForAttendance()
 
         commonViewModel.getFacultyDataApi(
             AppUtil.getSavedTokenPreference(requireContext()),
@@ -139,7 +140,7 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
                 //for audit
                 showProgressBar()
                 invokeCaptureIntent()
-            /*    val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+               /* val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
                 val currentTime = LocalTime.now()
                 val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
                 val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
@@ -158,6 +159,8 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
 
 
             }
+
+
             else showSnackBar("Checkin Already marked")
 
 
@@ -569,6 +572,7 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
                 val poiType = XstreamCommonMethods.processPidBlockEkyc(
                     response.toXML(),
                      decryptedAadhaar,
+                    // "939625617876",
                     false,
                     requireContext()
                 )
@@ -740,7 +744,6 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
                                     toastShort("Try Again")
                                 }
                             }
-                                ?: toastShort(getString(R.string.something_went_wrong_at_uidai_site))
                         }
 
                     }

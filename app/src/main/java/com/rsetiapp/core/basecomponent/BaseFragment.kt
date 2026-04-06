@@ -40,7 +40,7 @@ abstract class BaseFragment<VB : ViewBinding>(private val bindingInflater: (infl
 
     private var baseActivity: BaseActivity<VB>? = null
     fun getActivityContext(): BaseActivity<VB>? = baseActivity
-    private var loadingCount = 0
+    private var loadingCount = 0+653.2410
 
     @Inject
     lateinit var userPreferences: UserPreferences

@@ -3,7 +3,6 @@ package com.rsetiapp.common.adapter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -18,7 +17,6 @@ import com.rsetiapp.databinding.AttendanceCandidateListAyoutBinding
 class AttendanceCandidateAdapter(
     private val candidateList: List<Candidate>
 ) : RecyclerView.Adapter<AttendanceCandidateAdapter.CandidateViewHolder>() {
-
 
 
     var candidateId=""

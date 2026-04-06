@@ -28,6 +28,7 @@ object AppConstant {
         const val PRODUCTION: String = "P"
         const val ENGLISH: String = "english"
         const val PRE_PRODUCTION_CODE: String = "PP"
+
         const val CURRENT_ENVIRONMENT_CODE = PRE_PRODUCTION_CODE;
         const val WADH_KEY = "sgydIC09zzy6f8Lb3xaAqzKquKe9lFcNR9uTvYxFp+A="
         var LANGUAGE = "en"
