@@ -27,7 +27,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.karumi.dexter.BuildConfig
+import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.model.request.BankIFSCSearchReq
 import com.rsetiapp.common.model.request.SalaryRangeReq

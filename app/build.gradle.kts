@@ -15,7 +15,7 @@ android {
         applicationId = "com.rsetiapp"
         minSdk = 28
         targetSdk = 35
-        versionCode = 7
+        versionCode = 11
         versionName = "1.2"
 
         //  Ensure this is correctly set for Android instrumented tests
@@ -23,7 +23,6 @@ android {
 
         //  Correct Kotlin DSL syntax for keeping all language resources
         resourceConfigurations += listOf("en", "hi", "as", "bn", "gu", "kn", "ml", "mr", "or", "pa", "ta", "te", "ur")
-
 
 
     }
@@ -35,15 +34,30 @@ android {
         }
     }
 
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
+
+
+    defaultConfig {
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+        }
+    }
+
+
     buildTypes {
         release {
             isMinifyEnabled = false
 
-            buildConfigField("String", "ENCRYPT_IV_KEY", "\"$10A80$10A80$10A\"")  // ✅ Example BuildConfig variable
-            buildConfigField("String", "ENCRYPT_KEY", "\"$10A80$10A80$10A\"")  // ✅ Example BuildConfig variable
-            buildConfigField("String", "CRYPLIBAES", "\"AES/CBC/PKCS5PADDING\"")  // ✅ Example BuildConfig variable
-            buildConfigField("String", "CRYPT_ID", "\"8080808080808080\"")  // ✅ Example BuildConfig variable
-            buildConfigField("String", "CRYPT_IV", "\"8080808080808080\"")  // ✅ Example BuildConfig variable
+            buildConfigField("String", "ENCRYPT_IV_KEY", "\"$10A80$10A80$10A\"")
+            buildConfigField("String", "ENCRYPT_KEY", "\"$10A80$10A80$10A\"")
+            buildConfigField("String", "CRYPLIBAES", "\"AES/CBC/PKCS5PADDING\"")
+            buildConfigField("String", "CRYPT_ID", "\"8080808080808080\"")
+            buildConfigField("String", "CRYPT_IV", "\"8080808080808080\"")
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -220,13 +234,13 @@ dependencies {
     // Kotlin Coroutines with Play Services
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0-RC")
 
-    // TensorFlow Lite
+// ✅ TensorFlow Lite (LiteRT)
     implementation("com.google.ai.edge.litert:litert:1.4.0")
     implementation("com.google.ai.edge.litert:litert-gpu:1.4.0")
     implementation("com.google.ai.edge.litert:litert-gpu-api:1.4.0")
     implementation("com.google.ai.edge.litert:litert-support:1.4.0")
 
-    // MediaPipe Tasks Vision
+// ✅ MediaPipe
     implementation("com.google.mediapipe:tasks-vision:0.10.28")
     implementation("io.coil-kt:coil-compose:2.6.0")
 

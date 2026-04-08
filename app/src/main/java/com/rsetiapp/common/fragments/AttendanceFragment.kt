@@ -35,7 +35,7 @@ import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
-import com.karumi.dexter.BuildConfig
+import com.rsetiapp.BuildConfig
 import com.rsetiapp.core.uidai.ekyc.UidaiKycRequest
 import com.rsetiapp.core.uidai.ekyc.UidaiResp
 import com.rsetiapp.core.uidai.ekyc.IntentModel
