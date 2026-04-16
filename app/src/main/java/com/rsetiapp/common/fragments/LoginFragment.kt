@@ -1,5 +1,6 @@
 package com.rsetiapp.common.fragments
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -85,7 +86,10 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
 
         listener()
     }
+    @SuppressLint("SetTextI18n")
     private fun listener(){
+
+        binding.tvVersion.text= "V-"+ BuildConfig.VERSION_NAME
 
 // Disable long-press (prevents copy-paste menu)
         binding.etPassword.setOnLongClickListener { true }

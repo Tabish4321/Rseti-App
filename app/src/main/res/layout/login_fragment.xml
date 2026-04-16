@@ -126,6 +126,22 @@
 
         </LinearLayout>
 
+
+
+        <TextView
+            android:id="@+id/tvVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15sp"
+            android:fontFamily="@font/avenir_next_semi_bold"
+            android:gravity="center"
+            android:text="V-0.0.0"
+            android:textColor="@color/color_dark_green"
+            android:textSize="@dimen/sp_16"
+           app:layout_constraintBottom_toTopOf="@+id/tvLogin"
+
+            />
+
         <TextView
             android:id="@+id/tvLogin"
             style="@style/Button"
