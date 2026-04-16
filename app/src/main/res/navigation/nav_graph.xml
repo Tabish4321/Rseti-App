@@ -39,6 +39,14 @@
         </action>
 
         <action
+            android:id="@+id/action_homeFragment_to_batchFragment"
+            app:destination="@id/batchFragment" >
+        <argument
+            android:name="formName"
+            app:argType="string" />
+        </action>
+
+        <action
             android:id="@+id/action_homeFragment_to_FollowUpBatchFragment"
             app:destination="@id/FollowUpBatchFragment">
             <argument
@@ -53,13 +61,26 @@
                 app:argType="string" />
         </action>
 
+        <action
+            android:id="@+id/action_homeFrahment_to_sdrListFragment"
+            app:destination="@id/sdrListFragment" >
+            <argument
+                android:name="formName"
+                app:argType="string" />
+
+        </action>
+
 
     </fragment>
     <fragment
         android:id="@+id/EAPAwarnessFormFragment"
         android:name="com.rsetiapp.common.fragments.EAPAwarnessFormFragment"
         android:label="EAPAwarnessFormFragment"
-        tools:layout="@layout/fragment_eap_awarness" />
+        tools:layout="@layout/fragment_eap_awarness" >
+        <action
+            android:id="@+id/action_EAPAwarnessFormFragment_to_eapListFragment"
+            app:destination="@id/eapListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"
         android:name="com.rsetiapp.common.fragments.ForgotPasswordFragment"
@@ -122,6 +143,48 @@
             <argument
                 android:name="eapId"
                 app:argType="string" />
+
+            <argument
+                android:name="stateNme"
+                app:argType="string" />
+
+
+            <argument
+                android:name="stateCode"
+                app:argType="string" />
+            <argument
+                android:name="districtCode"
+                app:argType="string" />
+            <argument
+                android:name="districtName"
+                app:argType="string" />
+            <argument
+                android:name="blockName"
+                app:argType="string" />
+            <argument
+                android:name="blockCode"
+                app:argType="string" />
+            <argument
+                android:name="gpName"
+                app:argType="string" />
+            <argument
+                android:name="gpCode"
+                app:argType="string" />
+            <argument
+                android:name="villageName"
+                app:argType="string" />
+            <argument
+                android:name="villageCode"
+                app:argType="string" />
+            <argument
+                android:name="eapName"
+                app:argType="string" />
+            <argument
+                android:name="programCode"
+                app:argType="string" />
+
+
+
         </action>
     </fragment>
     <fragment
@@ -135,6 +198,16 @@
             <argument
             android:name="batchId"
             app:argType="string" />
+            <argument
+                android:name="batchName"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_attendanceBatchFragment_to_facultyAttendance"
+            app:destination="@id/facultyAttendance" >
+            <argument
+                android:name="batchId"
+                app:argType="string" />
             <argument
                 android:name="batchName"
                 app:argType="string" />
@@ -187,4 +260,49 @@
         android:label="AttendanceFragment"
         tools:layout="@layout/fragment_verify_user_attendance"
         />
+    <fragment
+        android:id="@+id/sdrVisitReport"
+        android:name="com.rsetiapp.common.fragments.SdrVisitReport"
+        android:label="SdrVisitReport"
+        tools:layout="@layout/fragment_sdr_visit_report"/>
+    <fragment
+        android:id="@+id/sdrListFragment"
+        android:name="com.rsetiapp.common.fragments.SdrListFragment"
+        android:label="SdrListFragment"
+        tools:layout="@layout/fragment_sdr_list">
+        <action
+            android:id="@+id/action_sdrListFragment_to_sdrVisitReport"
+            app:destination="@id/sdrVisitReport" >
+            <argument
+                android:name="formName"
+                app:argType="string" />
+
+            <argument
+                android:name="rsetiInstituteName"
+                app:argType="string" />
+
+            <argument
+                android:name="finYear"
+                app:argType="string" />
+            <argument
+                android:name="rsetiInstituteId"
+                app:argType="string" />
+
+            <argument
+                android:name="monthCode"
+                app:argType="string" />
+
+
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/facultyAttendance"
+        android:name="com.rsetiapp.common.fragments.FacultyAttendance"
+        android:label="FacultyAttendance"
+        tools:layout="@layout/faculty_attendance_fragment"/>
+    <fragment
+        android:id="@+id/batchFragment"
+        android:name="com.rsetiapp.common.compose.composeFragment.BatchFragment"
+        android:label="BatchFragment"
+        tools:layout="@layout/faculty_attendance_fragment"/>
 </navigation>

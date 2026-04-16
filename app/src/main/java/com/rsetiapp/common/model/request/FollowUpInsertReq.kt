@@ -30,7 +30,8 @@ data class FollowUpInsertReq(
 */
 
 
-
+    val imeiNo :String,
+    val login: String,
     val appVersion: String,
     val batchId: String,
     val candidateId: String,
@@ -50,11 +51,11 @@ data class FollowUpInsertReq(
     val followUpType: String,
     val followUpdate: String,
     val followUpDoneBy: String,
-    val sattlementStatus: String,  // Fix spelling from "sattlementStatus"
+    val sattlementStatus: String,
     val reason: String,
     val followupImage: String,
-    val latitute: String,  // Fix spelling from "latitute"
-    val longitute: String, // Fix spelling from "longitute"
+    val latitute: String,
+    val longitute: String,
     val statusItem: String,
     val selfInvestmentItem: String,
     val creditFromBankItem: String,
@@ -72,7 +73,10 @@ data class FollowUpInsertReq(
     val passbookCopy: String,
     val appointmentLetter: String,
     val salaryRange: String,
-      val settlementReason : String
+      val settlementReason : String,
+    val entityCode: String,
+    val orgId: String,
+    val hrId: String
 
 
 

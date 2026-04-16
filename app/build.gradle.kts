@@ -5,7 +5,6 @@ plugins {
     id("kotlin-kapt")
     id("androidx.navigation.safeargs.kotlin")
     id("kotlin-parcelize") // Add this line
-
 }
 
 android {
@@ -14,18 +13,52 @@ android {
 
     defaultConfig {
         applicationId = "com.rsetiapp"
-        minSdk = 26
-        targetSdk = 34
-        versionCode = 2
-        versionName = "1.0"
+        minSdk = 28
+        targetSdk = 35
+        versionCode = 12
+        versionName = "1.3.1"
 
-        // ✅ Ensure this is correctly set for Android instrumented tests
+        //  Ensure this is correctly set for Android instrumented tests
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        //  Correct Kotlin DSL syntax for keeping all language resources
+        resourceConfigurations += listOf("en", "hi", "as", "bn", "gu", "kn", "ml", "mr", "or", "pa", "ta", "te", "ur")
+
+
     }
+
+    //  Prevent Google Play from splitting languages (needed for in-app switching)
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
+
+
+    defaultConfig {
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+        }
+    }
+
 
     buildTypes {
         release {
             isMinifyEnabled = false
+
+            buildConfigField("String", "ENCRYPT_IV_KEY", "\"$10A80$10A80$10A\"")
+            buildConfigField("String", "ENCRYPT_KEY", "\"$10A80$10A80$10A\"")
+            buildConfigField("String", "CRYPLIBAES", "\"AES/CBC/PKCS5PADDING\"")
+            buildConfigField("String", "CRYPT_ID", "\"8080808080808080\"")
+            buildConfigField("String", "CRYPT_IV", "\"8080808080808080\"")
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -33,15 +66,25 @@ android {
         }
         debug {
             isMinifyEnabled = false
-            buildConfigField("String", "API_KEY", "\"DEBUG_API_KEY\"")  // ✅ Example BuildConfig variable
+            buildConfigField("String", "API_KEY", "\"DEBUG_API_KEY\"")
+            buildConfigField("String", "ENCRYPT_IV_KEY", "\"$10A80$10A80$10A\"")
+            buildConfigField("String", "ENCRYPT_KEY", "\"$10A80$10A80$10A\"")
+            buildConfigField("String", "CRYPLIBAES", "\"AES/CBC/PKCS5PADDING\"")
+            buildConfigField("String", "CRYPT_ID", "\"8080808080808080\"")
+            buildConfigField("String", "CRYPT_IV", "\"8080808080808080\"")
+
+
         }
     }
 
     buildFeatures {
         viewBinding = true
         buildConfig = true  // ✅ Ensure BuildConfig is enabled
+        compose = true
     }
-
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -67,9 +110,16 @@ android {
             buildConfigField("String", "BASE_URL", "\"https://staging.example.com/\"")
         }
     }
+/*
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDirs("libs")
+        }
+    }*/
 }
 
 dependencies {
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.core)
@@ -86,6 +136,8 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
 
     implementation(libs.androidx.room.runtime)
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
     kapt(libs.androidx.room.compiler)
 
     implementation(libs.androidx.datastore.preferences)
@@ -139,8 +191,65 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
+    implementation(libs.androidx.activity.compose)
+
+    implementation(files("libs/pehchaanlib.aar"))
+
+    // Jetpack Compose
+    implementation(platform("androidx.compose:compose-bom:2024.04.01"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3:1.2.1")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.01"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // CardView
+    implementation("androidx.cardview:cardview:1.0.0")
+
+    // WorkManager
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
+
+    // Transport runtime
+    implementation("com.google.android.datatransport:transport-runtime:2.2.6")
+
+    // ML Kit (Vision)
+    implementation("com.google.mlkit:face-detection:16.1.7")
+    implementation("com.google.mlkit:vision-common:16.1.7")
+
+    // CameraX
+    implementation("androidx.camera:camera-camera2:1.4.1")
+    implementation("androidx.camera:camera-lifecycle:1.4.1")
+    implementation("androidx.camera:camera-view:1.4.1")
+
+    // SweetAlert Dialog
+    implementation("com.github.f0ris.sweetalert:library:1.5.6")
+
+    // SDP & SSP for responsive UI
+    implementation("com.intuit.sdp:sdp-android:1.1.0")
+    implementation("com.intuit.ssp:ssp-android:1.1.0")
+
+    // Kotlin Coroutines with Play Services
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0-RC")
+
+// ✅ TensorFlow Lite (LiteRT)
+    implementation("com.google.ai.edge.litert:litert:1.4.0")
+    implementation("com.google.ai.edge.litert:litert-gpu:1.4.0")
+    implementation("com.google.ai.edge.litert:litert-gpu-api:1.4.0")
+    implementation("com.google.ai.edge.litert:litert-support:1.4.0")
+
+// ✅ MediaPipe
+    implementation("com.google.mediapipe:tasks-vision:0.10.28")
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+
+
 }
 
 kapt {
     correctErrorTypes = true
 }
+
+

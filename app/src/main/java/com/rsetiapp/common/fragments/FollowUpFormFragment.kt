@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Geocoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -24,6 +25,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -44,9 +46,12 @@ import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.FollowUpType
 import com.rsetiapp.common.model.response.SalaryRange
 import com.rsetiapp.core.basecomponent.BaseFragment
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.AppUtil.getCurrentDate
+import com.rsetiapp.core.util.AppUtil.hasStoragePermission
 import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.UserPreferences
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.core.util.toastShort
 import com.rsetiapp.core.util.visible
 import com.rsetiapp.databinding.FragmentFollowUpBinding
@@ -68,6 +73,7 @@ class FollowUpFormFragment :
     private var followUpTypeName = ArrayList<String>()
     private lateinit var followUpTypeAdapter: ArrayAdapter<String>
     private var selectedFollowUpType: FollowUpType? = null
+
 
     //Follow Up Status var
     private var followUpStatusList: List<FollowUpStatus> = mutableListOf()
@@ -127,6 +133,36 @@ class FollowUpFormFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+       /* parentFragmentManager.setFragmentResultListener("settlement_result", this) { _, bundle ->
+            selectedStatus = bundle.getString("selectedStatusItem").orEmpty()
+            selfInvestmentItem =
+                bundle.getString("selectedSelfInvestmentItem").orEmpty()
+            creditFromBankItem =
+                bundle.getString("SelectedCreditFromBankItem").orEmpty()
+            totalV = bundle.getInt("selectedTotal").toString()
+            upperCaseIfscTextV = bundle.getString("selectedUpperCaseIfscText").orEmpty()
+            bankCode = bundle.getString("selectedBankCode").orEmpty()
+            branchCode = bundle.getString("selectedBranchCode").orEmpty()
+            loanAcc = bundle.getString("selectedLoanAcc").orEmpty()
+            city = bundle.getString("selectedCity").orEmpty()
+            selectedReason = bundle.getString("selectedReason").orEmpty()
+            selectdeAccountStatus = bundle.getString("selectdeAccountStatus").orEmpty()
+            selectedRangeId = bundle.getString("selectedRangeId").orEmpty()
+            employmentGiven = bundle.getString("selectedEmploymentGiven").orEmpty()
+            familyMemberPartTime =
+                bundle.getString("selectedFamilyMemberPartTime").orEmpty()
+            settlementPhoto = bundle.getString("selectedSettlementPhoto").orEmpty()
+            passbookCopy = bundle.getString("selectedPassbookCopy").orEmpty()
+            appointmentLetter = bundle.getString("selectedAppointmentLetter").orEmpty()
+
+            Log.d("ResultDebug", "Received result in MyFragment: $selectedStatus")
+
+        }*/
+
+
+
+        userPreferences = UserPreferences(requireContext())
+
         init()
 
 
@@ -136,6 +172,9 @@ class FollowUpFormFragment :
         candidate = arguments?.getSerializable("candidate") as CandidateDetail
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         userPreferences = UserPreferences(requireContext())
+
+        checkAndRequestStoragePermissions()
+
 
         if (candidate.candidateProfilePic == "NA" || candidate.candidateProfilePic?.isEmpty() ?: true) {
             Glide.with(binding.root.context).load(R.drawable.person).into(binding.candidateImage)
@@ -151,9 +190,9 @@ class FollowUpFormFragment :
         binding.tvCareOfName.text = candidate.guardianName
         binding.tvContactName.text = candidate.mobileNo
 
-        commonViewModel.getFollowTypeListAPI()
+        commonViewModel.getFollowTypeListAPI(AppUtil.getSavedTokenPreference(requireContext()),AppUtil.getAndroidId(requireContext()),userPreferences.getUseID())
         collectFollowTypeResponse()
-        commonViewModel.getFollowStatusListAPI()
+        commonViewModel.getFollowStatusListAPI(AppUtil.getSavedTokenPreference(requireContext()),AppUtil.getAndroidId(requireContext()),userPreferences.getUseID())
         collectFollowStatusResponse()
 
         binding.tvDate.text = getCurrentDate()
@@ -242,8 +281,8 @@ class FollowUpFormFragment :
             if ( selectedFollowUpType != null && selectedFollowUpStatus != null )
             {
                 if ((  selectedFollowUpStatus!!.statusId == 3) && image1Base64.isNotEmpty() ) {
-                    commonViewModel.insertFollowUpAPI(
-                        FollowUpInsertReq(
+                    commonViewModel.insertFollowUpAPI(AppUtil.getSavedTokenPreference(requireContext()),
+                        FollowUpInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
                             appVersion = BuildConfig.VERSION_NAME,
                             batchId = candidate.batchId.toString(),
                             candidateId = candidate.candidateId ?: "",
@@ -285,7 +324,8 @@ class FollowUpFormFragment :
                             passbookCopy = passbookCopy,
                             appointmentLetter = appointmentLetter,
                             salaryRange = "",
-                            settlementReason = settlementPhoto
+                            settlementReason = settlementPhoto,AppUtil.getSavedEntityPreference(requireContext()),
+                            AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())
 
                         )
                     )
@@ -295,8 +335,9 @@ class FollowUpFormFragment :
                 }
 
                else if( (  selectedFollowUpStatus!!.statusId == 1) && reason.isNotEmpty()&& image1Base64.isNotEmpty()){
-                    commonViewModel.insertFollowUpAPI(
-                        FollowUpInsertReq(
+                    commonViewModel.insertFollowUpAPI(AppUtil.getSavedTokenPreference(requireContext()),
+                        FollowUpInsertReq(AppUtil.getAndroidId(requireContext()),
+                            userPreferences.getUseID(),
                             appVersion = BuildConfig.VERSION_NAME,
                             batchId = candidate.batchId.toString(),
                             candidateId = candidate.candidateId ?: "",
@@ -338,7 +379,8 @@ class FollowUpFormFragment :
                             passbookCopy = passbookCopy,
                             appointmentLetter = appointmentLetter,
                             salaryRange = "",
-                            settlementReason = settlementPhoto
+                            settlementReason = settlementPhoto,AppUtil.getSavedEntityPreference(requireContext()),
+                            AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())
 
                         )
                     )
@@ -346,7 +388,7 @@ class FollowUpFormFragment :
                 }
 
 
-                else if (selectedFollowUpType != null && selectedFollowUpStatus != null && selectedFollowUpStatus!!.statusId == 2 && image1Base64.isNotEmpty() )
+                else if (selectedFollowUpType != null && selectedFollowUpStatus != null &&  selectedFollowUpStatus?.statusId == 2 && image1Base64.isNotEmpty())
                 {
 
 
@@ -354,8 +396,10 @@ class FollowUpFormFragment :
                     getFormData()
 
 
-                    commonViewModel.insertFollowUpAPI(
-                        FollowUpInsertReq(
+
+                        commonViewModel.insertFollowUpAPI(AppUtil.getSavedTokenPreference(requireContext()),
+                        FollowUpInsertReq(AppUtil.getAndroidId(requireContext())
+                            ,userPreferences.getUseID(),
                             appVersion = BuildConfig.VERSION_NAME,
                             batchId = candidate.batchId.toString(),
                             candidateId = candidate.candidateId ?: "",
@@ -397,7 +441,8 @@ class FollowUpFormFragment :
                             passbookCopy = passbookCopy,
                             appointmentLetter = appointmentLetter,
                             salaryRange = "",
-                            settlementReason = settlementPhoto
+                            settlementReason = selectedReason,AppUtil.getSavedEntityPreference(requireContext()),
+                            AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())
 
                         )
                     )
@@ -421,6 +466,8 @@ class FollowUpFormFragment :
                 collectLatestLifecycleFlow(commonViewModel.getFollowTypeList) {
                     when (it) {
                         is Resource.Loading -> showProgressBar()
+
+
                         is Resource.Error -> {
                             hideProgressBar()
                             it.error?.let { baseErrorResponse ->
@@ -441,8 +488,11 @@ class FollowUpFormFragment :
                                     followUpTypeAdapter.notifyDataSetChanged()
                                 } else if (getFollowUpTypeList.responseCode == 301) {
                                     showSnackBar("Please Update from PlayStore")
-                                } else {
-                                    showSnackBar(getFollowUpTypeList.responseDesc)
+                                }   else if (getFollowUpTypeList.responseCode==401){
+                                    AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                                }
+                                else {
+                                    toastLong(getFollowUpTypeList.responseDesc)
                                 }
                             } ?: showSnackBar("Internal Server Error")
                         }
@@ -476,8 +526,11 @@ class FollowUpFormFragment :
                                     followUpStatusAdapter.notifyDataSetChanged()
                                 } else if (getFollowUpStatusList.responseCode == 301) {
                                     showSnackBar("Please Update from PlayStore")
-                                } else {
-                                    showSnackBar(getFollowUpStatusList.responseDesc)
+                                }  else if (getFollowUpStatusList.responseCode==401){
+                                    AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                                }
+                                else {
+                                    toastLong(getFollowUpStatusList.responseDesc)
                                 }
                             } ?: showSnackBar("Internal Server Error")
                         }
@@ -509,12 +562,12 @@ class FollowUpFormFragment :
                                     showSnackBar(insertApiResp.responseDesc)
                                 } else if (insertApiResp.responseCode == 301) {
                                     showSnackBar("Please Update from PlayStore")
-                                }
-                                else if (insertApiResp.responseCode == 206) {
-                                    showSnackBar(insertApiResp.responseDesc)
+
+                                }  else if (insertApiResp.responseCode==401){
+                                    AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
                                 }
                                 else {
-                                    showSnackBar(insertApiResp.responseDesc)
+                                    toastLong(insertApiResp.responseDesc)
                                 }
                             } ?: showSnackBar("Internal Server Error")
                         }
@@ -555,87 +608,47 @@ class FollowUpFormFragment :
             }
         }
 
-        private fun openCamera(imageView: ImageView) {
-            checkAndRequestPermissions()
+    private fun openCamera(imageView: ImageView) {
+        checkAndRequestPermissions()
 
-            currentImageView = imageView  // ✅ Store the clicked ImageView
+        currentImageView = imageView
 
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(), Manifest.permission.CAMERA
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                Toast.makeText(requireContext(), "Camera permission required!", Toast.LENGTH_SHORT)
-                    .show()
-                return
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            Toast.makeText(requireContext(), "Camera permission required!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraLauncher.launch(intent)  // No extra output, no file
+    }
+
+
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val bitmap = result.data?.extras?.get("data") as? Bitmap
+            if (bitmap == null || currentImageView == null) {
+                Toast.makeText(requireContext(), "Image capture failed!", Toast.LENGTH_SHORT).show()
+                return@registerForActivityResult
             }
 
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            val photoFile = createImageFile()
-            imageUri = FileProvider.getUriForFile(
-                requireContext(), "${requireContext().packageName}.provider", photoFile
-            )
+            val compressedBitmap = compressBitmap(bitmap)
+            currentImageView?.setImageBitmap(compressedBitmap)
 
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            val base64Image = bitmapToBase64(compressedBitmap)
 
-            cameraLauncher.launch(intent) // ✅ Launch the camera
-        }
-
-        private fun createImageFile(): File {
-            val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            return File.createTempFile("IMG_${System.currentTimeMillis()}", ".jpg", storageDir)
-                .apply {
-                    imageUri = FileProvider.getUriForFile(
-                        requireContext(), "${requireContext().packageName}.provider", this
-                    )
-                }
-        }
-
-        private val cameraLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    if (imageUri == null || currentImageView == null) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Image capture failed!",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
-                        return@registerForActivityResult
-                    }
-
-                    val bitmap = uriToBitmap(imageUri!!)
-                    bitmap?.let { compressedBitmap ->
-                        currentImageView?.setImageBitmap(compressedBitmap) // ✅ Set the image
-
-                        val base64Image = bitmapToBase64(compressedBitmap) // Convert to Base64
-
-                        // ✅ Check which ImageView was clicked and store Base64 accordingly
-                        when (currentImageView?.id) {
-                            R.id.image1 -> {
-                                image1Base64 = base64Image
-
-                            }
-                        }
-
-                        getCurrentLocation()
-                        binding.lllatLang.visible()
-                        binding.llAdress.visible()
-                    }
+            when (currentImageView?.id) {
+                R.id.image1 -> {
+                    image1Base64 = base64Image
                 }
             }
 
-        private fun uriToBitmap(uri: Uri): Bitmap? {
-            return try {
-                val inputStream = requireContext().contentResolver.openInputStream(uri)
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                inputStream?.close()
-                compressBitmap(bitmap)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            }
+            getCurrentLocation()
+            binding.lllatLang.visible()
+            binding.llAdress.visible()
         }
+    }
 
         private fun compressBitmap(bitmap: Bitmap): Bitmap {
             return try {
@@ -753,28 +766,60 @@ class FollowUpFormFragment :
         }
 
     fun getFormData() {
-        val sharedPreferences = requireContext().getSharedPreferences("UserFormData", Activity.MODE_PRIVATE)
+        commonViewModel.settlementData.observe(viewLifecycleOwner) { bundle ->
 
-         selectedStatus = sharedPreferences.getString("selectedStatusItem", "").toString()
-         selfInvestmentItem = sharedPreferences.getString("selectedSelfInvestmentItem", "").toString()
-         creditFromBankItem = sharedPreferences.getString("SelectedCreditFromBankItem", "").toString()
-         totalV = sharedPreferences.getInt("selectedTotal", 0).toString()
-         upperCaseIfscTextV = sharedPreferences.getString("selectedUpperCaseIfscText", "").toString()
-         loanAcc = sharedPreferences.getString("selectedLoanAcc", "").toString()
-         city = sharedPreferences.getString("selectedCity", "").toString()
-        selectedReason  = sharedPreferences.getString("selectedReason", "").toString()
-         selectdeAccountStatus = sharedPreferences.getString("selectdeAccountStatus", "").toString()
-         employmentGiven = sharedPreferences.getString("selectedEmploymentGiven", "").toString()
-         familyMemberPartTime = sharedPreferences.getString("selectedFamilyMemberPartTime", "").toString()
-         settlementPhoto = sharedPreferences.getString("selectedSettlementPhoto", "").toString()
-         passbookCopy = sharedPreferences.getString("selectedPassbookCopy", "").toString()
-        appointmentLetter = sharedPreferences.getString("selectedAppointmentLetter", "").toString()
-        selectedRangeId = sharedPreferences.getString("selectedSalaryRange", "").toString()
+            selectedStatus = bundle.getString("selectedStatusItem").orEmpty()
+            selfInvestmentItem =
+                bundle.getString("selectedSelfInvestmentItem").orEmpty()
+            creditFromBankItem =
+                bundle.getString("SelectedCreditFromBankItem").orEmpty()
+            totalV = bundle.getInt("selectedTotal").toString()
+            upperCaseIfscTextV = bundle.getString("selectedUpperCaseIfscText").orEmpty()
+            bankCode = bundle.getString("selectedBankCode").orEmpty()
+            branchCode = bundle.getString("selectedBranchCode").orEmpty()
+            loanAcc = bundle.getString("selectedLoanAcc").orEmpty()
+            city = bundle.getString("selectedCity").orEmpty()
+            selectedReason = bundle.getString("selectedReason").orEmpty()
+            selectdeAccountStatus = bundle.getString("selectdeAccountStatus").orEmpty()
+            selectedRangeId = bundle.getString("selectedRangeId").orEmpty()
+            employmentGiven = bundle.getString("selectedEmploymentGiven").orEmpty()
+            familyMemberPartTime =
+                bundle.getString("selectedFamilyMemberPartTime").orEmpty()
+            settlementPhoto = bundle.getString("selectedSettlementPhoto").orEmpty().replace("\\s".toRegex(), "")
+            passbookCopy = bundle.getString("selectedPassbookCopy").orEmpty().replace("\\s".toRegex(), "")
+            appointmentLetter = bundle.getString("selectedAppointmentLetter").orEmpty().replace("\\s".toRegex(), "")
+
+            Log.d("FollowUpFra", "Status: $selectedStatus, Self Investment: $city, Credit From Bank: $loanAcc")
+
+        }
+
 
         // Example usage: print values
-        Log.d("FormData", "Status: $selectedStatus, Self Investment: $selfInvestmentItem, Credit From Bank: $creditFromBankItem")
     }
 
+    private fun checkAndRequestStoragePermissions() {
+        if (!hasStoragePermission(requireContext())) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                storagePermissionLauncher.launch(AppUtil.storagePermissions)
+            } else {
+                storagePermissionLauncher.launch(arrayOf(AppUtil.legacyStoragePermission))
+            }
+        } else {
+            // Permissions already granted, continue your logic
+        }
+    }
+
+    private val storagePermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.entries.all { it.value }
+        if (allGranted) {
+            Toast.makeText(requireContext(), "Permission granted", Toast.LENGTH_SHORT).show()
+            // proceed with file/media access
+        } else {
+            Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
 
 

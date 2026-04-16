@@ -18,10 +18,19 @@ import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.UserPreferences
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.databinding.EapListFragmentBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
+
+
+@AndroidEntryPoint
 class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBinding::inflate) {
     private val commonViewModel: CommonViewModel by activityViewModels()
 
@@ -32,12 +41,23 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
     private var eapStatusValue=""
     private var eapDateValue=""
     private var formName=""
-
-
+    private var stateNme=""
+    private var stateCode=""
+    private var districtCode=""
+    private var districtName=""
+    private var blockName=""
+    private var blockCode=""
+    private var gpName=""
+    private var gpCode=""
+    private var villageName=""
+    private var villageCode=""
+    private var eapName=""
+    private var programCode=""
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
 
 
 
@@ -57,59 +77,70 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = eapAdapter
 
-        commonViewModel.eapDetailsAPI(EapListReq(BuildConfig.VERSION_NAME, userPreferences.getUseID()))
+        commonViewModel.eapDetailsAPI(AppUtil.getSavedTokenPreference(requireContext()),EapListReq(BuildConfig.VERSION_NAME, userPreferences.getUseID(),AppUtil.getAndroidId(requireContext())))
         collectEapListResponse()
     }
 
     @SuppressLint("SuspiciousIndentation", "DefaultLocale")
     private fun getValue(eapItem: EapList) {
-
-        eapIdValue = eapItem.eapID
-        eapDateValue = eapItem.monthYear // Example: "08/2025"
+        eapIdValue = eapItem.eapID.toString()
+        eapDateValue = eapItem.monthYear // Example: "24/05/2024"
         eapStatusValue = eapItem.status
+        stateNme = eapItem.stateNme
+        stateCode = eapItem.stateCode
+        districtCode = eapItem.districtCode
+        districtName = eapItem.districtName
+        blockName = eapItem.blockName
+        blockCode = eapItem.blockCode
+        gpName = eapItem.gpName
+        gpCode = eapItem.gpCode
+        villageName = eapItem.villageName
+        villageCode = eapItem.villageCode
+        eapName = eapItem.eapName
+        programCode = eapItem.programCode.toString()
 
-        // Get current month and year
-        val calendar = Calendar.getInstance()
-        val currentMonth = String.format("%02d", calendar.get(Calendar.MONTH) + 1) // Ensure two digits (01, 02, ..., 12)
-        val currentYear = calendar.get(Calendar.YEAR).toString()
 
-        // Extract month and year from eapDateValue
-        val parts = eapDateValue.split("/")
-        val eapMonth = parts[0]  // "08"
-        val eapYear = parts[1]   // "2025"
-/*
-         //Changes for testing
-        // For Open all Eap List testing
-        findNavController().navigate(
-            EapListFragmentDirections.actionEapListFragmentToEAPAwarnessFormFragment(
-                formName,
-                eapIdValue
-            )
-        )*/
-        // Check both conditions: status must be Active & date must match current month/year
-        if (eapStatusValue == "Active" && eapMonth == currentMonth && eapYear == currentYear) {
-            findNavController().navigate(
-                EapListFragmentDirections.actionEapListFragmentToEAPAwarnessFormFragment(
-                    formName,
-                    eapIdValue
+
+
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        sdf.isLenient = false
+
+        val currentDate = sdf.format(Date()) // Gets today's date in dd/MM/yyyy format
+
+        try {
+            val eapDate = sdf.parse(eapDateValue)
+            val todayDate = sdf.parse(currentDate)
+
+            if (eapStatusValue == "Active" && eapDate == todayDate) {
+                findNavController().navigate(
+                    EapListFragmentDirections.actionEapListFragmentToEAPAwarnessFormFragment(
+                        formName,
+                        eapIdValue,
+                        stateNme,stateCode,districtCode,districtName,blockName,blockCode,gpName,gpCode,villageName,villageCode,eapName,programCode
+                    )
                 )
-            )
-        }
-        else if (eapStatusValue == "Expired"){
+            } else if (eapStatusValue == "Expired") {
+                AppUtil.showAlertDialog(requireContext(), "Alert", "Eap Expired")
+            } else if (eapStatusValue == "Completed") {
 
-            AppUtil.showAlertDialog(requireContext(),"Alert","Eap Expired")
-
-        }
-        else if (eapStatusValue == "Completed"){
-
-            AppUtil.showAlertDialog(requireContext(),"Alert","Eap Completed")
-
-        }
-
-        else {
-            showMismatchAlert(requireContext(), eapMonth, eapYear, currentMonth, currentYear)
+                AppUtil.showAlertDialog(requireContext(), "Alert", "Eap Completed")
+            } else {
+                showMismatchAlert(requireContext(), eapDateValue, currentDate)
+            }
+        } catch (e: ParseException) {
+            AppUtil.showAlertDialog(requireContext(), "Error", "Invalid date format in EAP data.")
         }
     }
+
+    private fun showMismatchAlert(context: Context, eapDate: String, currentDate: String) {
+        AlertDialog.Builder(context)
+            .setTitle("Alert")
+            .setMessage("You can only proceed on the date: $eapDate.\nToday's date: $currentDate.")
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .create()
+            .show()
+    }
+
 
 
     @SuppressLint("NotifyDataSetChanged")
@@ -129,8 +160,11 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
                                 eapList.clear()  // Clear old data
                                 eapList.addAll(getEapResponse.wrappedList)  // Add new data
                                 eapAdapter.notifyDataSetChanged()  // Notify RecyclerView
-                            } else {
-                                showSnackBar(getEapResponse.responseDesc ?: "Error")
+                            }  else if (getEapResponse.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(getEapResponse.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
@@ -138,12 +172,5 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
             }
         }
     }
-    private fun showMismatchAlert(context: Context, eapMonth: String, eapYear: String, currentMonth: String, currentYear: String) {
-        AlertDialog.Builder(context)
-            .setTitle("Alert")
-            .setMessage("You can only proceed in the month: $eapMonth/$eapYear.\nCurrent date: $currentMonth/$currentYear.")
-            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-            .create()
-            .show()
-    }
+
 }

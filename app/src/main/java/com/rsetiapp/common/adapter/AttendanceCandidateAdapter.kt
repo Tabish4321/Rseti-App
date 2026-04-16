@@ -3,7 +3,6 @@ package com.rsetiapp.common.adapter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -18,7 +17,6 @@ import com.rsetiapp.databinding.AttendanceCandidateListAyoutBinding
 class AttendanceCandidateAdapter(
     private val candidateList: List<Candidate>
 ) : RecyclerView.Adapter<AttendanceCandidateAdapter.CandidateViewHolder>() {
-
 
 
     var candidateId=""
@@ -61,7 +59,7 @@ class AttendanceCandidateAdapter(
                         .into(binding.candidateImage)
                 } catch (e: Exception) {
                     Glide.with(context)
-                        .load(R.drawable.person) // Load default image if decoding fails
+                        .load(R.drawable.person)
                         .into(binding.candidateImage)
                 }
             }
@@ -82,10 +80,11 @@ class AttendanceCandidateAdapter(
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION && position < candidateList.size) {
 
+                    val profilePicSafe = candidate.candidateProfilePic ?: ""
 
                     val action = AttendanceCandidateFragmentDirections
                         .actionAttendanceCandidateFragmentToAttendanceFragment(candidate.candidateId,candidate.candidateName,candidate.mobileNo,candidate.emailId
-                        ,candidate.gender,candidate.dateOfBirth,candidate.candidateProfilePic,
+                        ,candidate.gender,candidate.dateOfBirth,profilePicSafe,
                             candidate.batchId.toString(),candidate.rollNo.toString(),aadhhaarNo
                         )
 

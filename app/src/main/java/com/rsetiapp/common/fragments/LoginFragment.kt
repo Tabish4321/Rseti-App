@@ -1,20 +1,35 @@
 package com.rsetiapp.common.fragments
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import com.pehchaan.backend.service.AuthenticationActivity
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
+import com.rsetiapp.common.model.request.FaceCheckReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.core.basecomponent.BaseFragment
+import com.rsetiapp.core.util.AESCryptography
+import com.rsetiapp.core.util.AppConstant
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
+import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.onRightDrawableClicked
 import com.rsetiapp.core.util.setRightDrawablePassword
 import com.rsetiapp.core.util.toastShort
@@ -26,14 +41,42 @@ import kotlinx.coroutines.launch
 class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding :: inflate ){
     private var userName = ""
     private var password = ""
+    private var token = ""
+    private var isFaceRegistered = ""
+    private var saltPassword = ""
     private var showPassword = true
+    private var isApiCalled = false
 
+    private val startForAuthentication =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val status = data?.getStringExtra(AppConstant.Constants.RESULT_STATUS) ?: "failure"
+                val message = data?.getStringExtra(AppConstant.Constants.RESULT_MESSAGE) ?: "Unknown error"
+
+                if (status == "success") {
+
+                    commonViewModel.updateFaceApi(FaceCheckReq(BuildConfig.VERSION_NAME,"Y",userPreferences.getUseID()))
+
+                    collectFaceUpdateResponse()
+
+
+
+
+                } else {
+                    showFaceRegDialog(requireContext(),"Alert","❌ Failure: $message")
+
+                }
+            } else {
+                showFaceRegDialog(requireContext(),"Alert","❌ Try Again")
+            }
+        }
 
     private val commonViewModel: CommonViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        userPreferences = UserPreferences(requireContext())
         init()
         handleBackPress()
     }
@@ -73,7 +116,13 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
 
         binding.tvForgotPass.setOnClickListener {
 
+
+
+
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment())
+
+
+
 
         }
         binding.etPassword.onRightDrawableClicked {
@@ -95,39 +144,55 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
             }
 
         }
+        binding.etEmail.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                s?.let {
+                    if (it.isNotEmpty() && !isApiCalled) {
+                        isApiCalled = true
+                        commonViewModel.getToken(AppUtil.getAndroidId(requireContext()), BuildConfig.VERSION_NAME)
+                        collectTokenResponse()
+
+                    }
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
 
 
         binding.tvLogin.setOnClickListener {
+            if (AppUtil.getSavedLanguagePreference(requireContext()).contains("en")) {
+
+                AppUtil.saveLanguagePreference(requireContext(), "en")
+
+
+            } else
+                AppUtil.changeAppLanguage(
+                    requireContext(),
+                    AppUtil.getSavedLanguagePreference(requireContext())
+                )
+
 
             if (binding.etEmail.text.isNotEmpty() && binding.etPassword.text.isNotEmpty()) {
                 userName = binding.etEmail.text.toString().uppercase()
                 password = binding.etPassword.text.toString()
+
                 val shaPass = AppUtil.sha512Hash(password)
-                if (AppUtil.getSavedLanguagePreference(requireContext()).contains("eng")) {
-
-                    AppUtil.saveLanguagePreference(requireContext(), "en")
-
-
-                } else
-                    AppUtil.changeAppLanguage(
-                        requireContext(),
-                        AppUtil.getSavedLanguagePreference(requireContext())
-                    )
+                val saltPass = shaPass+saltPassword
+                val finalPass = AppUtil.sha512Hash(saltPass)
 
 
-                commonViewModel.getLoginAPI(LoginReq(userName,shaPass,AppUtil.getAndroidId(requireContext()),BuildConfig.VERSION_NAME,""))
+
+                commonViewModel.getLoginAPI(LoginReq(userName,finalPass,AppUtil.getAndroidId(requireContext()),BuildConfig.VERSION_NAME,""))
 
                 collectLoginResponse()
 
             } else
                 showSnackBar("Please enter id and password")
-
-
         }
-
     }
-
-
 
     private fun collectLoginResponse() {
         lifecycleScope.launch {
@@ -140,35 +205,67 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                             toastShort(baseErrorResponse.message)
                         }
                     }
-
                     is Resource.Success -> {
                         hideProgressBar()
                         it.data?.let { getLoginResponse ->
                             when (getLoginResponse.responseCode) {
                                 200 -> {
+                                    val token1 = AESCryptography.decryptIntoString(getLoginResponse.appCode,AppConstant.Constants.ENCRYPT_KEY,AppConstant.Constants.ENCRYPT_IV_KEY)
 
-                                    userPreferences.updateUserId(null)
+                                   /* userPreferences.updateUserId(null)
                                     userPreferences.updateUserId(userName)
-                                    userPreferences.saveUserName(getLoginResponse.wrappedList[0].userName)
+                                    userPreferences.saveUserName(getLoginResponse.wrappedList[0].loginId)
                                     AppUtil.saveLoginStatus(requireContext(), true)
+*/
+                                    if (token == token1){
+                                        AppUtil.saveTokenPreference(requireContext(),"Bearer "+getLoginResponse.appCode)
+                                        userPreferences.updateUserId(null)
+                                        userPreferences.updateUserId(userName)
+                                        userPreferences.saveUserName(getLoginResponse.wrappedList[0].userName)
+                                        AppUtil.saveLoginStatus(requireContext(), true)  // true means user is logged in
+                                        AppUtil.saveEntityPreference(requireContext(),getLoginResponse.wrappedList[0].entityCode)
+                                        AppUtil.saveHRIdPreference(requireContext(),getLoginResponse.wrappedList[0].hrId?:"")
+                                        AppUtil.saveOrgIdPreference(requireContext(),getLoginResponse.wrappedList[0].orgId)
 
-                                    // findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToMainHomePage())
+                                         isFaceRegistered = getLoginResponse.wrappedList[0].faceRegistered
 
-                                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFrahment())
+
+
+                                        if (isFaceRegistered=="Y"){
+
+                                            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFrahment())
+
+                                        }
+                                        else{
+
+                                            val userId = userPreferences.getUseID()
+                                            val userName = "user"
+                                            startAuthentication(AppConstant.Constants.CALL_TYPE_REGISTRATION, userId, userName)
+
+                                        }
+
+
+
+
+                                    }
+                                    else toastShort("Session expired")
 
                                 }
 
                                 203 -> {
+                                    commonViewModel.getToken(AppUtil.getAndroidId(requireContext()), BuildConfig.VERSION_NAME)
                                     showSnackBar(getLoginResponse.responseDesc)
+                                  //showSnackBar(getLoginResponse.responseMsg)
 
                                 }
 
                                 301 -> {
-                                    showSnackBar(getLoginResponse.responseDesc)
+                                  //  showSnackBar(getLoginResponse.responseDesc)
+                                    showUpdateDialog()
                                 }
 
                                 else -> {
-                                    showSnackBar("Something went wrong")
+                                    showSnackBar(getLoginResponse.responseDesc)
                                 }
                             }
                         } ?: showSnackBar("Internal Server Error")
@@ -197,6 +294,147 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                     }
                 }
             })
+    }
+    private fun collectTokenResponse() {
+        lifecycleScope.launch {
+            collectLatestLifecycleFlow(commonViewModel.getToken) {
+                when (it) {
+                    is Resource.Loading -> showProgressBar()
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        it.error?.let { baseErrorResponse ->
+                            toastShort(baseErrorResponse.message)
+                        }
+                    }
+
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        it.data?.let { getToken ->
+                            when (getToken.responseCode) {
+                                200 -> {
+
+                                    token= AESCryptography.decryptIntoString(getToken.authToken,
+                                        AppConstant.Constants.ENCRYPT_KEY,AppConstant.Constants.ENCRYPT_IV_KEY)
+
+                                    saltPassword= AESCryptography.decryptIntoString(getToken.passString,
+                                        AppConstant.Constants.ENCRYPT_KEY,AppConstant.Constants.ENCRYPT_IV_KEY)
+
+                                }
+
+                                301 -> {
+
+                                    showSnackBar(getToken.responseDesc)
+
+
+                                }
+
+
+                                else -> {
+                                    showSnackBar("Something went wrong")
+                                }
+                            }
+                        } ?: showSnackBar("Internal Server Error")
+                    }
+                }
+            }
+        }
+    }
+    private fun showUpdateDialog() {
+        val builder = AlertDialog.Builder(requireContext()) // 🔥 use requireContext() inside Fragment
+        builder.setTitle("Update Available")
+        builder.setMessage("A new version of the app is available. Please update to continue.")
+
+        builder.setPositiveButton("Update") { dialog, _ ->
+            val appPackageName = "com.kaushalpanjee"
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName"))
+                intent.setPackage("com.android.vending")
+                startActivity(intent)
+            } catch (e: Exception) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com/drive/folders/1FV7AMmItAj6atkK_ud_7oVbT0KeS3bYa"))
+                startActivity(intent)
+            }
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.setCancelable(false)
+        builder.create().show()
+    }
+
+
+
+    private fun showFaceRegDialog(context: Context, title: String, message: String) {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(context)
+        builder.setTitle(title)
+        builder.setMessage(message)
+
+        builder.setPositiveButton("Retry") { dialog, _ ->
+            val userId = userPreferences.getUseID()
+            val userName = "user"
+            startAuthentication(AppConstant.Constants.CALL_TYPE_REGISTRATION, userId, userName)
+        }
+
+        builder.setNegativeButton("Try later") { dialog, _ ->
+            dialog.dismiss()
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFrahment())
+
+        }
+
+        val dialog = builder.create()
+        dialog.setCancelable(false)  // Prevent outside touch dismissal
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.show()
+    }
+    private fun startAuthentication(callType: String, userId: String,userName: String) {
+        val intent = Intent(requireContext(), AuthenticationActivity::class.java)
+        intent.putExtra(AppConstant.Constants.EXTRA_CLIENT_ID, AppConstant.Constants. YOUR_CLIENT_ID)
+        intent.putExtra(AppConstant.Constants.EXTRA_CALL_TYPE, callType)
+        intent.putExtra(AppConstant.Constants.EXTRA_USER_ID, userId)
+        if (callType == AppConstant.Constants.CALL_TYPE_REGISTRATION) {
+            intent.putExtra(AppConstant.Constants.EXTRA_USER_NAME, userName)
+        }
+        startForAuthentication.launch(intent)
+    }
+    private fun collectFaceUpdateResponse() {
+        lifecycleScope.launch {
+            collectLatestLifecycleFlow(commonViewModel.updateFaceApi) {
+                when (it) {
+                    is Resource.Loading -> showProgressBar()
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        it.error?.let { baseErrorResponse ->
+                            showSnackBar("Not Found")
+                        }
+                    }
+
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        it.data?.let { updateFaceApi ->
+                            if (updateFaceApi.responseCode == 200) {
+
+                                findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFrahment())
+
+                                showSnackBar(updateFaceApi.responseDesc)
+
+                            } else if (updateFaceApi.responseCode == 301) {
+                                showSnackBar("Please Update from PlayStore")
+                            }   else if (updateFaceApi.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                showSnackBar("Something went wrong")
+                                findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFrahment())
+
+                            }
+                        } ?: showSnackBar("Internal Server Error")
+                    }
+                }
+            }
+        }
     }
 
 }

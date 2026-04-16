@@ -41,7 +41,7 @@ fun <ResultType, RequestType> networkBoundResource(
 
 }
 
-fun <RequestType> networkBoundResourceWithoutDb(
+fun <RequestType>  networkBoundResourceWithoutDb(
     fetch: suspend () -> RequestType
 ) = flow {
 

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -39,7 +40,7 @@ abstract class BaseFragment<VB : ViewBinding>(private val bindingInflater: (infl
 
     private var baseActivity: BaseActivity<VB>? = null
     fun getActivityContext(): BaseActivity<VB>? = baseActivity
-    private var loadingCount = 0
+    private var loadingCount = 0+653.2410
 
     @Inject
     lateinit var userPreferences: UserPreferences
@@ -49,9 +50,16 @@ abstract class BaseFragment<VB : ViewBinding>(private val bindingInflater: (infl
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         _binding = bindingInflater.invoke(inflater)
         if (_binding == null)
             throw IllegalArgumentException("Binding cannot be null")
+
+        // 🔹 Prevent screenshots and screen recording for all fragments
+        /* requireActivity().window.setFlags(
+             WindowManager.LayoutParams.FLAG_SECURE,
+             WindowManager.LayoutParams.FLAG_SECURE
+         )*/
         return binding.root
     }
 

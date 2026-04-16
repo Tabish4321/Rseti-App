@@ -3,6 +3,8 @@ package com.rsetiapp.common.fragments
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.GravityCompat
@@ -10,7 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.karumi.dexter.BuildConfig
+import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
 import com.rsetiapp.common.adapter.ParentAdapter
@@ -18,8 +20,11 @@ import com.rsetiapp.common.model.response.Module
 import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
+import com.rsetiapp.core.util.UserPreferences
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.core.util.toastShort
 import com.rsetiapp.databinding.FragmentHomeBinding
+import com.rsetiapp.databinding.NavigationHeaderBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -34,18 +39,34 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
+
         setupRecyclerView()
         collectModulesData()
         handleBackPress()
 
+
+        // First, get the header view using getHeaderView()
+        val headerView = binding.navigationView.getHeaderView(0)
+
+        // Now, bind the header layout using the generated ViewBinding for the header
+        val headerBinding = NavigationHeaderBinding.bind(headerView)
+
+        // Access the ImageView from the header layout
+        val headerImageView: ImageView = headerBinding.circleImageView
+        val headerIdView: TextView = headerBinding.loginId
+
+        headerIdView.text = userPreferences.getUserName()+  " ("+userPreferences.getUseID()+")"
 
         binding.profilePic.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
         binding.changeLanguage.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFrahmentToLanguageChangeFragment())
-
+             // findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBatchFragment())
         }
+
+
         // Handle item selection in the navigation menu
         binding.navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -72,7 +93,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     @SuppressLint("NotifyDataSetChanged")
     private fun collectModulesData() {
-        commonViewModel.getFormAPI(BuildConfig.VERSION_NAME,userPreferences.getUseID() )
+        commonViewModel.getFormAPI(AppUtil.getSavedTokenPreference(requireContext()),
+            BuildConfig.VERSION_NAME,userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
         lifecycleScope.launch {
             commonViewModel.getFormAPI.collectLatest { resource ->
                 when (resource) {
@@ -88,8 +110,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                                 moduleList.clear()
                                 moduleList.addAll(response.wrappedList)
                                 parentAdapter.notifyDataSetChanged()
-                            } else {
-                                toastShort(response.responseDesc)
+                            }
+                            else if (response.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(response.responseDesc)
                             }
                         }
                     }

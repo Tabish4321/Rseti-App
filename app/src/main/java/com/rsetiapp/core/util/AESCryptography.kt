@@ -30,7 +30,7 @@ object AESCryptography {
         if (enableEncryption) {
             val keySpec = SecretKeySpec(secretKey.toByteArray(StandardCharsets.UTF_8), "AES")
             val ivSpec = IvParameterSpec(ivKey.toByteArray(StandardCharsets.UTF_8))
-            val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+            val cipher = Cipher.getInstance(AppConstant.Constants.CRYPLIBAES)
             cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec)
 
             val encryptedBytes: ByteArray = cipher.doFinal(inputText.toByteArray(StandardCharsets.UTF_8))
@@ -57,7 +57,7 @@ object AESCryptography {
 
             val keySpec = SecretKeySpec(keyBytes, "AES")
             val ivSpec = IvParameterSpec(ivBytes)
-            val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+            val cipher = Cipher.getInstance(AppConstant.Constants.CRYPLIBAES)
             cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec)
 
             // ✅ Decode Base64 (check input)
@@ -89,7 +89,7 @@ object AESCryptography {
             val ivSpec = IvParameterSpec(ivKey.toByteArray(Charsets.UTF_8))
 
             // Create AES cipher instance
-            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+            val cipher = Cipher.getInstance(AppConstant.Constants.CRYPLIBAES)
             cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec)
 
             // Decode hex string to byte array

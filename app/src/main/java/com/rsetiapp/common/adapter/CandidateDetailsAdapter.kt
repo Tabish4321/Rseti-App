@@ -6,6 +6,7 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.rsetiapp.R
 import com.rsetiapp.common.fragments.FollowUpCandidateFragmentDirections
 import com.rsetiapp.common.model.response.CandidateDetail
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.databinding.ItemCandidateDetailsBinding
 
 
@@ -81,14 +83,33 @@ class CandidateDetailsAdapter(
             // Handle Click Navigation (Ensure safe `adapterPosition`)
             binding.root.setOnClickListener {
                 val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION && position < candidateList.size) {
-                    val data = candidateList[position]
+                val quat1 = candidateList[position].quarter1
+                val quat2 = candidateList[position].quarter2
+                val quat3 = candidateList[position].quarter3
+                val quat4= candidateList[position].quarter4
+                val quat5 = candidateList[position].quarter5
+                val quat6 = candidateList[position].quarter6
+                val quat7 = candidateList[position].quarter7
+                val quat8= candidateList[position].quarter8
+                if (quat1=="2" || quat2=="2" || quat3=="2" || quat4=="2" || quat5=="2" || quat6=="2" || quat7=="2" || quat8=="2")
+                {
 
-                    val action = FollowUpCandidateFragmentDirections
-                        .actionFollowUpCandidateFragmentToFollowUpFormFragment(data)
+                    if (position != RecyclerView.NO_POSITION && position < candidateList.size) {
+                        val data = candidateList[position]
 
-                    binding.root.findNavController().navigate(action)
+                        val action = FollowUpCandidateFragmentDirections
+                            .actionFollowUpCandidateFragmentToFollowUpFormFragment(data)
+
+                        binding.root.findNavController().navigate(action)
+                    }
+
                 }
+
+                else{
+
+                    AppUtil.showAlertDialog(context,"Alert","Followup has been already done. Please wait until next quarter. ")
+                }
+
             }
         }
 

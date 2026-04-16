@@ -1,9 +1,11 @@
 package com.rsetiapp.common.fragments
+import android.Manifest
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.gms.location.*
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -29,24 +31,26 @@ import java.util.Locale
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.location.Geocoder
 import android.net.Uri
-import android.os.Environment
+import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.FileProvider
 import java.io.ByteArrayOutputStream
-import java.io.File
 import android.util.Base64
-
 import android.widget.ImageView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavOptions
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.rsetiapp.BuildConfig
@@ -56,9 +60,15 @@ import com.rsetiapp.common.CandidateUpdateListener
 import com.rsetiapp.common.adapter.CandidateAdapter
 import com.rsetiapp.common.model.request.Candidate
 import com.rsetiapp.common.model.request.EAPInsertRequest
+import com.rsetiapp.common.model.response.AutoFetch
+import com.rsetiapp.common.model.response.EapList
+import com.rsetiapp.common.model.response.Institute
 import com.rsetiapp.common.model.response.Program
 import com.rsetiapp.core.util.AppUtil
+import com.rsetiapp.core.util.AppUtil.getCurrentDate
+import com.rsetiapp.core.util.AppUtil.hasStoragePermission
 import com.rsetiapp.core.util.UserPreferences
+import com.rsetiapp.core.util.toastLong
 import com.rsetiapp.core.util.visible
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
@@ -69,6 +79,21 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
     private var formName=""
     private var eapId=""
+
+    private var stateNme=""
+    private var stateCode=""
+    private var districtCode=""
+    private var districtName=""
+    private var blockName=""
+    private var blockCode=""
+    private var gpName=""
+    private var gpCode=""
+    private var villageName=""
+    private var villageCode=""
+    private var eapName=""
+    private var programCode=""
+
+
     private var selectedDate=""
     private var selectedTotalParticipants=""
     private var selectedNameOfNGO=""
@@ -83,53 +108,20 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var adapter: CandidateAdapter
     private val candidateList = mutableListOf<Candidate>()
-    private val commonViewModel: CommonViewModel by activityViewModels()
 
-    //State Var
-    private lateinit var stateAdapter: ArrayAdapter<String>
-    private var stateList: MutableList<WrappedList> = mutableListOf()
-    private var state = ArrayList<String>()
-    private var stateCode = ArrayList<String>()
-    private var stateLgdCode = ArrayList<String>()
-    private var selectedStateCodeItem = ""
-    private var selectedStateLgdCodeItem = ""
-    private var selectedStateItem = ""
+    private var institute: MutableList<Institute> = mutableListOf()
+    private var eapData: MutableList<AutoFetch> = mutableListOf()
+
+
+
+    private val commonViewModel: CommonViewModel by activityViewModels()
+    private lateinit var locationSettingLauncher: ActivityResultLauncher<IntentSenderRequest>
+
+
+
     private var counts = ""
     private var latitude : Double? = null
     private var longitude : Double? = null
-
-    // district var
-    private var districtList: MutableList<DistrictList> = mutableListOf()
-    private lateinit var districtAdapter: ArrayAdapter<String>
-    private var district = ArrayList<String>()
-    private var districtCode = ArrayList<String>()
-    private var districtLgdCode = ArrayList<String>()
-    private var selectedDistrictCodeItem = ""
-    private var selectedDistrictLgdCodeItem = ""
-    private var selectedDistrictItem = ""
-
-
-    //block var
-    private var blockList: MutableList<BlockList> = mutableListOf()
-    private lateinit var blockAdapter: ArrayAdapter<String>
-    private var block = ArrayList<String>()
-    private var blockCode = ArrayList<String>()
-    private var blockLgdCode = ArrayList<String>()
-    private var selectedBlockCodeItem = ""
-    private var selectedbBlockLgdCodeItem = ""
-    private var selectedBlockItem = ""
-
-
-    //GP var
-    private var gpList: MutableList<GrampanchayatList> = mutableListOf()
-    private lateinit var gpAdapter: ArrayAdapter<String>
-    private var gp = ArrayList<String>()
-    private var gpCode = ArrayList<String>()
-    private var gpLgdCode = ArrayList<String>()
-    private var selectedGpCodeItem = ""
-    private var selectedbGpLgdCodeItem = ""
-    private var selectedGpItem = ""
-
 
     private var orgCode = ""
     private var orgName = ""
@@ -138,30 +130,34 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private var officialName = ""
     private var designationName = ""
 
-    //Village var
-    private var villageList: MutableList<VillageList> = mutableListOf()
-    private lateinit var villageAdapter: ArrayAdapter<String>
-    private var village = ArrayList<String>()
-    private var villageCode = ArrayList<String>()
-    private var villageLgdCode = ArrayList<String>()
-    private var selectedVillageCodeItem = ""
-    private var selectedbVillageLgdCodeItem = ""
-    private var selectedVillageItem = ""
-
-
-    //Program name var
-    private var programNameList: List<Program> = mutableListOf()
-    private lateinit var programNameAdapter: ArrayAdapter<String>
-    private var programName = ArrayList<String>()
-    private var programNameCode = ArrayList<String>()
-    private var selectedprogramNameCodeItem = ""
-    private var selectedprogramNameItem = ""
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userPreferences = UserPreferences(requireContext())
+
         formName = arguments?.getString("formName").toString()
         eapId = arguments?.getString("eapId").toString()
+        stateNme=  arguments?.getString("stateNme").toString()
+         stateCode= arguments?.getString("stateCode").toString()
+        districtCode= arguments?.getString("districtCode").toString()
+       districtName= arguments?.getString("districtName").toString()
+        blockName= arguments?.getString("blockName").toString()
+         blockCode= arguments?.getString("blockCode").toString()
+         gpName= arguments?.getString("gpName").toString()
+        gpCode= arguments?.getString("gpCode").toString()
+         villageName= arguments?.getString("villageName").toString()
+        villageCode= arguments?.getString("villageCode").toString()
+        eapName= arguments?.getString("eapName").toString()
+         programCode= arguments?.getString("programCode").toString()
+
+
+        binding.spinnerAutoState.text= stateNme
+        binding.districValue.text= districtName
+        binding.blockValue.text= blockName
+        binding.gpValue.text= gpName
+        binding.villageValue.text= villageName
+        binding.eapName.text= eapName
         userPreferences = UserPreferences(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         init()
@@ -169,14 +165,30 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     }
 
     private fun init(){
+
+
+        locationSettingLauncher = registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // GPS was enabled by the user
+            }
+            else {
+                // GPS was not enabled
+            }
+        }
+        checkAndRequestStoragePermissions()
+
+        checkAndPromptGPS()
+
+        // checkAndRequestPermissions()
         val recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerView)
         val candidateCountTextView = view?.findViewById<TextView>(R.id.candidteCount)
 
         @SuppressLint("SetTextI18n")
         fun updateCandidateCount(count: Int) {
-            candidateCountTextView?.text = count.toString()
-
-
+            candidateCountTextView?.text = "Candidates: "+count.toString()
+            counts=count.toString()
 
         }
 
@@ -205,21 +217,19 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 // Set initial count after adapter is set
         updateCandidateCount(candidateList.size)
 
-        commonViewModel.getStateListApi()
-        commonViewModel.getEapAutoFetchListAPI(userPreferences.getUseID(), BuildConfig.VERSION_NAME)
-        commonViewModel.getProgramListAPI()
-        collectProgramNameResponse()
+        commonViewModel.getStateListApi(AppUtil.getSavedTokenPreference(requireContext()),userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
+        commonViewModel.getEapAutoFetchListAPI(AppUtil.getSavedTokenPreference(requireContext()),userPreferences.getUseID(), BuildConfig.VERSION_NAME,AppUtil.getAndroidId(requireContext()))
+
         collectEapAutoFetchResponse()
-        collectStateResponse()
-        collectDistrictResponse()
-        collectBlockResponse()
-        collectGpResponse()
-        collectVillageResponse()
+
         listener()
     }
     @SuppressLint("SetTextI18n")
     private fun listener(){
 
+        val currentDate= getCurrentDate()
+        binding.tvDate.text = currentDate
+        selectedDate= currentDate
 
         binding.eapIdName.text= eapId
         //Submit Button
@@ -233,12 +243,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             selectedBrief =binding.etBrief.text.toString()
 
 
-
-
-
-            if (selectedDate.isNotEmpty()&& selectedTotalParticipants.isNotEmpty()&& selectedNameOfNGO.isNotEmpty() && selectedprogramNameCodeItem.isNotEmpty() &&
-                selectedStateCodeItem.isNotEmpty() &&  selectedDistrictCodeItem.isNotEmpty() &&  selectedBlockCodeItem.isNotEmpty() && selectedGpCodeItem.isNotEmpty()&&
-                selectedVillageCodeItem.isNotEmpty() && selectedNoOfAppExpectedNextMonth.isNotEmpty() && selectedBrief.isNotEmpty()&& image1Base64.isNotEmpty()&&
+            if (selectedDate.isNotEmpty()&& selectedTotalParticipants.isNotEmpty()&& selectedNameOfNGO.isNotEmpty()
+                && selectedNoOfAppExpectedNextMonth.isNotEmpty() && selectedBrief.isNotEmpty()&& image1Base64.isNotEmpty()&&
                 image2Base64.isNotEmpty()){
 
 
@@ -254,14 +260,18 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
                 else{
 
-                    commonViewModel.insertEAPAPI(EAPInsertRequest(BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
-                        selectedprogramNameCodeItem,selectedStateCodeItem,selectedDistrictCodeItem,selectedBlockCodeItem,selectedGpCodeItem,selectedVillageCodeItem,
+                    commonViewModel.insertEAPAPI(AppUtil.getSavedTokenPreference(requireContext()),
+                        EAPInsertRequest(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
+                            BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
+                        programCode,stateCode,districtCode,blockCode,gpCode,villageCode,
+
                         selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
+
                         latitude.toString(),
-                        longitude.toString(),candidateList))
+
+                        longitude.toString(),AppUtil.getSavedEntityPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext()),candidateList))
+
                     collectInsertResponse()
-
-
                 }
 
             }
@@ -301,233 +311,16 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         }
 
 
-        //Adapter Program
 
-        programNameAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            programName
-        )
 
-        binding.spinnerProgramName.setAdapter(programNameAdapter)
 
-        //Adapter State
 
-        stateAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            state
-        )
 
-        binding.spinnerState.setAdapter(stateAdapter)
-        //Adapter District setting
 
-        districtAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            district
-        )
-
-        binding.spinnerDistrict.setAdapter(districtAdapter)
-
-
-        //Adapter Block setting
-
-        blockAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            block
-        )
-
-        binding.spinnerBlock.setAdapter(blockAdapter)
-
-        //Adapter GP setting
-
-        gpAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            gp
-        )
-
-        binding.spinnerGp.setAdapter(gpAdapter)
-
-
-        //Adapter Village setting
-
-        villageAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            village
-        )
-
-        binding.spinnerVillage.setAdapter(villageAdapter)
-
-
-
-
-        //Selection Of State,and so on
-
-
-        binding.spinnerState.setOnItemClickListener { parent, view, position, id ->
-            selectedStateItem = parent.getItemAtPosition(position).toString()
-            if (position in state.indices) {
-                selectedStateCodeItem = stateCode[position]
-                selectedStateLgdCodeItem = stateLgdCode[position]
-                commonViewModel.getDistrictListApi(selectedStateCodeItem)
-                districtAdapter.notifyDataSetChanged()
-
-
-
-                selectedDistrictCodeItem = ""
-                selectedDistrictLgdCodeItem = ""
-                selectedDistrictItem = ""
-                binding.spinnerDistrict.clearFocus()
-                binding.spinnerDistrict.setText("", false)
-
-
-                selectedBlockCodeItem = ""
-                selectedbBlockLgdCodeItem = ""
-                selectedBlockItem = ""
-                binding.spinnerBlock.clearFocus()
-                binding.spinnerBlock.setText("", false)
-
-                selectedGpCodeItem = ""
-                selectedbGpLgdCodeItem = ""
-                selectedGpItem = ""
-                binding.spinnerGp.clearFocus()
-                binding.spinnerGp.setText("", false)
-
-
-                selectedVillageCodeItem = ""
-                selectedbVillageLgdCodeItem = ""
-                selectedVillageItem = ""
-                binding.spinnerVillage.clearFocus()
-                binding.spinnerVillage.setText("", false)
-
-
-
-            } else {
-                Toast.makeText(requireContext(), "Invalid selection", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        //District selection
-        binding.spinnerDistrict.setOnItemClickListener { parent, view, position, id ->
-            selectedDistrictItem = parent.getItemAtPosition(position).toString()
-            if (position in district.indices) {
-                selectedDistrictCodeItem = districtCode[position]
-                selectedDistrictLgdCodeItem = districtLgdCode[position]
-                commonViewModel.getBlockListApi(selectedDistrictCodeItem)
-                gpAdapter.notifyDataSetChanged()
-
-                selectedBlockCodeItem = ""
-                selectedbBlockLgdCodeItem = ""
-                selectedBlockItem = ""
-                binding.spinnerBlock.clearFocus()
-                binding.spinnerBlock.setText("", false)
-
-
-                selectedGpCodeItem = ""
-                selectedbGpLgdCodeItem = ""
-                selectedGpItem = ""
-                binding.spinnerGp.clearFocus()
-                binding.spinnerGp.setText("", false)
-
-
-                selectedVillageCodeItem = ""
-                selectedbVillageLgdCodeItem = ""
-                selectedVillageItem = ""
-                binding.spinnerVillage.clearFocus()
-                binding.spinnerVillage.setText("", false)
-
-            } else {
-                Toast.makeText(requireContext(), "Invalid selection", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
-        //Block Spinner
-        binding.spinnerBlock.setOnItemClickListener { parent, view, position, id ->
-            selectedBlockItem = parent.getItemAtPosition(position).toString()
-            if (position in block.indices) {
-                selectedBlockCodeItem = blockCode[position]
-                selectedbBlockLgdCodeItem = blockLgdCode[position]
-                commonViewModel.getGpListApi(selectedBlockCodeItem)
-                selectedGpCodeItem = ""
-                selectedbGpLgdCodeItem = ""
-                selectedGpItem = ""
-                binding.spinnerGp.clearFocus()
-                binding.spinnerGp.setText("", false)
-                selectedVillageCodeItem = ""
-                selectedbVillageLgdCodeItem = ""
-                selectedVillageItem = ""
-                binding.spinnerVillage.clearFocus()
-                binding.spinnerVillage.setText("", false)
-
-
-            } else {
-                Toast.makeText(requireContext(), "Invalid selection", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
-        //GP Spinner
-        binding.spinnerGp.setOnItemClickListener { parent, view, position, id ->
-            selectedGpItem = parent.getItemAtPosition(position).toString()
-
-            if (position in gp.indices) {
-                selectedGpCodeItem = gpCode[position]
-                selectedbGpLgdCodeItem = gpLgdCode[position]
-                commonViewModel.getVillageListApi(selectedGpCodeItem)
-
-                selectedVillageCodeItem = ""
-                selectedbVillageLgdCodeItem = ""
-                selectedVillageItem = ""
-                binding.spinnerVillage.clearFocus()
-                binding.spinnerVillage.setText("", false)
-
-            } else {
-                Toast.makeText(requireContext(), "Invalid selection", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
-        //Village Spinner
-        binding.spinnerVillage.setOnItemClickListener { parent, view, position, id ->
-            selectedVillageItem = parent.getItemAtPosition(position).toString()
-            if (position in village.indices) {
-                selectedVillageCodeItem = villageCode[position]
-                selectedbVillageLgdCodeItem = villageLgdCode[position]
-
-
-            } else {
-                Toast.makeText(requireContext(), "Invalid selection", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
-
-        binding.spinnerProgramName.setOnItemClickListener { parent, view, position, id ->
-            selectedprogramNameItem = parent.getItemAtPosition(position).toString()
-            if (position in programName.indices) {
-                selectedprogramNameCodeItem = programNameCode[position]
-
-
-            } else {
-                Toast.makeText(requireContext(), "Invalid Selection", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
-
-        binding.tvDate.setOnClickListener {
-
-            showDatePicker(binding.tvDate)
-
-        }
 
 
         binding.image1.setOnClickListener {
+
             openCamera(binding.image1)
         }
         binding.image2.setOnClickListener {
@@ -556,64 +349,47 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
                                 for (x in getEapAutoFetchListAPI.wrappedList){
 
+                                   institute= x.instituteData.toMutableList()
+                                    eapData= x.autoFetchData.toMutableList()
+
+
+                                }
+
+                                for (x in institute){
+
+
+
+                                    instituteName= x.instituteName
+                                    instituteCode= x.instituteCode.toString()
+
+
+
+                                    binding.tvInstituteName.text=instituteName
+
+
+                                }
+
+                                for (x in eapData){
                                     orgCode= x.orgCode
                                     orgName= x.orgName
-                                    instituteName= x.instituteName
-                                    instituteCode= x.instituteCode
                                     officialName= x.officialName
                                     designationName= x.designation
-
+                                    AppUtil.saveEapCanAgeLimitPreference(requireContext(),x.ageLimit)
                                     binding.tvOrganizationName.text=orgName
-                                    binding.tvInstituteName.text=instituteName
                                     binding.tvparticipatingOfficialName.text=officialName
                                     binding.tvdesiginationName.text=designationName
 
+
                                 }
 
 
-                                stateAdapter.notifyDataSetChanged()
                             } else if (getEapAutoFetchListAPI.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar("Internal Server Error111")
+                            }   else if (getEapAutoFetchListAPI.responseCode==401){
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
                             }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-
-                }
-            }
-        }
-    }
-    private fun collectProgramNameResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getProgramListAPI) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            toastShort(baseErrorResponse.message)
-                        }
-                    }
-
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { getProgramListAPI ->
-                            if (getProgramListAPI.responseCode == 200) {
-                                programNameList = getProgramListAPI.wrappedList
-                                programName.clear()
-                                programNameCode.clear()
-
-                                for (x in programNameList) {
-                                    programName.add(x.programName)
-                                    programNameCode.add(x.programCode)
-                                }
-
-                                stateAdapter.notifyDataSetChanged()
-                            } else if (getProgramListAPI.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar(getProgramListAPI.responseDesc)
+                            else {
+                               // toastLong(getEapAutoFetchListAPI.responseDesc)
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
@@ -643,7 +419,14 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                             if (insertApiResp.responseCode == 200) {
 
                                 showSnackBar("Success")
-                                findNavController().navigateUp()
+
+                                findNavController().navigate(
+                                    R.id.eapListFragment,
+                                    null,
+                                    NavOptions.Builder()
+                                        .setPopUpTo(R.id.EAPAwarnessFormFragment, true)
+                                        .build()
+                                )
 
 
 
@@ -652,8 +435,13 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
                             else if (insertApiResp.responseCode == 301) {
                                 showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar("Internal Server Error 1111")
+                            }
+                            else if (insertApiResp.responseCode==401){
+
+                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
+                            }
+                            else {
+                                toastLong(insertApiResp.responseDesc)
                             }
 
                         } ?: showSnackBar("Internal Server Error")
@@ -665,217 +453,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         }
     }
 
-
-    private fun collectStateResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getStateList) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            showSnackBar("Internal Server Error111")
-                        }
-                    }
-
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { getStateResponse ->
-                            if (getStateResponse.responseCode == 200) {
-                                stateList = getStateResponse.stateList
-                                state.clear()
-                                stateCode.clear()
-                                stateLgdCode.clear()
-
-                                for (x in stateList) {
-                                    state.add(x.stateName)
-                                    stateCode.add(x.stateCode)
-                                    stateLgdCode.add(x.lgdStateCode)
-                                }
-
-                                stateAdapter.notifyDataSetChanged()
-                            } else if (getStateResponse.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar(getStateResponse.responseDesc)
-                            }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-
-                    else -> { showSnackBar("Internal Server Error")}
-                }
-            }
-        }
-    }
-    private fun collectDistrictResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getDistrictList) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            showSnackBar("Internal Server Error111")
-                        }
-                    }
-
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { getDistrictResponse ->
-                            if (getDistrictResponse.responseCode == 200) {
-                                districtList = getDistrictResponse.districtList
-
-                                districtLgdCode.clear()
-                                district.clear()
-                                districtCode.clear()
-
-                                for (x in districtList) {
-                                    district.add(x.districtName)
-                                    districtCode.add(x.districtCode)
-                                    districtLgdCode.add(x.lgdDistrictCode)
-                                }
-
-
-
-
-
-                                withContext(Dispatchers.Main) {
-                                    districtAdapter.notifyDataSetChanged()
-
-                                }
-                            } else if (getDistrictResponse.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar("Something went wrong")
-                            }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-
-                    else -> { showSnackBar("Internal Server Error")}
-                }
-            }
-        }
-    }
-    private fun collectBlockResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getBlockList) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            showSnackBar("Internal Server Error111")
-                        }
-                    }
-
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { getBlockResponse ->
-                            if (getBlockResponse.responseCode == 200) {
-                                blockList = getBlockResponse.blockList
-                                block.clear()
-                                blockCode.clear()
-                                blockLgdCode.clear()
-
-                                for (x in blockList) {
-                                    block.add(x.blockName)
-                                    blockCode.add(x.blockCode) // Replace with actual field
-                                    blockLgdCode.add(x.lgdBlockCode) // Replace with actual field
-                                }
-                                blockAdapter.notifyDataSetChanged()
-                            } else if (getBlockResponse.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar("Something went wrong")
-                            }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-
-                    else -> { showSnackBar("Internal Server Error")}
-                }
-            }
-        }
-    }
-    private fun collectGpResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getGpList) {
-                when (it) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        it.error?.let { baseErrorResponse ->
-                            showSnackBar("Internal Server Error111")
-                        }
-                    }
-
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        it.data?.let { getGpResponse ->
-                            if (getGpResponse.responseCode == 200) {
-                                gpList = getGpResponse.grampanchayatList
-                                gp.clear()
-                                gpCode.clear()
-                                gpLgdCode.clear()
-
-                                for (x in gpList) {
-                                    gp.add(x.gpName)
-                                    gpCode.add(x.gpCode) // Replace with actual field
-                                    gpLgdCode.add(x.lgdGpCode) // Replace with actual field
-                                }
-                                blockAdapter.notifyDataSetChanged()
-                            } else if (getGpResponse.responseCode == 301) {
-                                showSnackBar("Please Update from PlayStore")
-                            } else {
-                                showSnackBar("Something went wrong")
-                            }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-
-                    else -> { showSnackBar("Internal Server Error")}
-                }
-            }
-        }
-    }
-    private fun collectVillageResponse() {
-        lifecycleScope.launch {
-            collectLatestLifecycleFlow(commonViewModel.getVillageList) { result ->
-                when (result) {
-                    is Resource.Loading -> showProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        showSnackBar(result.error?.message ?: "Error fetching data")
-                    }
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        result.data?.let { getVillageResponse ->
-                            if (getVillageResponse.responseCode == 200) {
-                                villageList = getVillageResponse.villageList
-
-                                village.clear()
-                                villageCode.clear()
-                                villageLgdCode.clear()
-
-                                for (x in villageList) {
-                                    village.add(x.villageName)
-                                    villageCode.add(x.villageCode)
-                                    villageLgdCode.add(x.lgdVillageCode)
-                                }
-
-                                // ✅ Update UI after data is set
-                                withContext(Dispatchers.Main) {
-                                    villageAdapter.notifyDataSetChanged()
-                                }
-                            } else {
-                                showSnackBar("Something went wrong")
-                            }
-                        } ?: showSnackBar("Internal Server Error")
-                    }
-
-                    else -> { showSnackBar("Internal Server Error")}
-                }
-            }
-        }
-    }
 
 
     private fun showDatePicker(textView: TextView) {
@@ -911,7 +488,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             textView.text = formattedDate
             selectedDate = formattedDate
         }
-    }    private fun checkAndRequestPermissions() {
+    }
+    private fun checkAndRequestPermissions() {
         val permissions = arrayOf(
             android.Manifest.permission.CAMERA,
             android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -936,80 +514,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             }
         }
     }
-
-    private fun openCamera(imageView: ImageView) {
-        checkAndRequestPermissions()
-
-        currentImageView = imageView  // ✅ Store the clicked ImageView
-
-        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA)
-            != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(requireContext(), "Camera permission required!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        val photoFile = createImageFile()
-        imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", photoFile)
-
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-
-        cameraLauncher.launch(intent) // ✅ Launch the camera
-    }
-
-
-    private fun createImageFile(): File {
-        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile("IMG_${System.currentTimeMillis()}", ".jpg", storageDir).apply {
-            imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", this)
-        }
-    }
-
-    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            if (imageUri == null || currentImageView == null) {
-                Toast.makeText(requireContext(), "Image capture failed!", Toast.LENGTH_SHORT).show()
-                return@registerForActivityResult
-            }
-
-            val bitmap = uriToBitmap(imageUri!!)
-            bitmap?.let { compressedBitmap ->
-                currentImageView?.setImageBitmap(compressedBitmap) // ✅ Set the image
-
-                val base64Image = bitmapToBase64(compressedBitmap) // Convert to Base64
-
-                // ✅ Check which ImageView was clicked and store Base64 accordingly
-                when (currentImageView?.id) {
-                    R.id.image1 -> {
-                        image1Base64 = base64Image
-
-                    }
-                    R.id.image2 -> {
-                        image2Base64 = base64Image
-
-                    }
-                }
-
-                getCurrentLocation()
-                binding.lllatLang.visible()
-                binding.llAdress.visible()
-            }
-        }
-    }
-
-    private fun uriToBitmap(uri: Uri): Bitmap? {
-        return try {
-            val inputStream = requireContext().contentResolver.openInputStream(uri)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            inputStream?.close()
-            compressBitmap(bitmap)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
 
     private fun compressBitmap(bitmap: Bitmap): Bitmap {
         return try {
@@ -1040,8 +544,53 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             ""
         }
     }
+
+    private fun openCamera(imageView: ImageView) {
+        checkAndRequestPermissions()
+        currentImageView = imageView
+
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA)
+            != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(requireContext(), "Camera permission required!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraLauncher.launch(intent)
+    }
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageBitmap = result.data?.extras?.get("data") as? Bitmap
+            if (imageBitmap == null || currentImageView == null) {
+                Toast.makeText(requireContext(), "Image capture failed!", Toast.LENGTH_SHORT).show()
+                return@registerForActivityResult
+            }
+
+            val compressedBitmap = compressBitmap(imageBitmap)
+            currentImageView?.setImageBitmap(compressedBitmap)
+
+            val base64Image = bitmapToBase64(compressedBitmap)
+
+            when (currentImageView?.id) {
+                R.id.image1 -> {
+                    image1Base64 = base64Image
+                }
+                R.id.image2 -> {
+                    image2Base64 = base64Image
+                }
+            }
+
+            getCurrentLocation()
+            binding.lllatLang.visible()
+            binding.llAdress.visible()
+        }
+    }
+
+
+
     @SuppressLint("MissingPermission")
-    private fun getCurrentLocation() {
+    private fun getCurrentLocation()
+    {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
                 latitude = location.latitude
@@ -1124,8 +673,60 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
     @SuppressLint("SetTextI18n")
     fun updateCandidateCount(count: Int) {
-        binding.candidteCount.text = "$count"
+        binding.candidteCount.text = "Candidates: $count"
+        counts=count.toString()
+
+    }
+    private val storagePermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.entries.all { it.value }
+        if (allGranted) {
+            Toast.makeText(requireContext(), "Permission granted", Toast.LENGTH_SHORT).show()
+            // proceed with file/media access
+        } else {
+            Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun checkAndRequestStoragePermissions() {
+        if (!hasStoragePermission(requireContext())) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                storagePermissionLauncher.launch(AppUtil.storagePermissions)
+            } else {
+                storagePermissionLauncher.launch(arrayOf(AppUtil.legacyStoragePermission))
+            }
+        } else {
+            // Permissions already granted, continue your logic
+        }
     }
 
+
+    private fun checkAndPromptGPS() {
+        val locationRequest = LocationRequest.create().apply {
+            priority = Priority.PRIORITY_HIGH_ACCURACY
+        }
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+            .setAlwaysShow(true)
+
+        val settingsClient = LocationServices.getSettingsClient(requireActivity())
+        val task = settingsClient.checkLocationSettings(builder.build())
+
+        task.addOnSuccessListener {
+            // GPS is already enabled
+        }
+
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    val intentSenderRequest = IntentSenderRequest.Builder(exception.resolution).build()
+                    locationSettingLauncher.launch(intentSenderRequest)
+                } catch (e: IntentSender.SendIntentException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
 
 }

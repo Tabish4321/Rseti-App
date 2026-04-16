@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
@@ -29,6 +31,10 @@ import java.util.Locale
 import java.util.TimeZone
 import android.content.res.Configuration
 import android.provider.Settings
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import com.google.gson.Gson
 import com.rsetiapp.R
 import java.security.MessageDigest
@@ -39,11 +45,34 @@ import java.time.format.TextStyle
 
 object AppUtil {
 
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    val storagePermissions = arrayOf(
+        android.Manifest.permission.READ_MEDIA_IMAGES,
+        android.Manifest.permission.READ_MEDIA_VIDEO,
+        android.Manifest.permission.READ_MEDIA_AUDIO
+    )
+    val legacyStoragePermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+
+
+
     @SuppressLint("HardwareIds")
     fun getAndroidId(context: Context) : String{
 
         return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
+
+
+     fun hasStoragePermission(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            storagePermissions.all {
+                ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+            }
+        } else {
+            ContextCompat.checkSelfPermission(context, legacyStoragePermission) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
 
     fun sha512Hash(input: String): String {
         val digest = MessageDigest.getInstance("SHA-512")
@@ -61,6 +90,105 @@ object AppUtil {
         val dateFormat = SimpleDateFormat("dd MMMM yyyy, EEEE", Locale.getDefault())
         return dateFormat.format(calendar.time)
     }
+    private var isSessionDialogShown = false // Flag to prevent multiple dialogs
+
+    fun showSessionExpiredDialog(navController: NavController, context: Context) {
+        if (isSessionDialogShown) return // Prevent showing multiple dialogs
+
+        isSessionDialogShown = true // Set flag to true when dialog is shown
+
+        val builder = androidx.appcompat.app.AlertDialog.Builder(context)
+        builder.setTitle("Session Expired")
+        builder.setMessage("Your session has expired. Please log in again.")
+        builder.setCancelable(false) // Prevent dismissing on outside touch or back press
+
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+            logoutUser(navController, context)
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+    fun logoutUser(navController: NavController, context: Context) {
+        // Clear user session data
+        AppUtil.saveLoginStatus(context, false)
+
+        // Navigate to login and reset the flag after navigation
+        navController.navigate(
+            R.id.loginFragment,
+            null,
+            NavOptions.Builder()
+                .setPopUpTo(navController.graph.startDestinationId, true) // Clear everything
+                .build()
+        )
+
+        isSessionDialogShown = false // Reset flag after navigation
+    }
+
+    fun saveTokenPreference(context: Context, tokenCode: String) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("token_code", tokenCode)
+        editor.apply()
+    }
+
+    fun getSavedTokenPreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("token_code", "") ?: "" // Default to English
+    }
+    fun saveEntityPreference(context: Context, entityCode: String) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("entity_code", entityCode)
+        editor.apply()
+    }
+
+    fun getSavedEntityPreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("entity_code", "") ?: "" // Default to English
+    }
+
+
+    fun saveHRIdPreference(context: Context, entityCode: String) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("hrId", entityCode?:"")
+        editor.apply()
+    }
+
+    fun getSavedHRIdPreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("hrId", "") ?: "" // Default to English
+    }
+
+    fun saveOrgIdPreference(context: Context, entityCode: String) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("orgId", entityCode)
+        editor.apply()
+    }
+
+    fun getSavedOrgIdPreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("orgId", "") ?: "" // Default to English
+    }
+
+
+
+    fun saveEapCanAgeLimitPreference(context: Context, tokenCode: Int) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("eap_canAge", tokenCode.toString())
+        editor.apply()
+    }
+
+    fun getSavedEapCanAgeLimitPreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("eap_canAge", "") ?: "" // Default to English
+    }
+
 
     // Add this function to your class
     fun convertUriToBase64(uri: Uri,context: Context): String {
@@ -306,6 +434,10 @@ object AppUtil {
 
     }
 
+
+
+
+
     fun getCurrentYear(): Int {
         return LocalDate.now().year
     }
@@ -381,4 +513,5 @@ object AppUtil {
         clipboardManager.setPrimaryClip(clipData)
 
     }
+
 }
