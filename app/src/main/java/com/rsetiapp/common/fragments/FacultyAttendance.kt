@@ -80,7 +80,7 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
     private var decryptedAadhaar = ""
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
-    private var radius: Float = 1000000f
+    private var radius: Float = 100f
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var intentResponse: IntentResponse? = null
     private val neededPermissions = arrayOf(Manifest.permission.CAMERA)
@@ -104,6 +104,7 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        collectFaceAuthResponse()
         startClock()
         initEKYC()
 
@@ -265,7 +266,7 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
                                     getCurrentLocation { location ->
                                         if (location != null) {
                                             val isInside = isUserInsideGeofence(location, latitude, longitude, radius)
-                                            // val isInside = isUserInsideGeofence(location, 26.2153, 84.3588, radius)
+                                            // val isInside = isUserInsideGeofence(location, 26.2153, 84.3588, 5000000f)
                                             if (isInside) {
 
                                                 //    findNavController().navigate(SdrListFragmentDirections.actionSdrListFragmentToSdrVisitReport(formName,instituteName,finYear,instituteId))
@@ -529,96 +530,57 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
 
 
     private fun invokeCaptureIntent() {
-
         try {
-            val intent1 = Intent(AppConstant.Constants.CAPTURE_INTENT)
-            intent1.putExtra(
+            val intent = Intent(AppConstant.Constants.CAPTURE_INTENT)
+            intent.putExtra(
                 AppConstant.Constants.CAPTURE_INTENT_REQUEST,
                 createPidOptions(getTransactionID(), "auth")
             )
-            startUidaiAuthResult.launch(intent1)
 
-            // val packageName = "com.example.otherapp" // Replace with the target app's package name
-            val intent =
-                requireContext().packageManager.getLaunchIntentForPackage(AppConstant.Constants.CAPTURE_INTENT)
-            intent?.putExtra(
-                AppConstant.Constants.CAPTURE_INTENT_REQUEST,
-                createPidOptions(getTransactionID(), "auth")
-            )
-            if (intent != null) {
-                startActivity(intent)
-            }
+            startUidaiAuthResult.launch(intent) //  only one call
+
         } catch (exp: Exception) {
             log("EKYCDATA", exp.toString())
+            hideProgressBar()
+            toastShort("Failed to open capture app")
         }
-
     }
+
 
     private fun createPidOptions(txnId: String, purpose: String): String {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<PidOptions ver=\"1.0\" env=\"$PRODUCTION\">\n" + "   <Opts fCount=\"\" fType=\"\" iCount=\"\" iType=\"\" pCount=\"\" pType=\"\" format=\"\" pidVer=\"2.0\" timeout=\"\" otp=\"\" wadh=\"${AppConstant.Constants.WADH_KEY}\" posh=\"\" />\n" + "   <CustOpts>\n" + "      <Param name=\"txnId\" value=\"${txnId}\"/>\n" + "      <Param name=\"purpose\" value=\"$purpose\"/>\n" + "      <Param name=\"language\" value=\"$LANGUAGE}\"/>\n" + "   </CustOpts>\n" + "</PidOptions>"
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<PidOptions ver=\"1.0\" env=\"${PRODUCTION}\">\n" + "   <Opts fCount=\"\" fType=\"\" iCount=\"\" iType=\"\" pCount=\"\" pType=\"\" format=\"\" pidVer=\"2.0\" timeout=\"\" otp=\"\" wadh=\"${AppConstant.Constants.WADH_KEY}\" posh=\"\" />\n" + "   <CustOpts>\n" + "      <Param name=\"txnId\" value=\"${txnId}\"/>\n" + "      <Param name=\"purpose\" value=\"$purpose\"/>\n" + "      <Param name=\"language\" value=\"$LANGUAGE}\"/>\n" + "   </CustOpts>\n" + "</PidOptions>"
     }
-
 
     private fun handleCaptureResponse(captureResponse: String) {
         try {
-
-            // Parse the capture response XML to an object
             val response = CaptureResponse.fromXML(captureResponse)
 
             if (response.isSuccess) {
                 showProgressBar()
 
-                // Process the response to generate the PoiType or other required fields
                 val poiType = XstreamCommonMethods.processPidBlockEkyc(
                     response.toXML(),
-                     decryptedAadhaar,
-                    // "939625617876",
+                    decryptedAadhaar,
                     false,
                     requireContext()
                 )
 
+                val authURL = "http://10.247.252.93:8080/NicASAServer/ASAMain"
 
-                // Define Pre-Production URL (use a constant or environment configuration in production)
-                //  val authURL = "http://10.247.252.95:8080/NicASAServer/ASAMain" //preProd
-                val authURL = "http://10.247.252.93:8080/NicASAServer/ASAMain"  //Prod
-
-                // Record the start time for elapsed time computation
-                startTime = SystemClock.elapsedRealtime()
-
-                // Post the processed data for Face Authentication
                 commonViewModel.postOnAUAFaceAuthNREGA(
                     AppConstant.StaticURL.FACE_AUTH_UIADI,
                     UidaiKycRequest(poiType, authURL)
                 )
-                collectFaceAuthResponse()
-                // Handle Aadhaar authentication or additional processing here if required
+
             } else {
                 hideProgressBar()
-                toastLong(getString(R.string.kyc_failed_msg))
-
+                toastLong("KYC Failed")
             }
 
-
-        } catch (e: SecurityException) {
-            // Handle camera permission-related issues
-            hideProgressBar()
-            e.printStackTrace()
-            //   e.message?.copyToClipboard(requireContext())
-
-            toastShort("Camera permission is required for this feature.")
-            log("EKYCDATA", "SecurityException: ${e.message}")
-        } catch (e: IllegalArgumentException) {
-            // Handle cases where the response parsing might fail
-            hideProgressBar()
-            e.printStackTrace()
-            toastShort("Invalid Capture Response format.")
-            log("EKYCDATA", "IllegalArgumentException: ${e.message}")
         } catch (e: Exception) {
-            // Catch all other exceptions
             hideProgressBar()
             e.printStackTrace()
-            toastShort("An error occurred while processing the response.")
-            log("EKYCDATA", "Exception: ${e.message}")
+            toastShort("Error processing capture response")
         }
     }
 
@@ -756,6 +718,7 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
             }
         }
     }
+
     private fun collectAttendanceInsertResponse() {
         hideProgressBar()
 

@@ -1,6 +1,7 @@
 package com.rsetiapp.common.fragments
 
 import android.Manifest
+import android.R.attr.bitmap
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
@@ -16,13 +17,9 @@ import android.location.Location
 import android.os.Handler
 import android.os.Looper
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -31,31 +28,24 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.core.uidai.ekyc.UidaiKycRequest
-import com.rsetiapp.core.uidai.ekyc.UidaiResp
 import com.rsetiapp.core.uidai.ekyc.IntentModel
 import com.rsetiapp.core.uidai.ekyc.IntentResponse
 import com.rsetiapp.R
 import com.rsetiapp.common.CommonViewModel
 import com.rsetiapp.common.model.request.AttendanceCheckReq
 import com.rsetiapp.common.model.request.AttendanceInsertReq
-import com.rsetiapp.common.model.response.AttendanceData
-import com.rsetiapp.common.model.response.CandidateDetail
-import com.rsetiapp.common.model.response.VillageList
 import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.uidai.XstreamCommonMethods
-import com.rsetiapp.core.uidai.XstreamCommonMethods.respDecodedXmlToPojoAuth
 import com.rsetiapp.core.uidai.capture.CaptureResponse
 import com.rsetiapp.core.util.AESCryptography
 import com.rsetiapp.core.util.AppConstant
 import com.rsetiapp.core.util.AppConstant.Constants.LANGUAGE
 import com.rsetiapp.core.util.AppConstant.Constants.PRODUCTION
-import com.rsetiapp.core.util.AppUtil.decodeBase64
 import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.log
 import com.rsetiapp.core.util.toastLong
@@ -64,12 +54,8 @@ import com.rsetiapp.databinding.FragmentVerifyUserAttendanceBinding
 import com.rsetiapp.core.geoFancing.GeofenceHelper
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.UserPreferences
-import com.rsetiapp.core.util.copyToClipboard
-import com.rsetiapp.core.util.gone
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.security.SecureRandom
 import java.text.SimpleDateFormat
 import java.time.Duration
@@ -122,10 +108,11 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
       var radius: Float = 100f*/
     private var latitude = 26.2153  // Example geofence latitude
     private var longitude = 84.3588  // Example geofence longitude
-    private var radius = 50000000f  // 100 meters radius
+    private var radius = 50f  // 100 meters radius
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        collectFaceAuthResponse()
         startClock()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         userPreferences = UserPreferences(requireContext())
@@ -146,7 +133,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         aadhaarNo = arguments?.getString("aadhaarNo").toString()
 
         commonViewModel.getAttendanceCheckStatus(AppUtil.getSavedTokenPreference(requireContext()),AttendanceCheckReq(BuildConfig.VERSION_NAME,batchId,candidateId
-        ,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()))
+            ,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()))
 
 
 
@@ -188,26 +175,26 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
 
 
-                if (attendanceFlag=="checkin"){
-                    //for audit
-                    showProgressBar()
-                   invokeCaptureIntent()
-                 /*   val currentDate = LocalDate.now()
-                    val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-                    val currentTime = LocalTime.now()
-                    val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
-                    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+            if (attendanceFlag=="checkin"){
+                //for audit
+                showProgressBar()
+                invokeCaptureIntent()
+                /*   val currentDate = LocalDate.now()
+                   val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                   val currentTime = LocalTime.now()
+                   val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
+                   val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
 
-                    commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
-                        BuildConfig.VERSION_NAME,batchId,candidateId,
-                        currentDate.toString(),"checkin",
-                        formattedTime,"","",candidateName,AppUtil.getSavedEntityPreference(requireContext()),AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())))
-                        collectAttendanceInsertResponse()*/
+                   commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
+                       BuildConfig.VERSION_NAME,batchId,candidateId,
+                       currentDate.toString(),"checkin",
+                       formattedTime,"","",candidateName,AppUtil.getSavedEntityPreference(requireContext()),AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())))
+                       collectAttendanceInsertResponse()*/
 
 
 
-                }
+            }
             else showSnackBar("Checkin Already marked")
 
 
@@ -219,40 +206,40 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         binding.btnCheckOut.setOnClickListener {
 
 
-                if (attendanceFlag=="checkout"){
+            if (attendanceFlag=="checkout"){
 
-                    //for audit
-                      showProgressBar()
-                       invokeCaptureIntent()
+                //for audit
+                showProgressBar()
+                invokeCaptureIntent()
 
-                   /* val currentDate = LocalDate.now()
-                    val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-                    val currentTime = LocalTime.now()
+                /* val currentDate = LocalDate.now()
+                 val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                 val currentTime = LocalTime.now()
 
-                    val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
-                    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-
-
-                    val checkInTime = LocalTime.parse(checkIn, timeFormatter)
-                    val checkOutTime = LocalTime.parse(formattedTime, timeFormatter)
-                    val duration = Duration.between(checkInTime, checkOutTime)
-                    val hours = duration.toHours()
-                    val minutes = duration.toMinutes() % 60
-
-                    val totalHoursValue = String.format("%02d:%02d:00", hours, minutes) // Format as HH:mm:ss
-
-                    commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
-                        BuildConfig.VERSION_NAME,batchId,candidateId,
-                        currentDate.toString(),"checkout",
-                        "",formattedTime,totalHoursValue,candidateName,AppUtil.getSavedEntityPreference(requireContext()),AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())))
-
-                    collectAttendanceInsertResponse()*/
+                 val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
+                 val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
 
-                }
+                 val checkInTime = LocalTime.parse(checkIn, timeFormatter)
+                 val checkOutTime = LocalTime.parse(formattedTime, timeFormatter)
+                 val duration = Duration.between(checkInTime, checkOutTime)
+                 val hours = duration.toHours()
+                 val minutes = duration.toMinutes() % 60
+
+                 val totalHoursValue = String.format("%02d:%02d:00", hours, minutes) // Format as HH:mm:ss
+
+                 commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
+                     BuildConfig.VERSION_NAME,batchId,candidateId,
+                     currentDate.toString(),"checkout",
+                     "",formattedTime,totalHoursValue,candidateName,AppUtil.getSavedEntityPreference(requireContext()),AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())))
+
+                 collectAttendanceInsertResponse()*/
 
 
-                else showSnackBar("Kindly mark checkin First")
+            }
+
+
+            else showSnackBar("Kindly mark checkin First")
 
 
 
@@ -346,47 +333,34 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
 
     private fun invokeCaptureIntent() {
-
         try {
-            val intent1 = Intent(AppConstant.Constants.CAPTURE_INTENT)
-            intent1.putExtra(
+            val intent = Intent(AppConstant.Constants.CAPTURE_INTENT)
+            intent.putExtra(
                 AppConstant.Constants.CAPTURE_INTENT_REQUEST,
                 createPidOptions(getTransactionID(), "auth")
             )
-            startUidaiAuthResult.launch(intent1)
 
-            // val packageName = "com.example.otherapp" // Replace with the target app's package name
-            val intent =
-                requireContext().packageManager.getLaunchIntentForPackage(AppConstant.Constants.CAPTURE_INTENT)
-            intent?.putExtra(
-                AppConstant.Constants.CAPTURE_INTENT_REQUEST,
-                createPidOptions(getTransactionID(), "auth")
-            )
-            if (intent != null) {
-                startActivity(intent)
-            }
+            startUidaiAuthResult.launch(intent) //  only one call
+
         } catch (exp: Exception) {
             log("EKYCDATA", exp.toString())
+            hideProgressBar()
+            toastShort("Failed to open capture app")
         }
-
     }
+
 
     private fun createPidOptions(txnId: String, purpose: String): String {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<PidOptions ver=\"1.0\" env=\"${PRODUCTION}\">\n" + "   <Opts fCount=\"\" fType=\"\" iCount=\"\" iType=\"\" pCount=\"\" pType=\"\" format=\"\" pidVer=\"2.0\" timeout=\"\" otp=\"\" wadh=\"${AppConstant.Constants.WADH_KEY}\" posh=\"\" />\n" + "   <CustOpts>\n" + "      <Param name=\"txnId\" value=\"${txnId}\"/>\n" + "      <Param name=\"purpose\" value=\"$purpose\"/>\n" + "      <Param name=\"language\" value=\"$LANGUAGE}\"/>\n" + "   </CustOpts>\n" + "</PidOptions>"
     }
 
-
     private fun handleCaptureResponse(captureResponse: String) {
         try {
-
-            // Parse the capture response XML to an object
             val response = CaptureResponse.fromXML(captureResponse)
 
             if (response.isSuccess) {
-
                 showProgressBar()
 
-                // Process the response to generate the PoiType or other required fields
                 val poiType = XstreamCommonMethods.processPidBlockEkyc(
                     response.toXML(),
                     decryptedAadhaar,
@@ -394,51 +368,24 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                     requireContext()
                 )
 
+                val authURL = "http://10.247.252.93:8080/NicASAServer/ASAMain"
 
-                // Define Pre-Production URL (use a constant or environment configuration in production)
-                //  val authURL = "http://10.247.252.95:8080/NicASAServer/ASAMain" //preProd
-                val authURL = "http://10.247.252.93:8080/NicASAServer/ASAMain"  //Prod
-
-                // Record the start time for elapsed time computation
-                startTime = SystemClock.elapsedRealtime()
-
-                // Post the processed data for Face Authentication
                 commonViewModel.postOnAUAFaceAuthNREGA(
                     AppConstant.StaticURL.FACE_AUTH_UIADI,
                     UidaiKycRequest(poiType, authURL)
                 )
-                collectFaceAuthResponse()
-                // Handle Aadhaar authentication or additional processing here if required
+
             } else {
                 hideProgressBar()
-                toastLong(getString(R.string.kyc_failed_msg))
-
+                toastLong("KYC Failed")
             }
 
-
-        } catch (e: SecurityException) {
-            // Handle camera permission-related issues
-            hideProgressBar()
-            e.printStackTrace()
-         //   e.message?.copyToClipboard(requireContext())
-
-            toastShort("Camera permission is required for this feature.")
-            log("EKYCDATA", "SecurityException: ${e.message}")
-        } catch (e: IllegalArgumentException) {
-            // Handle cases where the response parsing might fail
-            hideProgressBar()
-            e.printStackTrace()
-            toastShort("Invalid Capture Response format.")
-            log("EKYCDATA", "IllegalArgumentException: ${e.message}")
         } catch (e: Exception) {
-            // Catch all other exceptions
             hideProgressBar()
             e.printStackTrace()
-            toastShort("An error occurred while processing the response.")
-            log("EKYCDATA", "Exception: ${e.message}")
+            toastShort("Error processing capture response")
         }
     }
-
 
     private fun checkCameraPermission(): Boolean {
         val permissionsNotGranted = java.util.ArrayList<String>()
@@ -490,141 +437,139 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         )
     }
 
-
-    private fun collectFaceAuthResponse()
-    {
+    private fun collectFaceAuthResponse() {
         lifecycleScope.launch {
-            try {
-                collectLatestLifecycleFlow(commonViewModel.postOnAUAFaceAuthNREGA) { resource ->
-                    when (resource) {
-                        is Resource.Loading -> {
-                        }
 
-                        is Resource.Error -> {
-                            hideProgressBar()
+            collectLatestLifecycleFlow(commonViewModel.postOnAUAFaceAuthNREGA) { resource ->
 
-                            resource.error?.let { errorResponse ->
-                                toastShort(errorResponse.message)
-                                errorResponse.message?.copyToClipboard(requireContext())
+                when (resource) {
 
-                                log("EKYCDATA", errorResponse.message ?: "Unknown error message")
-                            } ?: run {
-                                toastShort("Nothing to show pls try again")
-                            }
-                        }
+                    is Resource.Loading -> {
+                        showProgressBar()
+                    }
 
-                        is Resource.Success -> {
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        toastShort(resource.error?.message ?: "API Error")
+                        log("API_ERROR", resource.error?.message ?: "")
+                    }
 
-                            resource.data?.body()?.let { uidaiData: UidaiResp ->
-                                try {
-                                    val kycResp = XstreamCommonMethods.respDecodedXmlToPojoEkyc(
+                    is Resource.Success -> {
+                        hideProgressBar()
+
+                        resource.data?.body()?.let { uidaiData ->
+
+                            try {
+                                val kycResp =
+                                    XstreamCommonMethods.respDecodedXmlToPojoEkyc(
                                         uidaiData.PostOnAUA_Face_authResult
                                     )
 
-                                    //  uidaiData.PostOnAUA_Face_authResult.copyToClipboard(requireContext())
+                                if (kycResp.isSuccess) {
 
-                                    log("EKYCDATA", kycResp.toString())
+                                    val bytes: ByteArray =
+                                        Base64.decode(kycResp.uidData.pht, Base64.DEFAULT)
+                                    val bitmap =
+                                        BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
 
-                                    if (kycResp.isSuccess) {
-                                        val bytes: ByteArray =
-                                            Base64.decode(kycResp.uidData.pht, Base64.DEFAULT)
-                                        val bitmap =
-                                            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-
-                                        userPhotoUIADI = bitmap
-                                        ekycImage = kycResp.uidData.pht ?: ""
-
-                                        log("EKYCDATA", userPhotoUIADI.toString())
-                                        log("EKYCDATA", ekycImage)
-
-
-                                        name = kycResp.uidData.poi.name ?: "N/A"
-                                        photo = kycResp.uidData.pht ?: "N/A"
-                                        gender = kycResp.uidData.poi.gender ?: "N/A"
-                                        dob = kycResp.uidData.poi.dob ?: "N/A"
-                                        careOf = kycResp.uidData.poa.co ?: "N/A"
-                                        state = kycResp.uidData.poa.state ?: "N/A"
-                                        dist = kycResp.uidData.poa.dist ?: "N/A"
-                                        block = kycResp.uidData.poa.subdist ?: "N/A"
-                                        village = kycResp.uidData.poa.vtc ?: "N/A"
-                                        street = kycResp.uidData.poa.loc ?: "N/A"
-                                        po = kycResp.uidData.poa.po ?: "N/A"
-                                        pinCode = kycResp.uidData.poa.pc ?: "N/A"
-
-
-                                        hideProgressBar()
-
-                                        val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-                                        val currentTime = LocalTime.now()
-                                        val formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))  // ✅ 24-hour format\
-                                        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+                                    userPhotoUIADI = bitmap
+                                    ekycImage = kycResp.uidData.pht ?: ""
+                                    name = kycResp.uidData.poi.name ?: "N/A"
+                                    photo = kycResp.uidData.pht ?: "N/A"
+                                    gender = kycResp.uidData.poi.gender ?: "N/A"
+                                    dob = kycResp.uidData.poi.dob ?: "N/A"
+                                    careOf = kycResp.uidData.poa.co ?: "N/A"
 
 
 
-                                        if (attendanceFlag== "checkin"){
+                                    val currentDate = LocalDate.now()
+                                        .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
 
+                                    val currentTime = LocalTime.now()
+                                    val formattedTime = currentTime.format(
+                                        DateTimeFormatter.ofPattern("HH:mm:ss")
+                                    )
 
-                                            commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
-                                                BuildConfig.VERSION_NAME,batchId,candidateId,currentDate,"checkin",
-                                                formattedTime,"","",candidateName,AppUtil.getSavedEntityPreference(requireContext()),AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())
-                                            ))
-                                        }
-                                        else{
+                                    val timeFormatter =
+                                        DateTimeFormatter.ofPattern("HH:mm:ss")
 
-                                            val checkInTime = LocalTime.parse(checkIn, timeFormatter)
-                                            val checkOutTime = LocalTime.parse(formattedTime, timeFormatter)
-                                            val duration = Duration.between(checkInTime, checkOutTime)
+                                    if (attendanceFlag == "checkin") {
 
+                                        commonViewModel.getInsertAttendance(
+                                            AppUtil.getSavedTokenPreference(requireContext()),
+                                            AttendanceInsertReq(
+                                                AppUtil.getAndroidId(requireContext()),
+                                                userPreferences.getUseID(),
+                                                BuildConfig.VERSION_NAME,
+                                                batchId,
+                                                candidateId,
+                                                currentDate,
+                                                "checkin",
+                                                formattedTime,
+                                                "",
+                                                "",
+                                                candidateName,
+                                                AppUtil.getSavedEntityPreference(requireContext()),
+                                                AppUtil.getSavedOrgIdPreference(requireContext()),
+                                                AppUtil.getSavedHRIdPreference(requireContext())
+                                            )
+                                        )
 
-                                            val hours = duration.toHours()
-                                            val minutes = (duration.toMinutes() % 60)
-                                            val seconds = (duration.seconds % 60)
-
-                                            val totalHoursValue = String.format("%02d:%02d:%02d", hours, minutes, seconds)
-
-                                            toastLong(totalHoursValue)
-
-                                            commonViewModel.getInsertAttendance(AppUtil.getSavedTokenPreference(requireContext()),AttendanceInsertReq(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),BuildConfig.VERSION_NAME,batchId,candidateId,currentDate,"checkout",
-                                                "",formattedTime,totalHoursValue,candidateName,AppUtil.getSavedEntityPreference(requireContext()),AppUtil.getSavedOrgIdPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext())))
-
-                                        }
-
-                                        collectAttendanceInsertResponse()
                                     } else {
-                                        hideProgressBar()
-                                        val decodedRar = decodeBase64(kycResp.rar)
-                                        decodedRar?.let { decodedRarParsed ->
-                                            val authRes = respDecodedXmlToPojoAuth(decodedRarParsed)
-                                            val errorDesc =
-                                                XstreamCommonMethods.getAuthErrorDescription(authRes.info)
-                                            toastShort(errorDesc)
 
+                                        val checkInTime =
+                                            LocalTime.parse(checkIn, timeFormatter)
 
-                                        } ?: toastShort("Try Again")
+                                        val checkOutTime =
+                                            LocalTime.parse(formattedTime, timeFormatter)
+
+                                        val duration =
+                                            Duration.between(checkInTime, checkOutTime)
+
+                                        val totalHoursValue = String.format(
+                                            "%02d:%02d:%02d",
+                                            duration.toHours(),
+                                            duration.toMinutes() % 60,
+                                            duration.seconds % 60
+                                        )
+
+                                        commonViewModel.getInsertAttendance(
+                                            AppUtil.getSavedTokenPreference(requireContext()),
+                                            AttendanceInsertReq(
+                                                AppUtil.getAndroidId(requireContext()),
+                                                userPreferences.getUseID(),
+                                                BuildConfig.VERSION_NAME,
+                                                batchId,
+                                                candidateId,
+                                                currentDate,
+                                                "checkout",
+                                                "",
+                                                formattedTime,
+                                                totalHoursValue,
+                                                candidateName,
+                                                AppUtil.getSavedEntityPreference(requireContext()),
+                                                AppUtil.getSavedOrgIdPreference(requireContext()),
+                                                AppUtil.getSavedHRIdPreference(requireContext())
+                                            )
+                                        )
                                     }
+
+                                    collectAttendanceInsertResponse()
+
+                                } else {
+                                    toastShort("Face Auth Failed")
                                 }
-                                catch (e: Exception) {
-                                    hideProgressBar()
-                                    e.printStackTrace()
-                                    log("EKYCDATA", "Error processing KYC response: ${e.message}")
-                                    toastShort("Try Again")
-                                }
+
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                toastShort("Parsing Error")
                             }
                         }
-
                     }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                hideProgressBar()
-                log("EKYCDATA", "Unhandled error: ${e.message}")
-                toastShort("Try Again")
             }
         }
     }
-
-
-
 
     private fun loadBase64Image(base64String: String?, imageView: ImageView) {
         if (base64String.isNullOrEmpty()) {
@@ -661,15 +606,15 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                         hideProgressBar()
                         result.data?.let { getAttendanceCheckStatus ->
                             if (getAttendanceCheckStatus.responseCode == 200) {
-                              val  attendanceStatusRes = getAttendanceCheckStatus.wrappedList
+                                val  attendanceStatusRes = getAttendanceCheckStatus.wrappedList
 
                                 for (x in attendanceStatusRes) {
 
-                                        checkIn = x.checkIn//00:00
+                                    checkIn = x.checkIn//00:00
                                     totalHours = x.totalHours//00:00:00
                                     latitude = x.lattitude.toDouble()
                                     checkOut = x.checkOut
-                                    radius = x.radius.toFloat()
+                                    //radius = x.radius.toFloat()
                                     attendanceFlag = x.attendanceFlag
                                     longitude = x.longitude.toDouble()
 
@@ -677,11 +622,11 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                     getCurrentLocation { location ->
                                         if (location != null) {
                                             val isInside = isUserInsideGeofence(location, latitude, longitude, radius)
-                                           // val isInside = isUserInsideGeofence(location, 26.2153, 84.3588, radius)
+                                           //  val isInside = isUserInsideGeofence(location, 26.2153, 84.3588, 5000000f)
                                             if (isInside) {
 
 
-                                            //    findNavController().navigate(SdrListFragmentDirections.actionSdrListFragmentToSdrVisitReport(formName,instituteName,finYear,instituteId))
+                                                //    findNavController().navigate(SdrListFragmentDirections.actionSdrListFragmentToSdrVisitReport(formName,instituteName,finYear,instituteId))
                                             } else {
                                                 showAlertGeoFancingDialog(requireContext(),"Alert","❌ You are outside the institute area")
 
@@ -735,7 +680,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                 toastLong("Attendance Marked")
 
 
-                               showBottomSheet(userPhotoUIADI,name,gender,dob,careOf)
+                                showBottomSheet(userPhotoUIADI,name,gender,dob,careOf)
 
                             }
                             else if (getInsertAttendance.responseCode==401){
