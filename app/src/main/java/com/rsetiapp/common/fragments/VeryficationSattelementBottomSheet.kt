@@ -378,8 +378,7 @@ class VeryficationSattelementBottomSheet : BottomSheetDialogFragment() {
                                 successMessage,   // 👈 "Verified successfully"
                                 Toast.LENGTH_SHORT
                             ).show()
-
-
+                             dismiss()
 
                             requireActivity().onBackPressedDispatcher.onBackPressed()
                         }
