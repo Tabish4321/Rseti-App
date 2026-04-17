@@ -15,6 +15,7 @@ import com.rsetiapp.common.model.request.CandidateListReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.CourseRequest
+import com.rsetiapp.common.model.request.DistrictListReq
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
@@ -33,11 +34,15 @@ import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.InsertFacultyReq
 import com.rsetiapp.common.model.request.InsertSdrVisitReq
+import com.rsetiapp.common.model.request.InstituteListReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.request.SdrListReq
 import com.rsetiapp.common.model.request.SettleStatusRequest
+import com.rsetiapp.common.model.request.SettlementVeryficationBatchReq
+import com.rsetiapp.common.model.request.SettlementVeryficationReq
+import com.rsetiapp.common.model.request.SettlementVeryficationUploadReq
 import com.rsetiapp.common.model.request.TokenReq
 import com.rsetiapp.common.model.request.ValidateOtpReq
 import com.rsetiapp.common.model.response.AttendanceBatchRes
@@ -54,6 +59,7 @@ import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.CourseResponse
+import com.rsetiapp.common.model.response.DistrictListResponse
 import com.rsetiapp.common.model.response.EapListResponse
 import com.rsetiapp.common.model.response.FaceResponse
 import com.rsetiapp.common.model.response.FacultyDetailsRes
@@ -63,6 +69,7 @@ import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.InsertFacultyRes
+import com.rsetiapp.common.model.response.InstituteResponse
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
@@ -70,6 +77,9 @@ import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.common.model.response.SdrInsertResp
 import com.rsetiapp.common.model.response.SdrListResp
 import com.rsetiapp.common.model.response.SettleStatusResponse
+import com.rsetiapp.common.model.response.SettlementPercentageListResponse
+import com.rsetiapp.common.model.response.SettlementVeryficationListResponse
+import com.rsetiapp.common.model.response.SettlementVeryficationUploadInsertRes
 import com.rsetiapp.common.model.response.TokenRes
 import com.rsetiapp.core.data.local.database.AppDatabase
 import com.rsetiapp.core.data.remote.AppLevelApi
@@ -316,6 +326,50 @@ class CommonRepository @Inject constructor(
     suspend fun insertFacultyAttendanceApi(token: String,insertFacultyReq: InsertFacultyReq) : Flow<Resource<out InsertFacultyRes>>{
         return networkBoundResourceWithoutDb {
             appLevelApi.insertFacultyAttendanceApi(token,insertFacultyReq)
+        }
+    }
+
+
+
+
+
+    suspend fun getSettlementsLoginAPI(settlementVeryficationReq: SettlementVeryficationReq): Flow<Resource<out SettlementVeryficationListResponse>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getSettlementsLoginAPI(settlementVeryficationReq)
+        }
+    }
+
+    suspend fun getdistrictListAPI(districtrReq: DistrictListReq): Flow<Resource<out DistrictListResponse>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getdistrictListAPI(districtrReq)
+        }
+    }
+
+
+//    instituteListAPI
+
+    suspend fun instituteListAPI(
+        token: String,
+        request: InstituteListReq
+    ): Flow<Resource<InstituteResponse>> {
+
+        return networkBoundResourceWithoutDb {
+            appLevelApi.instituteListAPI(
+                token = "Bearer $token",
+                request = request
+            )
+        } as Flow<Resource<InstituteResponse>>
+    }
+    suspend fun getsettledbatchAPI(settleBatchReq: SettlementVeryficationBatchReq): Flow<Resource<out SettlementPercentageListResponse>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getgetsettledbatchAPIListAPI(settleBatchReq)
+        }
+    }
+
+
+    suspend fun reverificationSettlementAPI(settlementVeryReq: SettlementVeryficationUploadReq): Flow<Resource<out SettlementVeryficationUploadInsertRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.reverificationSettlementAPI(settlementVeryReq)
         }
     }
 

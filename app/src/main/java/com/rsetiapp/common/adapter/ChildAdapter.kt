@@ -70,6 +70,14 @@ class ChildAdapter(
                         binding.root.findNavController().navigate(action)
                     }
 
+                    "SETTLEMENT_VERIFICATION" -> {
+                        val action =
+                            HomeFragmentDirections.actionSettlementVeryficationBatchFragment(
+                                form.formName
+                            )
+                        binding.root.findNavController().navigate(action)
+                    }
+
                 }
             }
         }

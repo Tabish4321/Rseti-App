@@ -17,6 +17,7 @@ import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateListReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.CourseRequest
+import com.rsetiapp.common.model.request.DistrictListReq
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
@@ -30,11 +31,15 @@ import com.rsetiapp.common.model.request.FormRequest
 import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.InsertFacultyReq
 import com.rsetiapp.common.model.request.InsertSdrVisitReq
+import com.rsetiapp.common.model.request.InstituteListReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.request.SdrListReq
 import com.rsetiapp.common.model.request.SettleStatusRequest
+import com.rsetiapp.common.model.request.SettlementVeryficationBatchReq
+import com.rsetiapp.common.model.request.SettlementVeryficationReq
+import com.rsetiapp.common.model.request.SettlementVeryficationUploadReq
 import com.rsetiapp.common.model.request.StateListReq
 import com.rsetiapp.common.model.request.TokenReq
 import com.rsetiapp.common.model.request.ValidateOtpReq
@@ -50,6 +55,7 @@ import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.CourseResponse
+import com.rsetiapp.common.model.response.DistrictListResponse
 import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
@@ -62,6 +68,7 @@ import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.InsertFacultyRes
+import com.rsetiapp.common.model.response.InstituteResponse
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
@@ -69,6 +76,9 @@ import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.common.model.response.SdrInsertResp
 import com.rsetiapp.common.model.response.SdrListResp
 import com.rsetiapp.common.model.response.SettleStatusResponse
+import com.rsetiapp.common.model.response.SettlementPercentageListResponse
+import com.rsetiapp.common.model.response.SettlementVeryficationListResponse
+import com.rsetiapp.common.model.response.SettlementVeryficationUploadInsertRes
 import com.rsetiapp.common.model.response.StateDataResponse
 import com.rsetiapp.common.model.response.TokenRes
 import com.rsetiapp.common.model.response.VillageResponse
@@ -252,5 +262,28 @@ interface AppLevelApi {
     ): SaveResponse
 
 
+
+//     Settlements  Ajit Ranjan
+
+    @POST("settlements")
+    suspend fun getSettlementsLoginAPI(@Body settlementVeryficationReq: SettlementVeryficationReq): SettlementVeryficationListResponse
+
+    @POST("districtList")
+    suspend fun getdistrictListAPI(@Body districtListReq: DistrictListReq): DistrictListResponse
+
+
+    @POST("settled-batch")
+    suspend fun getgetsettledbatchAPIListAPI(@Body batchListReq: SettlementVeryficationBatchReq): SettlementPercentageListResponse
+
+
+
+    @POST("reverificationSettlement")
+    suspend fun reverificationSettlementAPI(@Body settlementVeryficationReq: SettlementVeryficationUploadReq): SettlementVeryficationUploadInsertRes
+
+    @POST("instituteList")
+    suspend fun instituteListAPI(
+        @Header("rsetiappauth") token: String,
+        @Body request: InstituteListReq
+    ): InstituteResponse
 
 }

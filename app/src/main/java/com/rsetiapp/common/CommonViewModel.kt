@@ -19,6 +19,7 @@ import com.rsetiapp.common.model.request.BankIFSCSearchReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.CourseRequest
+import com.rsetiapp.common.model.request.DistrictListReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapListReq
 import com.rsetiapp.common.model.request.FaceCheckReq
@@ -27,11 +28,15 @@ import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.InsertFacultyReq
 import com.rsetiapp.common.model.request.InsertSdrVisitReq
+import com.rsetiapp.common.model.request.InstituteListReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.request.SdrListReq
 import com.rsetiapp.common.model.request.SettleStatusRequest
+import com.rsetiapp.common.model.request.SettlementVeryficationBatchReq
+import com.rsetiapp.common.model.request.SettlementVeryficationReq
+import com.rsetiapp.common.model.request.SettlementVeryficationUploadReq
 import com.rsetiapp.common.model.request.ValidateOtpReq
 import com.rsetiapp.common.model.response.AttendanceBatchRes
 import com.rsetiapp.common.model.response.AttendanceCandidateRes
@@ -44,6 +49,7 @@ import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.CourseResponse
+import com.rsetiapp.common.model.response.DistrictListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
@@ -55,6 +61,7 @@ import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.InsertFacultyRes
+import com.rsetiapp.common.model.response.InstituteResponse
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
@@ -62,6 +69,9 @@ import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.common.model.response.SdrInsertResp
 import com.rsetiapp.common.model.response.SdrListResp
 import com.rsetiapp.common.model.response.SettleStatusResponse
+import com.rsetiapp.common.model.response.SettlementPercentageListResponse
+import com.rsetiapp.common.model.response.SettlementVeryficationListResponse
+import com.rsetiapp.common.model.response.SettlementVeryficationUploadInsertRes
 import com.rsetiapp.common.model.response.TokenRes
 import com.rsetiapp.core.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -540,5 +550,93 @@ private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>
 
 
     val settlementData = MutableLiveData<Bundle>()
+
+
+
+
+
+
+
+
+
+
+
+
+//     Ajit Ranjan Settlement
+
+    private var _settlementVeryfication =
+        MutableStateFlow<Resource<out SettlementVeryficationListResponse>>(Resource.Loading())
+    val getsettlementVeryfication = _settlementVeryfication.asStateFlow()
+
+    fun getSettlementsLoginAPI(settlementVeryficationReq: SettlementVeryficationReq) {
+        viewModelScope.launch {
+            commonRepository.getSettlementsLoginAPI(settlementVeryficationReq).collectLatest {
+                _settlementVeryfication.emit(it)
+            }
+        }
+    }
+
+    private var _districtListReq =
+        MutableStateFlow<Resource<out DistrictListResponse>>(Resource.Loading())
+    val districtList = _districtListReq.asStateFlow()
+
+
+    fun getdistrictListAPI(districtreq: DistrictListReq) {
+        viewModelScope.launch {
+            commonRepository.getdistrictListAPI(districtreq).collectLatest {
+                _districtListReq.emit(it)
+            }
+        }
+    }
+
+
+
+    private val _instituteListAPI = MutableSharedFlow<Resource<InstituteResponse>>()
+    val instituteListAPI = _instituteListAPI.asSharedFlow()
+
+    fun instituteListAPI(
+        token: String,
+        request: InstituteListReq
+    ) {
+        viewModelScope.launch {
+            commonRepository
+                .instituteListAPI(token, request)
+                .collectLatest {
+                    _instituteListAPI.emit(it)
+                }
+        }
+    }
+
+
+    //    settled-batch
+
+
+    private var _getsettledbatchAPI =
+        MutableStateFlow<Resource<out SettlementPercentageListResponse>>(Resource.Loading())
+    val getsettledbatchAPI = _getsettledbatchAPI.asStateFlow()
+
+
+    fun getsettledbatchAPI(settlementReq: SettlementVeryficationBatchReq) {
+        viewModelScope.launch {
+            commonRepository.getsettledbatchAPI(settlementReq).collectLatest {
+                _getsettledbatchAPI.emit(it)
+            }
+        }
+    }
+
+
+    private var _reverificationSettlement =
+        MutableStateFlow<Resource<out SettlementVeryficationUploadInsertRes>>(Resource.Loading())
+    val reverificationSettlement = _reverificationSettlement.asStateFlow()
+
+
+    fun reverificationSettlementAPI(followUpInsertReq: SettlementVeryficationUploadReq) {
+        viewModelScope.launch {
+            commonRepository.reverificationSettlementAPI(followUpInsertReq).collectLatest {
+                _reverificationSettlement.emit(it)
+            }
+
+
+        }}
 
 }

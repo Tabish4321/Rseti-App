@@ -31,12 +31,15 @@ import java.util.Locale
 import java.util.TimeZone
 import android.content.res.Configuration
 import android.provider.Settings
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.rsetiapp.R
+import com.rsetiapp.common.model.request.SettlementPrefModel
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.time.Month
@@ -285,6 +288,80 @@ object AppUtil {
         }
         return false
     }
+
+
+//    Settlement Ajit Ranjan
+fun saveCandidateIdPreference(context: Context, candidateId: String) {
+    val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+    editor.putString("candidateId", candidateId)
+    editor.apply()
+}
+
+    fun getSavedCandidatePreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("candidateId", "") ?: "" // Default to English
+    }
+
+    fun saveItem(context: Context, item: SettlementPrefModel) {
+        val prefs = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val gson = Gson()
+
+        val currentList = getList(context).toMutableList()
+        currentList.add(item)
+
+        prefs.edit()
+            .putString("app_preferences", gson.toJson(currentList))
+            .apply()
+
+//        try {
+//            val json = Gson().toJson(item)
+//
+//            if (json.length > 1000000) { // ~500KB limit
+//                Log.e("SAVE_ERROR", "Data too large")
+//                return
+//            }
+//
+//            val prefs = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+//            val gson = Gson()
+//
+//            val currentList = getList(context).toMutableList()
+//            currentList.add(item)
+//
+//            prefs.edit()
+//                .putString("app_preferences", gson.toJson(currentList))
+//                .apply()
+//
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
+
+    }
+
+    fun getList(context: Context): List<SettlementPrefModel> {
+        val prefs = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = prefs.getString("app_preferences", null) ?: return emptyList()
+
+        val type = object : TypeToken<List<SettlementPrefModel>>() {}.type
+        return gson.fromJson(json, type)
+    }
+
+
+    fun saveinstituteIdPreference(context: Context, instituteId: String) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("instituteId", instituteId)
+        editor.apply()
+    }
+
+    fun getSavedinstituteIdPreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("instituteId", "") ?: "" // Default to English
+    }
+
+
+
 
 
     fun formatScheduleTimeIntoDateTime(dateTimeString: String): Pair<String, String> {
