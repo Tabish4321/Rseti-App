@@ -1,5 +1,6 @@
 package com.rsetiapp.common.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -8,12 +9,52 @@ import com.rsetiapp.common.fragments.FollowUpCandidateFragmentDirections
 import com.rsetiapp.common.fragments.SettlementVeryficationFragmentDirections
 import com.rsetiapp.common.model.response.SettlementPercentage
 import com.rsetiapp.core.util.AppUtil
+import com.rsetiapp.databinding.ItemBatchBinding
 import com.rsetiapp.databinding.ItemSettlementVeryficationBatchBinding
 
-
+//class SettlementBatchAdapter(
+//    private val list: MutableList<SettlementPercentage>,
+//    private val onItemClick: (Int) -> Unit
+//) : RecyclerView.Adapter<SettlementBatchAdapter.ViewHolder>()
+//{
+//
+//    var selectedPosition = -1
+//
+//    inner class ViewHolder(val binding: ItemBatchBinding) :
+//        RecyclerView.ViewHolder(binding.root)
+//
+//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+//        val binding = ItemBatchBinding.inflate(
+//            LayoutInflater.from(parent.context), parent, false
+//        )
+//        return ViewHolder(binding)
+//    }
+//
+//    override fun getItemCount(): Int = list.size
+//
+//    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+//
+//        val item = list[position]
+//        holder.binding.tvBatchName.text = item.batchName
+//
+//        // 🔴 Highlight selected item
+//        if (position == selectedPosition) {
+//            holder.itemView.setBackgroundColor(Color.RED)
+//        } else {
+//            holder.itemView.setBackgroundColor(Color.BLACK)
+//        }
+//
+//        holder.itemView.setOnClickListener {
+//            selectedPosition = position
+//            notifyDataSetChanged()
+//            onItemClick(position)
+//        }
+//    }
+//}
 class SettlementBatchAdapter(
     private val candidateList: MutableList<SettlementPercentage>
-) : RecyclerView.Adapter<SettlementBatchAdapter.CandidateViewHolder>() {
+) : RecyclerView.Adapter<SettlementBatchAdapter.CandidateViewHolder>()
+{
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CandidateViewHolder {
         val binding =

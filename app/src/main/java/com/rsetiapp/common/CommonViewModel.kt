@@ -49,6 +49,7 @@ import com.rsetiapp.common.model.response.CandidateListResponse
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.CourseResponse
+import com.rsetiapp.common.model.response.DistrictList
 import com.rsetiapp.common.model.response.DistrictListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
@@ -62,6 +63,7 @@ import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
 import com.rsetiapp.common.model.response.InsertFacultyRes
 import com.rsetiapp.common.model.response.InstituteResponse
+import com.rsetiapp.common.model.response.Institutes
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
@@ -69,6 +71,7 @@ import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.common.model.response.SdrInsertResp
 import com.rsetiapp.common.model.response.SdrListResp
 import com.rsetiapp.common.model.response.SettleStatusResponse
+import com.rsetiapp.common.model.response.SettlementPercentage
 import com.rsetiapp.common.model.response.SettlementPercentageListResponse
 import com.rsetiapp.common.model.response.SettlementVeryficationListResponse
 import com.rsetiapp.common.model.response.SettlementVeryficationUploadInsertRes
@@ -89,6 +92,14 @@ import javax.inject.Inject
 @HiltViewModel
 class CommonViewModel @Inject constructor(private val commonRepository: CommonRepository) :
     ViewModel() {
+    // ✅ Flags
+    var isDistrictLoaded = false
+    var isBatchConsumed = false
+
+    // ✅ Cached Data (IMPORTANT)
+    var districtListCache: List<DistrictList> = emptyList()
+    var instituteListCache: List<Institutes> = emptyList()
+    var batchListCache: List<SettlementPercentage> = emptyList()
 
     private var _getToken = MutableSharedFlow<Resource<out TokenRes>>()
     val getToken = _getToken.asSharedFlow()

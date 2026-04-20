@@ -6,7 +6,9 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rsetiapp.BuildConfig
@@ -28,8 +30,293 @@ import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.databinding.FragmentSettlementVeryficationBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
+
+//@AndroidEntryPoint
+//class SettlementVeryficationFragment :
+//    BaseFragment<FragmentSettlementVeryficationBinding>(
+//        FragmentSettlementVeryficationBinding::inflate
+//    ) {
+//
+//    private lateinit var districtAdapter: ArrayAdapter<String>
+//    private lateinit var instituteAdapter: ArrayAdapter<String>
+//
+//    private var districtList: List<DistrictList> = emptyList()
+//    private var instituteList: List<Institutes> = emptyList()
+//
+//    private val districtNames = ArrayList<String>()
+//    private val instituteNames = ArrayList<String>()
+//
+//    private val commonViewModel: CommonViewModel by activityViewModels()
+//
+//    private lateinit var batchAdapter: SettlementBatchAdapter
+//    private val batchList = mutableListOf<SettlementPercentage>()
+//
+//    private var instituteJob: Job? = null
+//    private var batchJob: Job? = null
+//
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//        init()
+//    }
+//
+//    private fun init() {
+//
+//        binding.tvTitleName.text = getString(R.string.settlement_batch)
+//
+//        binding.backButton.setOnClickListener {
+//            findNavController().navigateUp()
+//        }
+//
+//        setupRecycler()
+//        setupDistrictSpinner()
+//        setupInstituteSpinner()
+//
+//        // 🔥 Load district
+//        if (commonViewModel.districtCache.isNotEmpty()) {
+//            setDistrictData(commonViewModel.districtCache)
+//        } else {
+//            val value = AppUtil.getSavedEntityPreference(requireContext())
+//            val lastTwoDigits = value.takeLast(2)
+//
+//            commonViewModel.getdistrictListAPI(
+//                DistrictListReq(lastTwoDigits, BuildConfig.VERSION_NAME)
+//            )
+//            observeDistrict()
+//        }
+//    }
+//
+//    // ---------------- Recycler ----------------
+//
+//    private fun setupRecycler() {
+//        batchAdapter = SettlementBatchAdapter(batchList) {
+//            commonViewModel.selectedBatchPosition = it
+//        }
+//
+//        binding.rvBatch.layoutManager = LinearLayoutManager(requireContext())
+//        binding.rvBatch.adapter = batchAdapter
+//    }
+//
+//    // ---------------- District ----------------
+//
+//    private fun setupDistrictSpinner() {
+//
+//        districtAdapter = ArrayAdapter(
+//            requireContext(),
+//            android.R.layout.simple_spinner_dropdown_item,
+//            districtNames
+//        )
+//
+//        binding.spinnerDistrict.setAdapter(districtAdapter)
+//
+//        binding.spinnerDistrict.setOnItemClickListener { _, _, position, _ ->
+//
+//            val selected = districtList[position]
+//
+//            commonViewModel.selectedDistrictId = selected.districtCode
+//
+//            // 🔥 FIX: clear cache
+//            commonViewModel.instituteCache = emptyList()
+//            commonViewModel.batchCache = emptyList()
+//            commonViewModel.selectedInstituteId = null
+//
+//            instituteNames.clear()
+//            instituteAdapter.notifyDataSetChanged()
+//
+//            batchList.clear()
+//            batchAdapter.notifyDataSetChanged()
+//
+//            loadInstitute(selected.districtCode)
+//        }
+//    }
+//
+//    private fun observeDistrict() {
+//        lifecycleScope.launch {
+//            commonViewModel.districtList.collectLatest { resource ->
+//                if (resource is Resource.Success) {
+//                    val list = resource.data?.districtList ?: return@collectLatest
+//                    commonViewModel.districtCache = list
+//                    setDistrictData(list)
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun setDistrictData(list: List<DistrictList>) {
+//
+//        districtList = list
+//        districtNames.clear()
+//        list.forEach { districtNames.add(it.districtName) }
+//
+//        districtAdapter.notifyDataSetChanged()
+//
+//        val selectedId = commonViewModel.selectedDistrictId
+//        val index = list.indexOfFirst { it.districtCode == selectedId }
+//
+//        if (index != -1) {
+//            binding.spinnerDistrict.setText(districtNames[index], false)
+//            loadInstitute(list[index].districtCode)
+//        }
+//    }
+//
+//    // ---------------- Institute ----------------
+//
+//    private fun setupInstituteSpinner() {
+//
+//        instituteAdapter = ArrayAdapter(
+//            requireContext(),
+//            android.R.layout.simple_spinner_dropdown_item,
+//            instituteNames
+//        )
+//
+//        binding.spinnerInstitute.setAdapter(instituteAdapter)
+//
+//        binding.spinnerInstitute.setOnItemClickListener { _, _, position, _ ->
+//
+//            val selected = instituteList[position]
+//
+//            commonViewModel.selectedInstituteId = selected.instituteId
+//
+//            // 🔥 clear old batch cache
+//            commonViewModel.batchCache = emptyList()
+//
+//            loadBatch(selected.instituteId)
+//        }
+//    }
+//
+//    private fun loadInstitute(districtCode: String) {
+//
+//        // 🔥 ALWAYS CALL API (fix)
+//        commonViewModel.instituteListAPI(
+//            AppUtil.getSavedTokenPreference(requireContext()),
+//
+//            InstituteListReq(
+//                appVersion = BuildConfig.VERSION_NAME,
+//        login = userPreferences.getUseID(),
+//        imeiNo = AppUtil.getAndroidId(requireContext()),
+//        districtCode = districtCode
+////                districtCode = "0551"
+//        )
+//
+//
+//
+//
+////            InstituteListReq(
+////                BuildConfig.VERSION_NAME,
+////                "",
+////                AppUtil.getAndroidId(requireContext()),
+////                districtCode
+////            )
+//        )
+//
+//        observeInstitute()
+//    }
+//
+//    private fun observeInstitute() {
+//
+//        instituteJob?.cancel()
+//
+//        instituteJob = lifecycleScope.launch {
+//            commonViewModel.instituteListAPI.collectLatest { resource ->
+//
+//                when (resource) {
+//
+//                    is Resource.Success -> {
+//                        val list = resource.data?.wrappedList ?: emptyList()
+//
+//                        commonViewModel.instituteCache = list
+//                        setInstituteData(list)
+//                    }
+//
+//                    is Resource.Error -> {
+//                        Toast.makeText(requireContext(), "Institute error", Toast.LENGTH_SHORT).show()
+//                    }
+//
+//                    else -> {}
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun setInstituteData(list: List<Institutes>) {
+//
+//        instituteList = list
+//        instituteNames.clear()
+//        list.forEach { instituteNames.add(it.instituteName) }
+//
+//        instituteAdapter.notifyDataSetChanged()
+//
+//        val selectedId = commonViewModel.selectedInstituteId
+//        val index = list.indexOfFirst { it.instituteId == selectedId }
+//
+//        if (index != -1) {
+//            binding.spinnerInstitute.setText(instituteNames[index], false)
+//            loadBatch(list[index].instituteId)
+//        }
+//    }
+//
+//    // ---------------- Batch ----------------
+//
+//    private fun loadBatch(instituteId: String) {
+//
+//        commonViewModel.getsettledbatchAPI(
+//            SettlementVeryficationBatchReq(
+//                BuildConfig.VERSION_NAME,
+//                instituteId
+//            )
+//        )
+//
+//        observeBatch()
+//    }
+//
+//    private fun observeBatch() {
+//
+//        batchJob?.cancel()
+//
+//        batchJob = lifecycleScope.launch {
+//            commonViewModel.getsettledbatchAPI.collectLatest { resource ->
+//
+//                when (resource) {
+//
+//                    is Resource.Success -> {
+//                        val list = resource.data?.wrappedList ?: emptyList()
+//
+//                        commonViewModel.batchCache = list
+//                        setBatchData(list)
+//                    }
+//
+//                    is Resource.Error -> {
+//                        Toast.makeText(requireContext(), "Batch error", Toast.LENGTH_SHORT).show()
+//                    }
+//
+//                    else -> {}
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun setBatchData(list: List<SettlementPercentage>) {
+//
+//        batchList.clear()
+//        batchList.addAll(list)
+//
+//        batchAdapter.notifyDataSetChanged()
+//
+//        // 🔴 restore selected
+//        batchAdapter.selectedPosition = commonViewModel.selectedBatchPosition
+//        batchAdapter.notifyDataSetChanged()
+//    }
+//}
+
+
+
+
+
+
+
 
 @AndroidEntryPoint
 class SettlementVeryficationFragment : BaseFragment<FragmentSettlementVeryficationBinding>(FragmentSettlementVeryficationBinding::inflate) {
@@ -89,7 +376,7 @@ class SettlementVeryficationFragment : BaseFragment<FragmentSettlementVeryficati
         DistrictAdapter()
 
         Institutelistner()
-//        setupAdapter()
+        setupAdapter()
 
 
     }
@@ -138,13 +425,13 @@ class SettlementVeryficationFragment : BaseFragment<FragmentSettlementVeryficati
             binding.spinnerInstitute.setText("", false)
 
             // Clear batch data
-            batchList.clear()
-            binding.rvBatch.adapter = null
+//            batchList.clear()
+//            binding.rvBatch.adapter = null
 
 //            settlementVeryfiationAdapter.update(emptyList()) // IMPORTANT
 
-            InstituteAdapter.clear()
-            InstituteName.clear()
+//            InstituteAdapter.clear()
+//            InstituteName.clear()
             binding.spinnerInstitute.text
             val request = InstituteListReq(
                 appVersion = BuildConfig.VERSION_NAME,
@@ -168,11 +455,11 @@ class SettlementVeryficationFragment : BaseFragment<FragmentSettlementVeryficati
 
     }
 
-    fun update(newList: List<SettlementPercentage>) {
-        batchList.clear()
-        batchList.addAll(newList)
-//        notifyDataSetChanged()
-    }
+//    fun update(newList: List<SettlementPercentage>) {
+//        batchList.clear()
+//        batchList.addAll(newList)
+////        notifyDataSetChanged()
+//    }
     private fun InstituteListResponse() {
 
         lifecycleScope.launch {
@@ -302,7 +589,7 @@ class SettlementVeryficationFragment : BaseFragment<FragmentSettlementVeryficati
 
                         val list = resource.data?.wrappedList
                         if (!list.isNullOrEmpty()) {
-                            batchList.clear()
+//                            batchList.clear()
                             batchList.addAll(list)
                             setupAdapter()
 //                            settlementVeryfiationAdapter.notifyDataSetChanged()
