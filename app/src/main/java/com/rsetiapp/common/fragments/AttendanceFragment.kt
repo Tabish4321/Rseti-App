@@ -612,7 +612,7 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                     totalHours = x.totalHours//00:00:00
                                     latitude = x.lattitude.toDouble()
                                     checkOut = x.checkOut
-                                    //radius = x.radius.toFloat()
+                                    radius = x.radius.toFloat()
                                     attendanceFlag = x.attendanceFlag
                                     longitude = x.longitude.toDouble()
 
