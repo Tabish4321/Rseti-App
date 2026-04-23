@@ -425,8 +425,8 @@ class SettlementVeryficationFragment : BaseFragment<FragmentSettlementVeryficati
             binding.spinnerInstitute.setText("", false)
 
             // Clear batch data
-//            batchList.clear()
-//            binding.rvBatch.adapter = null
+            batchList.clear()
+            binding.rvBatch.adapter = null
 
 //            settlementVeryfiationAdapter.update(emptyList()) // IMPORTANT
 

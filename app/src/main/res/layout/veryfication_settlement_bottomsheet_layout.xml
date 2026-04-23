@@ -702,6 +702,54 @@
 
 
 
+
+            <LinearLayout
+                android:id="@+id/linradioLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/llImageUpload3">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textAlignment="viewStart"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:fontFamily="@font/avenir_next_regular"
+                    android:text="@string/all_detail_correct"
+                    android:layout_height="wrap_content"/>
+
+
+
+                <RadioGroup
+                    android:id="@+id/radioGroupAreBoardingAandLoadingFacilitiesProvidedYesNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radioAreBoardingAandLoadingFacilitiesProvidedYes"
+                        android:layout_width="wrap_content"
+                        android:fontFamily="@font/avenir_next_regular"
+                        android:layout_height="wrap_content"
+                        android:text="@string/yes"/>
+
+                    <RadioButton
+                        android:id="@+id/radioAreBoardingAandLoadingFacilitiesProvidedNo"
+                        android:layout_width="wrap_content"
+                        android:fontFamily="@font/avenir_next_regular"
+                        android:layout_height="wrap_content"
+                        android:text="@string/no"/>
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+
             <LinearLayout
                 android:id="@+id/llProof"
                 android:layout_width="match_parent"
@@ -710,7 +758,7 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/llImageUpload3">
+                app:layout_constraintTop_toBottomOf="@+id/linradioLayout">
 
 
 
@@ -725,16 +773,36 @@
                     android:textSize="16sp" />
 
                 <!-- EditText with custom background -->
+
                 <EditText
                     android:id="@+id/TvRemark"
+                    android:visibility="gone"
                     style="@style/EditText"
                     android:background="@drawable/edittext_background"
                     android:hint="@string/enter_remark"
                     android:padding="12dp"
-                    android:inputType="text"
-                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "
+                    android:inputType="textMultiLine"
+                    android:gravity="top|start"
+                    android:maxLength="500"
+                    android:minLines="3"
+                    android:maxLines="10"
+
+                    android:scrollbars="vertical"
+                    android:overScrollMode="always"
+
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
+<!--                <EditText-->
+<!--                    android:id="@+id/TvRemark"-->
+<!--                    android:visibility="gone"-->
+<!--                    style="@style/EditText"-->
+<!--                    android:background="@drawable/edittext_background"-->
+<!--                    android:hint="@string/enter_remark"-->
+<!--                    android:padding="12dp"-->
+<!--                    android:inputType="text"-->
+<!--                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "-->
+<!--                    android:textColor="@android:color/black"-->
+<!--                    android:textSize="16sp" />-->
 
 
 

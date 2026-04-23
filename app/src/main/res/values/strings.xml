@@ -206,6 +206,9 @@
     <string name="enter_remark">Enter Remark</string>
     <string name="settlement_batch">Settlement Batch</string>
     <string name="settlement_veryfication">Settlement Veryfication</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="all_detail_correct">All Detail Correct?</string>
 
 
 </resources>

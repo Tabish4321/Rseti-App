@@ -63,6 +63,7 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 import android.widget.Button
+import android.widget.RadioGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
@@ -133,6 +134,7 @@ class VeryficationSattelementBottomSheet : BottomSheetDialogFragment() {
     private var settlementId = ""
     private var followUpId = ""
     private var batchId = ""
+    var isBoardingLoadingProvided: String? = null
     private var ifscCode = ""
     private var loanAccountNo = ""
     private var creditFromBank = ""
@@ -236,7 +238,23 @@ class VeryficationSattelementBottomSheet : BottomSheetDialogFragment() {
         val tvFamilyMemberWorksPartTime =
             view.findViewById<TextView>(R.id.tvFamilyMemberWorksPartTime)
 
+        val radioGroup = view.findViewById<RadioGroup>(R.id.radioGroupAreBoardingAandLoadingFacilitiesProvidedYesNo)
+// 👇 Listener lagao (IMPORTANT)
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
 
+            when (checkedId) {
+
+                R.id.radioAreBoardingAandLoadingFacilitiesProvidedYes -> {
+                    isBoardingLoadingProvided = "Yes"
+                    TvRemark.visibility = View.GONE
+                }
+
+                R.id.radioAreBoardingAandLoadingFacilitiesProvidedNo -> {
+                    isBoardingLoadingProvided = "No"
+                    TvRemark.visibility = View.VISIBLE
+                }
+            }
+        }
         tVstatus.setText(statusName)
         tvIfscCode.setText(ifscCode)
         tvLoanBankAcNo.setText(loanAccountNo)
@@ -292,7 +310,16 @@ class VeryficationSattelementBottomSheet : BottomSheetDialogFragment() {
                 if (location != null) {
                     val isInside = isUserInsideGeofence(location, latitude, longitude, radius)
                     if (isInside) {
-                        reverificationSettlement()
+
+                        if (isBoardingLoadingProvided.isNullOrEmpty()) {
+                            // ❌ No selection
+                            toastLong(" Please Select All Details Correct?")
+
+                        } else {
+                            reverificationSettlement()
+
+                        }
+//                        reverificationSettlement()
                     } else {
                         showAlertGeoFancingDialog(
                             requireContext(),
@@ -344,7 +371,9 @@ class VeryficationSattelementBottomSheet : BottomSheetDialogFragment() {
                 employmentGiven,
                 familyMemberPartTime,
                 userPreferences.getUserName(),
-                BuildConfig.VERSION_NAME
+                isBoardingLoadingProvided,
+                BuildConfig.VERSION_NAME,
+
             )
 
             // ✅ 2️⃣ PRINT REQUEST JSON
