@@ -524,9 +524,29 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
 
 
     private fun getTransactionID(): String {
-        val secureRandom = SecureRandom()
-        return secureRandom.nextInt(9999).toString()
+        val prefix = "RSETI"
+        val suffix = "AEAD"
+
+        // 12 digit random number
+        val random = SecureRandom()
+        val n = (100000000000L + (random.nextDouble() * 900000000000L)).toLong()
+
+        val date = Date()
+
+        val yyyy = SimpleDateFormat("yyyy", Locale.getDefault()).format(date)
+        val mm = SimpleDateFormat("MM", Locale.getDefault()).format(date)
+        val dd = SimpleDateFormat("dd", Locale.getDefault()).format(date)
+
+        val hh = SimpleDateFormat("HH", Locale.getDefault()).format(date) // 24-hour format better
+        val min = SimpleDateFormat("mm", Locale.getDefault()).format(date)
+        val ss = SimpleDateFormat("ss", Locale.getDefault()).format(date)
+
+        val strDate = yyyy + mm + dd
+        val strTime = hh + min + ss
+
+        return "$prefix$n$strDate$strTime$suffix"
     }
+
 
 
     private fun invokeCaptureIntent() {
