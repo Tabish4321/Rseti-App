@@ -28,6 +28,7 @@ import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.FollowUpInsertReq
 import com.rsetiapp.common.model.request.FollowUpTypeReq
 import com.rsetiapp.common.model.request.FormRequest
+import com.rsetiapp.common.model.request.GetSettledCandidateReq
 import com.rsetiapp.common.model.request.GramPanchayatReq
 import com.rsetiapp.common.model.request.InsertFacultyReq
 import com.rsetiapp.common.model.request.InsertSdrVisitReq
@@ -67,6 +68,8 @@ import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
+//import com.rsetiapp.common.model.response.GetSettledCandidate
+import com.rsetiapp.common.model.response.GetSettledCandidateRes
 import com.rsetiapp.common.model.response.InsertFacultyRes
 import com.rsetiapp.common.model.response.InstituteResponse
 import com.rsetiapp.common.model.response.LoginRes
@@ -272,6 +275,10 @@ interface AppLevelApi {
     suspend fun getdistrictListAPI(@Body districtListReq: DistrictListReq): DistrictListResponse
 
 
+
+
+
+
     @POST("settled-batch")
     suspend fun getgetsettledbatchAPIListAPI(@Body batchListReq: SettlementVeryficationBatchReq): SettlementPercentageListResponse
 
@@ -280,6 +287,17 @@ interface AppLevelApi {
 //    @POST("reverificationSet")
     @POST("reverificationSettlement")
     suspend fun reverificationSettlementAPI(@Body settlementVeryficationReq: SettlementVeryficationUploadReq): SettlementVeryficationUploadInsertRes
+
+
+
+
+    @POST("getSettledCandidate")
+    suspend fun getSettledCandidateAPI(@Header("rsetiappauth") token: String,
+                                            @Body candidateListReq: GetSettledCandidateReq): GetSettledCandidateRes
+
+
+//    @POST("getSettledCandidate")
+//    suspend fun getSettledCandidateAPI(@Body settlementVeryficationReq: GetSettledCandidateReq): GetSettledCandidate
 
     @POST("instituteList")
     suspend fun instituteListAPI(

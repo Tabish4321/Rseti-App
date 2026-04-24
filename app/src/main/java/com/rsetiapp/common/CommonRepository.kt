@@ -32,6 +32,7 @@ import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.common.model.request.FormRequest
+import com.rsetiapp.common.model.request.GetSettledCandidateReq
 import com.rsetiapp.common.model.request.InsertFacultyReq
 import com.rsetiapp.common.model.request.InsertSdrVisitReq
 import com.rsetiapp.common.model.request.InstituteListReq
@@ -68,6 +69,8 @@ import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
+//import com.rsetiapp.common.model.response.GetSettledCandidate
+import com.rsetiapp.common.model.response.GetSettledCandidateRes
 import com.rsetiapp.common.model.response.InsertFacultyRes
 import com.rsetiapp.common.model.response.InstituteResponse
 import com.rsetiapp.common.model.response.LoginRes
@@ -88,6 +91,7 @@ import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.networkBoundResourceWithoutDb
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.Header
 import javax.inject.Inject
 
@@ -343,6 +347,12 @@ class CommonRepository @Inject constructor(
         return networkBoundResourceWithoutDb {
             appLevelApi.getdistrictListAPI(districtrReq)
         }
+
+
+
+
+
+
     }
 
 
@@ -372,6 +382,29 @@ class CommonRepository @Inject constructor(
             appLevelApi.reverificationSettlementAPI(settlementVeryReq)
         }
     }
+
+
+
+
+    suspend fun getSettledCandidateAPI(header :String,
+                                appVersion: String, batchId: Int,imeiNo: String,login: String
+    ): Flow<Resource<out GetSettledCandidateRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getSettledCandidateAPI(header,GetSettledCandidateReq(login,appVersion,imeiNo,batchId))
+        }
+    }
+
+
+
+//    suspend fun getSettledCandidateAPI(getsettledcandidateReq: GetSettledCandidateReq): Flow<Resource<out GetSettledCandidate>> {
+//        return networkBoundResourceWithoutDb {
+//            appLevelApi.getSettledCandidateAPI(getsettledcandidateReq)
+//        }
+//    }
+
+
+
+
 
 
 }

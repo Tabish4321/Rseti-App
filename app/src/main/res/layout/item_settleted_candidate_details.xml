@@ -1,77 +1,348 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/dp_20"
-    android:layout_marginTop="@dimen/dp_10"
-    android:background="@drawable/card_follow_up_background"
-    android:elevation="@dimen/dp_1"
-    android:padding="@dimen/dp_10">
+    android:layout_margin="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/candidateImage"
-        android:layout_width="@dimen/dp_55"
-        android:layout_height="@dimen/dp_55"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/CustomCircleShape"
-        app:strokeColor="@color/color_dark_green"
-        app:strokeWidth="@dimen/dp_1" />
-
-    <TextView
-        android:id="@+id/tvCandidate"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_5"
-        android:layout_marginTop="@dimen/dp_5"
-        android:fontFamily="@font/avenir_next_regular"
-        android:text="@string/name"
-        android:textColor="@color/color_follow_up_title"
-        android:textSize="@dimen/sp_14"
-        app:layout_constraintStart_toEndOf="@id/candidateImage"
-        app:layout_constraintTop_toTopOf="@+id/candidateImage" />
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tvCandidateName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_5"
-        android:layout_marginTop="@dimen/dp_5"
-        android:fontFamily="@font/avenir_next_bold"
-        android:text="@string/candidate_name"
-        android:textColor="@color/color_text"
-        android:textSize="@dimen/sp_14"
-        app:layout_constraintStart_toEndOf="@+id/tvCandidate"
-        app:layout_constraintTop_toTopOf="parent" />
-<!--    candidateId-->
-    <TextView
-        android:id="@+id/tvRollNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_5"
-        android:fontFamily="@font/avenir_next_regular"
-        android:text="@string/roll_no"
-        android:textColor="@color/color_follow_up_title"
-        android:textSize="@dimen/sp_14"
-        app:layout_constraintStart_toEndOf="@id/candidateImage"
-        app:layout_constraintTop_toBottomOf="@+id/tvCandidate" />
+        <!-- 🔹 Profile Image -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/candidateImage"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/CustomCircleShape"
+            app:strokeColor="@color/color_dark_green"
+            app:strokeWidth="2dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <!-- 🔹 Right Container -->
+        <LinearLayout
+            android:id="@+id/rightContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp"
+            app:layout_constraintStart_toEndOf="@id/candidateImage"
+            app:layout_constraintTop_toTopOf="@id/candidateImage"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- 🔹 ROW 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="6dp">
+
+                <TextView
+                    android:id="@+id/tvBatchRegno"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/batch_id"
+                    android:textColor="@color/color_follow_up_title"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tvtvBatchRegNoValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:text="@string/batch_id"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_text"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"/>
+
+            <!-- 🔹 ROW 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="6dp">
+
+                <TextView
+                    android:id="@+id/tvRollNumber"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/roll_no"
+                    android:textColor="@color/color_follow_up_title"/>
+
+                <TextView
+                    android:id="@+id/tvRollNumberValue"
+                    android:text="@string/roll_no"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_text"/>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0"/>
+
+            <!-- 🔹 ROW 3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="6dp">
+
+                <TextView
+                    android:id="@+id/tvCandidate"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/name"
+                    android:textColor="@color/color_follow_up_title"/>
+
+                <TextView
+                    android:id="@+id/tvCandidateName"
+                    android:text="@string/candidate_name"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_text"/>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0"/>
+
+            <!-- 🔹 ROW 4 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="6dp">
+
+                <TextView
+                    android:id="@+id/tvCandidateId"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/candidate_id"
+                    android:textColor="@color/color_follow_up_title"/>
+
+                <TextView
+                    android:id="@+id/tvCandidateIdValue"
+                    android:text="@string/candidate_id"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_text"/>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0"/>
+
+            <!-- 🔹 ROW 5 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="6dp">
+
+                <TextView
+                    android:id="@+id/tvContact"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/contact_number"
+                    android:textColor="@color/color_follow_up_title"/>
+
+                <TextView
+                    android:id="@+id/tvContactNumber"
+                    android:text="@string/contact_number"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_text"/>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0"/>
+
+            <!-- 🔹 ROW 6 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="6dp">
+
+                <TextView
+                    android:id="@+id/tvguardianContact"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/guardian_ph_no"
+                    android:textColor="@color/color_follow_up_title"/>
+
+                <TextView
+                    android:id="@+id/tvguardianContactValue"
+                    android:text="@string/guardian_ph_no"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_text"/>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0"/>
+
+            <!-- 🔹 ROW 7 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="6dp">
+
+                <TextView
+                    android:id="@+id/tvsettledOn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/settled_on"
+                    android:textColor="@color/color_follow_up_title"/>
+
+                <TextView
+                    android:id="@+id/tvsettledOnValue"
+                    android:text="@string/settled_on"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_text"/>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0"/>
+
+            <!-- 🔹 ROW 8 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="6dp">
+
+                <TextView
+                    android:id="@+id/tvverificationStatus"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/verification_status"
+                    android:textColor="@color/color_follow_up_title"/>
+
+                <TextView
+                    android:id="@+id/tvverificationStatusValue"
+                    android:text="@string/verification_status"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_text"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
 
 
-    <TextView
-        android:id="@+id/tvRollNumberValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_5"
-        android:fontFamily="@font/avenir_next_bold"
-        android:text="@string/roll_no"
-        android:textColor="@color/color_text"
-        android:textSize="@dimen/sp_14"
-        app:layout_constraintStart_toEndOf="@+id/tvRollNumber"
-        app:layout_constraintTop_toBottomOf="@+id/tvCandidateName" />
+
+
+
+
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:id="@+id/container"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:layout_marginHorizontal="@dimen/dp_20"-->
+<!--    android:layout_marginTop="@dimen/dp_10"-->
+<!--    android:background="@drawable/card_follow_up_background"-->
+<!--    android:elevation="@dimen/dp_1"-->
+<!--    android:padding="@dimen/dp_10">-->
+
+<!--    <com.google.android.material.imageview.ShapeableImageView-->
+<!--        android:id="@+id/candidateImage"-->
+<!--        android:layout_width="@dimen/dp_55"-->
+<!--        android:layout_height="@dimen/dp_55"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:shapeAppearanceOverlay="@style/CustomCircleShape"-->
+<!--        app:strokeColor="@color/color_dark_green"-->
+<!--        app:strokeWidth="@dimen/dp_1" />-->
+
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvBatchRegno"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="@dimen/dp_5"-->
+<!--        android:layout_marginTop="@dimen/dp_5"-->
+<!--        android:fontFamily="@font/avenir_next_regular"-->
+<!--        android:text="@string/batch_id"-->
+<!--        android:textColor="@color/color_follow_up_title"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@id/candidateImage"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/candidateImage" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvtvBatchRegNoValue"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="@dimen/dp_5"-->
+<!--        android:layout_marginTop="@dimen/dp_5"-->
+<!--        android:fontFamily="@font/avenir_next_bold"-->
+<!--        android:text="@string/batch_id"-->
+<!--        android:textColor="@color/color_text"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/tvBatchRegno"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvRollNumber"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="@dimen/dp_5"-->
+<!--        android:fontFamily="@font/avenir_next_regular"-->
+<!--        android:text="@string/roll_no"-->
+<!--        android:textColor="@color/color_follow_up_title"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@id/candidateImage"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvtvBatchRegNoValue" />-->
+
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvRollNumberValue"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="@dimen/dp_5"-->
+<!--        android:fontFamily="@font/avenir_next_bold"-->
+<!--        android:text="@string/roll_no"-->
+<!--        android:textColor="@color/color_text"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/tvRollNumber"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvtvBatchRegNoValue" />-->
+
+
+
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvCandidate"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="@dimen/dp_5"-->
+<!--        android:fontFamily="@font/avenir_next_regular"-->
+<!--        android:text="@string/name"-->
+<!--        android:textColor="@color/color_follow_up_title"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@id/candidateImage"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvRollNumberValue" />-->
+
+<!--    <TextView-->
+<!--            android:id="@+id/tvCandidateName"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="@dimen/dp_5"-->
+<!--        android:fontFamily="@font/avenir_next_bold"-->
+<!--        android:text="@string/candidate_name"-->
+<!--        android:textColor="@color/color_text"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/tvRollNumber"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvRollNumberValue"-->
+<!--        />-->
+
+
 
 
 
@@ -85,340 +356,122 @@
 <!--        android:textColor="@color/color_follow_up_title"-->
 <!--        android:textSize="@dimen/sp_14"-->
 <!--        app:layout_constraintStart_toEndOf="@id/candidateImage"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/tvCandidate" />-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvCandidateName" />-->
 
 <!--    <TextView-->
-<!--        android:id="@+id/tvCandidateIdValueValue"-->
+<!--        android:id="@+id/tvCandidateIdValue"-->
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->
 <!--        android:layout_marginStart="@dimen/dp_5"-->
 <!--        android:fontFamily="@font/avenir_next_bold"-->
-<!--        android:text="@string/roll_no"-->
+<!--        android:text="@string/candidate_id"-->
 <!--        android:textColor="@color/color_text"-->
 <!--        android:textSize="@dimen/sp_14"-->
 <!--        app:layout_constraintStart_toEndOf="@+id/tvCandidateId"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/tvCandidateName" />-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvCandidateName"-->
+<!--        />-->
 
-    <TextView
-        android:id="@+id/tvContact"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_5"
-        android:fontFamily="@font/avenir_next_regular"
-        android:text="@string/contact_number"
-        android:textColor="@color/color_follow_up_title"
-        android:textSize="@dimen/sp_14"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/candidateImage" />
+<!--    <TextView-->
+<!--        android:id="@+id/tvContact"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
 
-    <TextView
-        android:id="@+id/tvContactNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_5"
-        android:fontFamily="@font/avenir_next_bold"
-        android:text="@string/contact_number"
-        android:textColor="@color/color_text"
-        android:textSize="@dimen/sp_14"
-        app:layout_constraintStart_toEndOf="@+id/tvContact"
-        app:layout_constraintTop_toTopOf="@+id/tvContact" />
+<!--        android:fontFamily="@font/avenir_next_regular"-->
+<!--        android:text="@string/contact_number"-->
+<!--        android:textColor="@color/color_follow_up_title"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@id/candidateImage"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvCandidateIdValue" />-->
+<!--&lt;!&ndash;    app:layout_constraintStart_toStartOf="parent"&ndash;&gt;-->
+<!--&lt;!&ndash;    app:layout_constraintTop_toBottomOf="@+id/candidateImage"&ndash;&gt;-->
 
-    <TextView
-        android:id="@+id/tvSettlement"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:fontFamily="@font/avenir_next_regular"
-        android:text="@string/settlement_status"
-        android:textColor="@color/color_follow_up_title"
-        android:textSize="@dimen/sp_14"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvContact" />
+<!--    <TextView-->
+<!--        android:id="@+id/tvContactNumber"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="@dimen/dp_5"-->
 
-    <TextView
-        android:id="@+id/tvSettlementStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_5"
-        android:visibility="gone"
-        android:fontFamily="@font/avenir_next_bold"
-        android:text="@string/settlement_status"
-        android:textColor="@color/color_text"
-        android:textSize="@dimen/sp_14"
-        app:layout_constraintStart_toEndOf="@+id/tvSettlement"
-        app:layout_constraintTop_toTopOf="@+id/tvSettlement" />
+<!--        android:fontFamily="@font/avenir_next_bold"-->
+<!--        android:text="@string/contact_number"-->
+<!--        android:textColor="@color/color_text"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@id/tvContact"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvCandidateIdValue" />-->
 
-    <TextView
-        android:id="@+id/tvFollowUpStatus"
-        android:layout_width="wrap_content"
-        android:visibility="gone"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/avenir_next_regular"
-        android:text="@string/follow_up_status"
-        android:textColor="@color/color_follow_up_title"
-        android:textSize="@dimen/sp_14"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSettlement" />
 
-    <LinearLayout
-        android:layout_width="@dimen/dp_0"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:weightSum="8"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvFollowUpStatus"
-        tools:ignore="DisableBaselineAlignment">
+<!--    <TextView-->
+<!--        android:id="@+id/tvguardianContact"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/color_background_light_grey"
-            android:gravity="center"
-            android:orientation="vertical">
+<!--        android:fontFamily="@font/avenir_next_regular"-->
+<!--        android:text="@string/guardian_ph_no"-->
+<!--        android:textColor="@color/color_follow_up_title"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@id/candidateImage"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvContactNumber" />-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/avenir_next_medium"
-                android:text="@string/status_quarter_1"
-                android:textColor="@color/color_follow_up_title"
-                android:textSize="@dimen/sp_12"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
+<!--    <TextView-->
+<!--        android:id="@+id/tvguardianContactValue"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="@dimen/dp_5"-->
 
-            <ImageView
-                android:id="@+id/followUp1Status"
-                android:layout_width="@dimen/dp_25"
-                android:layout_height="@dimen/dp_25"
-                android:padding="@dimen/dp_3"
-                android:src="@drawable/baseline_circle_24"
-                app:layout_constraintStart_toEndOf="@+id/candidateImage"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                app:tint="@color/color_grey"
-                tools:ignore="ContentDescription" />
+<!--        android:fontFamily="@font/avenir_next_bold"-->
+<!--        android:text="@string/guardian_ph_no"-->
+<!--        android:textColor="@color/color_text"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@id/tvguardianContact"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvContactNumber" />-->
 
-        </LinearLayout>
+<!--    <TextView-->
+<!--        android:id="@+id/tvsettledOn"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/color_background_light_grey"
-            android:gravity="center"
-            android:orientation="vertical">
+<!--        android:fontFamily="@font/avenir_next_regular"-->
+<!--        android:text="@string/settled_on"-->
+<!--        android:textColor="@color/color_follow_up_title"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@id/candidateImage"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvguardianContactValue" />-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/avenir_next_medium"
-                android:text="@string/status_quarter_2"
-                android:textColor="@color/color_follow_up_title"
-                android:textSize="@dimen/sp_12"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
+<!--    <TextView-->
+<!--        android:id="@+id/tvsettledOnValue"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="@dimen/dp_5"-->
 
-            <ImageView
-                android:id="@+id/followUp2Status"
-                android:layout_width="@dimen/dp_25"
-                android:layout_height="@dimen/dp_25"
-                android:padding="@dimen/dp_3"
-                android:src="@drawable/baseline_circle_24"
-                app:layout_constraintStart_toEndOf="@+id/candidateImage"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                app:tint="@color/color_grey"
-                tools:ignore="ContentDescription" />
+<!--        android:fontFamily="@font/avenir_next_bold"-->
+<!--        android:text="@string/settled_on"-->
+<!--        android:textColor="@color/color_text"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@id/tvsettledOn"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvguardianContactValue" />-->
 
-        </LinearLayout>
+<!--    <TextView-->
+<!--        android:id="@+id/tvverificationStatus"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/color_background_light_grey"
-            android:gravity="center"
-            android:orientation="vertical">
+<!--        android:fontFamily="@font/avenir_next_regular"-->
+<!--        android:text="@string/verification_status"-->
+<!--        android:textColor="@color/color_follow_up_title"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@id/candidateImage"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvsettledOnValue" />-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/avenir_next_medium"
-                android:text="@string/status_quarter_3"
-                android:textColor="@color/color_follow_up_title"
-                android:textSize="@dimen/sp_12"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
+<!--    <TextView-->
+<!--        android:id="@+id/tvverificationStatusValue"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="@dimen/dp_5"-->
 
-            <ImageView
-                android:id="@+id/followUp3Status"
-                android:layout_width="@dimen/dp_25"
-                android:layout_height="@dimen/dp_25"
-                android:padding="@dimen/dp_3"
-                android:src="@drawable/baseline_circle_24"
-                app:layout_constraintStart_toEndOf="@+id/candidateImage"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                app:tint="@color/color_grey"
-                tools:ignore="ContentDescription" />
+<!--        android:fontFamily="@font/avenir_next_bold"-->
+<!--        android:text="@string/verification_status"-->
+<!--        android:textColor="@color/color_text"-->
+<!--        android:textSize="@dimen/sp_14"-->
+<!--        app:layout_constraintStart_toEndOf="@id/tvverificationStatus"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvsettledOnValue" />-->
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/color_background_light_grey"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/avenir_next_medium"
-                android:text="@string/status_quarter_4"
-                android:textColor="@color/color_follow_up_title"
-                android:textSize="@dimen/sp_12"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
-
-            <ImageView
-                android:id="@+id/followUp4Status"
-                android:layout_width="@dimen/dp_25"
-                android:layout_height="@dimen/dp_25"
-                android:padding="@dimen/dp_3"
-                android:src="@drawable/baseline_circle_24"
-                app:layout_constraintStart_toEndOf="@+id/candidateImage"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                app:tint="@color/color_grey"
-                tools:ignore="ContentDescription" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/color_background_light_grey"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/avenir_next_medium"
-                android:text="@string/status_quarter_5"
-                android:textColor="@color/color_follow_up_title"
-                android:textSize="@dimen/sp_12"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
-
-            <ImageView
-                android:id="@+id/followUp5Status"
-                android:layout_width="@dimen/dp_25"
-                android:layout_height="@dimen/dp_25"
-                android:padding="@dimen/dp_3"
-                android:src="@drawable/baseline_circle_24"
-                app:layout_constraintStart_toEndOf="@+id/candidateImage"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                app:tint="@color/color_grey"
-                tools:ignore="ContentDescription" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/color_background_light_grey"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/avenir_next_medium"
-                android:text="@string/status_quarter_6"
-                android:textColor="@color/color_follow_up_title"
-                android:textSize="@dimen/sp_12"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
-
-            <ImageView
-                android:id="@+id/followUp6Status"
-                android:layout_width="@dimen/dp_25"
-                android:layout_height="@dimen/dp_25"
-                android:padding="@dimen/dp_3"
-                android:src="@drawable/baseline_circle_24"
-                app:layout_constraintStart_toEndOf="@+id/candidateImage"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                app:tint="@color/color_grey"
-                tools:ignore="ContentDescription" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/color_background_light_grey"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/avenir_next_medium"
-                android:text="@string/status_quarter_7"
-                android:textColor="@color/color_follow_up_title"
-                android:textSize="@dimen/sp_12"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
-
-            <ImageView
-                android:id="@+id/followUp7Status"
-                android:layout_width="@dimen/dp_25"
-                android:layout_height="@dimen/dp_25"
-                android:padding="@dimen/dp_3"
-                android:src="@drawable/baseline_circle_24"
-                app:layout_constraintStart_toEndOf="@+id/candidateImage"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                app:tint="@color/color_grey"
-                tools:ignore="ContentDescription" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/color_background_light_grey"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/avenir_next_medium"
-                android:text="@string/status_quarter_8"
-                android:textColor="@color/color_follow_up_title"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvBatch" />
-
-            <ImageView
-                android:id="@+id/followUp8Status"
-                android:layout_width="@dimen/dp_25"
-                android:layout_height="@dimen/dp_25"
-                android:padding="@dimen/dp_3"
-                android:src="@drawable/baseline_circle_24"
-                app:layout_constraintStart_toEndOf="@+id/candidateImage"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                app:tint="@color/color_grey"
-                tools:ignore="ContentDescription" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+<!--</androidx.constraintlayout.widget.ConstraintLayout>-->

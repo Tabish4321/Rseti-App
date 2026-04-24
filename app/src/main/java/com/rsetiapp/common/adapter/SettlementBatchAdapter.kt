@@ -90,11 +90,14 @@ class SettlementBatchAdapter(
             binding.tvSettlementPerctangeName.text = candidate.settledPercentage
             binding.tvInstituteName.text = candidate.instituteName
             binding.tvBatchName.text = candidate.batchName
-            binding.tvtvCandidateIDName.text = candidate.candidateId
+            binding.tvtvCandidateedpType.text = candidate.edpType
+            binding.tvSettlementStatus.text = candidate.status
             val context = binding.root.context
             binding.root.setOnClickListener {
                 if (position != RecyclerView.NO_POSITION && position < candidateList.size) {
                     val data = candidateList[position]
+
+                    candidate.batchId?.let { candidateId -> AppUtil.savebatchIdIdPreference(context,candidateId) }
                     AppUtil.saveCandidateIdPreference(context,""+data.candidateId)
                     val action = SettlementVeryficationFragmentDirections
                         .actionSettlementVeryficationBatchFragmentToSettlemt(data)

@@ -26,6 +26,7 @@ import com.rsetiapp.common.model.request.FaceCheckReq
 import com.rsetiapp.common.model.request.FacutlyDataReq
 import com.rsetiapp.common.model.request.FogotPaasReq
 import com.rsetiapp.common.model.request.FollowUpInsertReq
+import com.rsetiapp.common.model.request.GetSettledCandidateReq
 import com.rsetiapp.common.model.request.InsertFacultyReq
 import com.rsetiapp.common.model.request.InsertSdrVisitReq
 import com.rsetiapp.common.model.request.InstituteListReq
@@ -61,6 +62,8 @@ import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
+//import com.rsetiapp.common.model.response.GetSettledCandidate
+import com.rsetiapp.common.model.response.GetSettledCandidateRes
 import com.rsetiapp.common.model.response.InsertFacultyRes
 import com.rsetiapp.common.model.response.InstituteResponse
 import com.rsetiapp.common.model.response.Institutes
@@ -78,6 +81,7 @@ import com.rsetiapp.common.model.response.SettlementVeryficationUploadInsertRes
 import com.rsetiapp.common.model.response.TokenRes
 import com.rsetiapp.core.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -649,5 +653,29 @@ private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>
 
 
         }}
+
+
+    private var _SettledCandidate =
+        MutableStateFlow<Resource<out GetSettledCandidateRes>>(Resource.Loading())
+    val SettledCandidate = _SettledCandidate.asStateFlow()
+
+
+//val login: String, val appVersion :String, val imeiNo :String,
+//                                  val batchId: Int
+
+    fun getSettledCandidateAPI(header :String,login:String , appVersion: String,imeiNo: String,batchId: Int){
+        viewModelScope.launch {
+            commonRepository.getSettledCandidateAPI(header,appVersion,batchId,imeiNo,login).collectLatest {
+                _SettledCandidate.emit(it)
+            }
+        }
+    }
+
+
+
+
+
+
+
 
 }

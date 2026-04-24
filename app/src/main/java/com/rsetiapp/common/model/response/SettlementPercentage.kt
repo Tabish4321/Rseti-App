@@ -5,6 +5,8 @@ import java.io.Serializable
 data class SettlementPercentage(
     val batchId: String?,
     val candidateId: String?,
+    val edpType: String?,
+    val status: String?,
     val instituteId: String?,
     val settledCandidates: String?,
     val totalCandidates: String?,

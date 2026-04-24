@@ -441,6 +441,8 @@ class SettlementVeryficationFragment : BaseFragment<FragmentSettlementVeryficati
 //                districtCode = "0551"
             )
 
+
+
             commonViewModel.instituteListAPI(
                 token = AppUtil.getSavedTokenPreference(requireContext()).removePrefix("Bearer ").trim(),
                 request = request

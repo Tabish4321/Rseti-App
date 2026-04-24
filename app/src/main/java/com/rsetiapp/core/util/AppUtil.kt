@@ -303,6 +303,28 @@ fun saveCandidateIdPreference(context: Context, candidateId: String) {
         return sharedPreferences.getString("candidateId", "") ?: "" // Default to English
     }
 
+
+//       Save Batch id
+
+    fun savebatchIdIdPreference(context: Context, candidateId: String) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("batchId", candidateId)
+        editor.apply()
+    }
+
+    fun getSavedbatchIdPreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("batchId", "") ?: "" // Default to English
+    }
+
+
+
+
+
+
+
+
     fun saveItem(context: Context, item: SettlementPrefModel) {
         val prefs = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
         val gson = Gson()
