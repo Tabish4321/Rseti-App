@@ -87,6 +87,8 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
     }
     private fun listener(){
 
+        binding.tvVersion.text= BuildConfig.VERSION_NAME
+
 // Disable long-press (prevents copy-paste menu)
         binding.etPassword.setOnLongClickListener { true }
 
