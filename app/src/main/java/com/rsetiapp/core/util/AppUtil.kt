@@ -325,16 +325,6 @@ fun saveCandidateIdPreference(context: Context, candidateId: String) {
 
 
 
-    fun saveItem(context: Context, item: SettlementPrefModel) {
-        val prefs = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
-        val gson = Gson()
-
-        val currentList = getList(context).toMutableList()
-        currentList.add(item)
-
-        prefs.edit()
-            .putString("app_preferences", gson.toJson(currentList))
-            .apply()
 
 //        try {
 //            val json = Gson().toJson(item)
@@ -358,17 +348,46 @@ fun saveCandidateIdPreference(context: Context, candidateId: String) {
 //            e.printStackTrace()
 //        }
 
-    }
+//    fun saveItem(context: Context, item: SettlementPrefModel) {
+//        val prefs = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+//        val gson = Gson()
+//
+//        val currentList = getList(context).toMutableList()
+//        currentList.add(item)
+//
+//        prefs.edit()
+//            .putString("app_preferences", gson.toJson(currentList))
+//            .apply()
+//    }
+//
+//    fun getList(context: Context): List<SettlementPrefModel> {
+//        val prefs = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+//        val gson = Gson()
+//        val json = prefs.getString("app_preferences", null) ?: return emptyList()
+//
+//        val type = object : TypeToken<List<SettlementPrefModel>>() {}.type
+//        return gson.fromJson(json, type)
+//    }
 
-    fun getList(context: Context): List<SettlementPrefModel> {
+
+
+
+    fun saveItem(context: Context, item: SettlementPrefModel) {
         val prefs = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
         val gson = Gson()
-        val json = prefs.getString("app_preferences", null) ?: return emptyList()
 
-        val type = object : TypeToken<List<SettlementPrefModel>>() {}.type
-        return gson.fromJson(json, type)
+        prefs.edit()
+            .putString("settlement_item", gson.toJson(item))
+            .apply()
     }
 
+    fun getItem(context: Context): SettlementPrefModel? {
+        val prefs = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = prefs.getString("settlement_item", null) ?: return null
+
+        return gson.fromJson(json, SettlementPrefModel::class.java)
+    }
 
     fun saveinstituteIdPreference(context: Context, instituteId: String) {
         val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)

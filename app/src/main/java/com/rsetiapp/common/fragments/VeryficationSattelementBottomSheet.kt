@@ -59,6 +59,7 @@ import kotlin.toString
 
 
 import android.app.AlertDialog
+import android.graphics.PorterDuff
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
@@ -92,12 +93,12 @@ import kotlin.collections.last
 import kotlin.text.toDoubleOrNull
 import kotlin.toString
 
-class VeryficationSattelementBottomSheet : BottomSheetDialogFragment() {
+class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
     private val commonViewModel: CommonViewModel by activityViewModels()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var Bindinglatitude = 0.0
     private var Bindinglongitutde = 0.0
-
+    private var isBottomSheetOpened = false
 
     //    private var Bindinglatitude = 27.034750
 //    private var Bindinglongitutde = 79.487056
@@ -168,57 +169,63 @@ class VeryficationSattelementBottomSheet : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         userPreferences = UserPreferences(requireContext())
 
-        // Get arguments
+        val item = AppUtil.getItem(requireContext())
 
+        if (item != null) {
 
-        val savedList = AppUtil.getList(requireContext())
+            instituteId = item.instituteId
+            candidateId = item.candidateId
+            candidateName = item.candidateName
+            mobileNo = item.mobileNo
+            guardianName = item.guardianName
+            guardianMobileNo = item.guardianMobileNo
+            aadharBlockName = item.aadharBlockName
+            aadharPinCode = item.aadharPinCode
+            settlementId = item.settlementId
+            followUpId = item.followUpId
+            batchId = item.batchId
+            ifscCode = item.ifscCode
+            loanAccountNo = item.loanAccountNo
+            creditFromBank = item.creditFromBank
+            selfInvestment = item.selfInvestment
+            totalInvestment = item.totalInvestment
+            passbookCopy = item.passbookCopy
+            appointmentLetterValue = item.appointmentLetter
+            settlmentPhoto = item.settlementPhoto
+            updatedBy = item.updatedBy
 
-        if (savedList.isNotEmpty()) {
-            val lastItem = savedList.last()
+            Bindinglatitude = item.latitude.toDoubleOrNull() ?: 0.0
+            Bindinglongitutde = item.longitude.toDoubleOrNull() ?: 0.0
 
-
-
-
-
-
-            instituteId = lastItem.instituteId
-            candidateId = lastItem.candidateId
-            candidateName = lastItem.candidateName
-            mobileNo = lastItem.mobileNo
-            guardianName = lastItem.guardianName
-            guardianMobileNo = lastItem.guardianMobileNo
-            aadharBlockName = lastItem.aadharBlockName
-            aadharPinCode = lastItem.aadharPinCode
-            settlementId = lastItem.settlementId
-            followUpId = lastItem.followUpId
-            batchId = lastItem.batchId
-            ifscCode = lastItem.ifscCode
-            loanAccountNo = lastItem.loanAccountNo
-            creditFromBank = lastItem.creditFromBank
-            selfInvestment = lastItem.selfInvestment
-            totalInvestment = lastItem.totalInvestment
-            passbookCopy = lastItem.passbookCopy
-            appointmentLetterValue = lastItem.appointmentLetter
-            settlmentPhoto = lastItem.settlementPhoto
-            updatedBy = lastItem.updatedBy
-            Bindinglatitude = lastItem.latitude.toDoubleOrNull() ?: 0.0
-            Bindinglongitutde = lastItem.longitude.toDoubleOrNull() ?: 0.0
-            rollNo = lastItem.rollNo
-//        Add field
-
-            cityName = lastItem.cityName
-            settlementReason = lastItem.settlementReason
-            accountStatus = lastItem.accountStatus
-            salaryRange = lastItem.salaryRange
-            employmentGiven = lastItem.employmentGiven
-            familyMemberPartTime = lastItem.familyMemberPartTime
-            bankName = lastItem.bankName
-            branchName = lastItem.branchName
-            followupType = lastItem.followupType
-            statusName = lastItem.statusName
-            salaryRangeId = lastItem.salaryRangeId
-
+            rollNo = item.rollNo
+            cityName = item.cityName
+            settlementReason = item.settlementReason
+            accountStatus = item.accountStatus
+            salaryRange = item.salaryRange
+            employmentGiven = item.employmentGiven
+            familyMemberPartTime = item.familyMemberPartTime
+            bankName = item.bankName
+            branchName = item.branchName
+            followupType = item.followupType
+            statusName = item.statusName
+            salaryRangeId = item.salaryRangeId
         }
+
+
+
+        val backButton = view.findViewById<ImageView>(R.id.backButton)
+        val tvTitleName = view.findViewById<TextView>(R.id.tvTitleName)
+        tvTitleName.setText(candidateName)
+
+        backButton.setColorFilter(
+            ContextCompat.getColor(requireContext(), R.color.black),
+            PorterDuff.Mode.SRC_IN
+        )
+
+        backButton.setOnClickListener { dismiss()
+//            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
         btnSettledSubmit = view.findViewById<TextView>(R.id.btnSettled)
         passbookPhoto = view.findViewById<ImageView>(R.id.passbookPhoto)
         appointmentLetterImage = view.findViewById<ImageView>(R.id.appointmentLetter)
@@ -653,7 +660,14 @@ class VeryficationSattelementBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
 
+        // 👉 Parent Fragment ko notify karo ki BottomSheet close ho gaya
+        parentFragmentManager.setFragmentResult("BOTTOM_SHEET_DISMISSED", Bundle())
+        // Reset flag when bottomsheet closed
+
+    }
 }
 
 
