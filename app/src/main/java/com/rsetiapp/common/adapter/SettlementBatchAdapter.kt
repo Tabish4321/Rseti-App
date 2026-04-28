@@ -94,6 +94,7 @@ class SettlementBatchAdapter(
             binding.tvSettlementStatus.text = candidate.status
             val context = binding.root.context
             binding.root.setOnClickListener {
+                AppUtil.saveRecyclerViewPreference(context, "false")
                 if (position != RecyclerView.NO_POSITION && position < candidateList.size) {
                     val data = candidateList[position]
 

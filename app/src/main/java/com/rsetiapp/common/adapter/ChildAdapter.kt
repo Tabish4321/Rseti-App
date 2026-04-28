@@ -1,9 +1,11 @@
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.rsetiapp.common.fragments.HomeFragmentDirections
 import com.rsetiapp.common.model.response.Form
+import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.databinding.ItemChildBinding
 
 class ChildAdapter(
@@ -75,6 +77,8 @@ class ChildAdapter(
                             HomeFragmentDirections.actionSettlementVeryficationBatchFragment(
                                 form.formName
                             )
+                        val context = binding.root.context
+                        AppUtil.saveRecyclerViewPreference(context, "true")
                         binding.root.findNavController().navigate(action)
                     }
 

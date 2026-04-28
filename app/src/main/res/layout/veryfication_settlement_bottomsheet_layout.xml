@@ -78,33 +78,12 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/dp_16"
-            android:fontFamily="@font/avenir_next_demi_bold"
-            android:padding="@dimen/dp_4"
             android:text="@string/settled_type_status"
-            android:textColor="@color/color_dark_green" />
+            android:textColor="@android:color/black" />
 
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:fontFamily="@font/avenir_next_demi_bold"-->
-<!--            android:hint="@string/statush"-->
-<!--            android:padding="1dp"-->
-<!--            android:textColorHint="@color/color_dark_green"-->
-<!--            app:boxStrokeColor="@color/color_dark_green">-->
 
-<!--            <TextView-->
-<!--                android:id="@+id/spinnerStatusBottom"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:focusable="false"-->
-<!--                android:focusableInTouchMode="false"-->
-<!--                android:inputType="none"-->
-<!--                android:textColor="@color/color_dark_green"-->
-<!--                android:textSize="15sp"-->
-<!--                tools:ignore="LabelFor" />-->
 
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
+
 
         <TextView
             android:layout_width="match_parent"
@@ -319,7 +298,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="@string/branch_name"
+                    android:text="Brach Name"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
@@ -457,7 +436,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/dp_16"
-                    android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
                     android:text="@string/account_status_mandate"
                     android:textColor="@color/color_dark_green" />
@@ -500,7 +478,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/dp_16"
-                    android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
                     android:text="@string/earnings_income_mandate"
                     android:textColor="@color/color_dark_green" />
@@ -511,29 +488,8 @@
                     android:padding="12dp"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:fontFamily="@font/avenir_next_demi_bold"-->
-<!--                    android:hint="@string/earnings_income_hint"-->
-<!--                    android:padding="1dp"-->
-<!--                    android:textColorHint="@color/color_dark_green"-->
-<!--                    app:boxStrokeColor="@color/color_dark_green">-->
 
-<!--                    <AutoCompleteTextView-->
-<!--                        android:id="@+id/spinnerEarningsIncome"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:focusable="false"-->
-<!--                        android:focusableInTouchMode="false"-->
-<!--                        android:inputType="none"-->
-<!--                        android:textColor="@color/color_dark_green"-->
-<!--                        android:textSize="15sp"-->
-<!--                        tools:ignore="LabelFor" />-->
-
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
-            </LinearLayout>
+   </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/llEmploymentGiven"
@@ -601,7 +557,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/dp_16"
-                    android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
                     android:text="@string/family_member_part_time_job_mandate"
                     android:textColor="@color/color_dark_green" />
@@ -640,7 +595,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/dp_16"
-                    android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
                     android:text="@string/settlement_proof_mandate"
                     android:textColor="@color/color_dark_green" />
@@ -760,10 +714,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:textSize="16sp"
-                    android:textStyle="bold"
                     android:textAlignment="viewStart"
                     android:layout_marginTop="@dimen/dp_10"
-                    android:fontFamily="@font/avenir_next_regular"
                     android:text="@string/all_detail_correct"
                     android:layout_height="wrap_content"/>
 
@@ -812,7 +764,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="Remark"
+                    android:text="@string/remark"
+                    android:visibility="gone"
+                    android:id="@+id/textViewRemark"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
@@ -863,7 +817,7 @@
                 android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_15sdp"
                 android:textColor="@color/black"
-                android:text="Remark Proof"/>
+                android:text="Image Upload"/>
 
             <ImageView
                 android:id="@+id/image1"

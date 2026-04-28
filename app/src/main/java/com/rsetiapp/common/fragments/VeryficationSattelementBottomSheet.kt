@@ -147,6 +147,7 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
     private var rollNo = ""
     private lateinit var TvRemark: EditText
     private lateinit var btnSettledSubmit: TextView
+    private lateinit var  textViewRemark: TextView
     private var settlmentPhoto = ""
     private lateinit var image1: ImageView
     private lateinit var passbookPhoto: ImageView
@@ -242,6 +243,7 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
         val tvAccountStatus = view.findViewById<TextView>(R.id.tvAccountStatus)
         val tvEarningsIncome = view.findViewById<TextView>(R.id.tvEarningsIncome)
         val etEmploymentGiven = view.findViewById<TextView>(R.id.tvEmploymentGiven)
+         textViewRemark = view.findViewById<TextView>(R.id.textViewRemark)
         val tvFamilyMemberWorksPartTime =
             view.findViewById<TextView>(R.id.tvFamilyMemberWorksPartTime)
 
@@ -254,11 +256,13 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
                 R.id.radioAreBoardingAandLoadingFacilitiesProvidedYes -> {
                     isBoardingLoadingProvided = "Yes"
                     TvRemark.visibility = View.GONE
+                    textViewRemark.visibility = View.GONE
                 }
 
                 R.id.radioAreBoardingAandLoadingFacilitiesProvidedNo -> {
                     isBoardingLoadingProvided = "No"
                     TvRemark.visibility = View.VISIBLE
+                    textViewRemark.visibility = View.VISIBLE
                 }
             }
         }
@@ -318,14 +322,28 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
                     val isInside = isUserInsideGeofence(location, latitude, longitude, radius)
                     if (isInside) {
 
-                        if (isBoardingLoadingProvided.isNullOrEmpty()) {
-                            // ❌ No selection
-                            toastLong(" Please Select All Details Correct?")
+                        when {
+                            isBoardingLoadingProvided.isNullOrEmpty() -> {
+                                toastLong("Please Select All Details Correct?")
+                            }
 
-                        } else {
-                            reverificationSettlement()
+                            image1Base64.isNullOrEmpty() -> {
+                                toastLong(getString(R.string.please_capture_image_from_your_phone))
+                            }
 
+                            else -> {
+                                reverificationSettlement()
+                            }
                         }
+
+//                        if (isBoardingLoadingProvided.isNullOrEmpty()) {
+//                            // ❌ No selection
+//                            toastLong(" Please Select All Details Correct?")
+//
+//                        } else {
+//                            reverificationSettlement()
+//
+//                        }
 //                        reverificationSettlement()
                     } else {
                         showAlertGeoFancingDialog(
@@ -414,9 +432,14 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
                                 successMessage,   // 👈 "Verified successfully"
                                 Toast.LENGTH_SHORT
                             ).show()
+                            parentFragmentManager.setFragmentResult(
+                                "REFRESH_DATA",
+                                Bundle()
+                            )
                              dismiss()
 
-                            requireActivity().onBackPressedDispatcher.onBackPressed()
+
+//                            requireActivity().onBackPressedDispatcher.onBackPressed()
                         }
 
                         is Resource.Error -> {
@@ -460,8 +483,8 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
                 Toast.makeText(requireContext(), "Permissions granted!", Toast.LENGTH_SHORT)
                     .show()
             } else {
-                Toast.makeText(requireContext(), "Permissions denied!", Toast.LENGTH_SHORT)
-                    .show()
+//                Toast.makeText(requireContext(), "Permissions denied!", Toast.LENGTH_SHORT)
+//                    .show()
             }
         }
     }
@@ -628,7 +651,7 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
             Toast.makeText(requireContext(), "Permission granted", Toast.LENGTH_SHORT).show()
             // proceed with file/media access
         } else {
-            Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
         }
     }
     fun passbookCopybase64ToBitmap(base64Str: String): Bitmap? {

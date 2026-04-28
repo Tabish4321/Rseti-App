@@ -275,6 +275,22 @@ object AppUtil {
 
 
 
+    fun saveRecyclerViewPreference(context: Context, tokenCode: String) {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("RecyclerView", tokenCode)
+        editor.apply()
+    }
+
+    fun getSavedRecyclerViewPreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("RecyclerView", "") ?: "" // Default to English
+    }
+
+
+
+
+
     fun isNetworkAvailable(context: Context?): Boolean {
         if (context == null) return false
         val connectivityManager =

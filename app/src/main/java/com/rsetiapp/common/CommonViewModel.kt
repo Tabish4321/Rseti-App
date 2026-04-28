@@ -97,13 +97,8 @@ import javax.inject.Inject
 class CommonViewModel @Inject constructor(private val commonRepository: CommonRepository) :
     ViewModel() {
     // ✅ Flags
-    var isDistrictLoaded = false
-    var isBatchConsumed = false
-
-    // ✅ Cached Data (IMPORTANT)
-    var districtListCache: List<DistrictList> = emptyList()
-    var instituteListCache: List<Institutes> = emptyList()
-    var batchListCache: List<SettlementPercentage> = emptyList()
+    var batchCacheList: MutableList<SettlementPercentage> = mutableListOf()
+    var isBatchLoaded: Boolean = false
 
     private var _getToken = MutableSharedFlow<Resource<out TokenRes>>()
     val getToken = _getToken.asSharedFlow()

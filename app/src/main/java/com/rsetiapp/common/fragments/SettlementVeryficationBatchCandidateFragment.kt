@@ -77,7 +77,14 @@ class SettlementVeryficationBatchCandidateFragment :   BaseFragment<FragmentSett
         ) { _, _ ->
             isBottomSheetOpened = false
         }
-
+        // ✅ NEW LISTENER (IMPORTANT)
+        parentFragmentManager.setFragmentResultListener(
+            "REFRESH_DATA",
+            viewLifecycleOwner
+        ) { _, _ ->
+            collectCandidatesData()
+        }
+        collectCandidatesData()
 
         init()
         setupAdapter()
@@ -104,7 +111,24 @@ class SettlementVeryficationBatchCandidateFragment :   BaseFragment<FragmentSett
             candidateSettledList
         ) { candidate ->
 
-            if (candidate.verificationStatus != "Rejected") {
+//            if (candidate.verificationStatus != "Rejected") {
+//
+//                commonViewModel.getSettlementsLoginAPI(
+//                    SettlementVeryficationReq(
+//                        BuildConfig.VERSION_NAME,
+//                        candidate.candidateId
+//                    )
+//                )
+//                observeSettlementData()
+//
+//
+//            }
+
+
+
+            if (candidate.verificationStatus != "Rejected" &&
+                candidate.verificationStatus != "Verified"
+            ) {
 
                 commonViewModel.getSettlementsLoginAPI(
                     SettlementVeryficationReq(
@@ -112,9 +136,8 @@ class SettlementVeryficationBatchCandidateFragment :   BaseFragment<FragmentSett
                         candidate.candidateId
                     )
                 )
+
                 observeSettlementData()
-
-
             }
         }
         binding.rvCandidate.layoutManager = LinearLayoutManager(requireContext())
@@ -200,7 +223,7 @@ class SettlementVeryficationBatchCandidateFragment :   BaseFragment<FragmentSett
                                 val candidate = list[0]
 
                                 val model = SettlementPrefModel(
-                                    instituteId = AppUtil.getSavedinstituteIdPreference(requireContext()) ?: "",
+                                    instituteId = AppUtil.getSavedinstituteIdPreference(requireContext()),
                                     candidateId = candidate.candidateId ?: "",
                                     candidateName = candidate.candidateName ?: "",
                                     mobileNo = candidate.mobileNo ?: "",

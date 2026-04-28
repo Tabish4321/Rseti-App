@@ -209,13 +209,15 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="all_detail_correct">All Detail Correct?</string>
-    <string name="settled_type_status">Settled Type (Status)</string>
+    <string name="settled_type_status">Settled Type </string>
     <string name="edp_type">EDP Type</string>
     <string name="course_name">Course</string>
     <string name="settledon">settledOn</string>
     <string name="guardian_ph_no">Guardian Ph No</string>
     <string name="settled_on">Settled On</string>
     <string name="verification_status">Verification Status</string>
+    <string name="please_capture_image_from_your_phone">Please capture image from your phone</string>
+    <string name="remark">Remark</string>
 
 
 </resources>

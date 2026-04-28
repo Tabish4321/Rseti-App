@@ -27,7 +27,7 @@ data class SettlementVeryficationUploadReq(
     val employmentGiven: String?,
     val familyMemberPartTime: String?,
     val loginId: String?,
-    val is_verified: String?,
+    val isVerified: String?,
     val appVersion: String?
 
 )
