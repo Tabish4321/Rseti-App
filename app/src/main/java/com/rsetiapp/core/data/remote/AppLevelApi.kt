@@ -286,6 +286,7 @@ interface AppLevelApi {
 
 //    @POST("reverificationSet")
     @POST("reverificationSettlement")
+//    @POST("kgkgktytukt")
     suspend fun reverificationSettlementAPI(@Body settlementVeryficationReq: SettlementVeryficationUploadReq): SettlementVeryficationUploadInsertRes
 
 

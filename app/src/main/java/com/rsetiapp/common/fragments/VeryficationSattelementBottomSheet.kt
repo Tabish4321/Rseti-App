@@ -13,18 +13,14 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,66 +28,36 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rsetiapp.R
 import com.rsetiapp.core.util.AppUtil
-import com.rsetiapp.core.util.AppUtil.getCurrentDate
 import com.rsetiapp.core.util.AppUtil.hasStoragePermission
 import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.toastLong
-import com.rsetiapp.core.util.visible
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.util.Locale
-import java.util.Timer
-import java.util.TimerTask
-import kotlin.toString
 
 
-import android.app.AlertDialog
 import android.graphics.PorterDuff
-import android.text.Editable
-import android.text.InputFilter
-import android.text.TextWatcher
-import android.widget.Button
 import android.widget.RadioGroup
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResult
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
+import androidx.constraintlayout.motion.widget.Debug.getLocation
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.GsonBuilder
 import com.karumi.dexter.BuildConfig
 import com.rsetiapp.common.CommonViewModel
-import com.rsetiapp.common.model.request.BankIFSCSearchReq
-import com.rsetiapp.common.model.request.SalaryRangeReq
-import com.rsetiapp.common.model.request.SettleStatusRequest
 import com.rsetiapp.common.model.request.SettlementVeryficationUploadReq
 import com.rsetiapp.common.model.response.SettlementVeryficationUploadInsertRes
-import com.rsetiapp.core.util.gone
-import com.rsetiapp.core.util.log
-import com.rsetiapp.core.util.toastLong
-import com.rsetiapp.core.util.toastShort
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.apply
 import kotlin.collections.all
 import kotlin.collections.any
 import kotlin.collections.isNotEmpty
-import kotlin.collections.last
 import kotlin.text.toDoubleOrNull
-import kotlin.toString
 
 class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
     private val commonViewModel: CommonViewModel by activityViewModels()
@@ -99,6 +65,9 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
     private var Bindinglatitude = 0.0
     private var Bindinglongitutde = 0.0
     private var isBottomSheetOpened = false
+
+
+    private var address: String? = null
 
     //    private var Bindinglatitude = 27.034750
 //    private var Bindinglongitutde = 79.487056
@@ -146,6 +115,10 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
     private var updatedBy = ""
     private var rollNo = ""
     private lateinit var TvRemark: EditText
+
+
+    private lateinit var tvlattitude: TextView
+    private lateinit var tvlong: TextView
     private lateinit var btnSettledSubmit: TextView
     private lateinit var  textViewRemark: TextView
     private var settlmentPhoto = ""
@@ -169,6 +142,22 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         userPreferences = UserPreferences(requireContext())
+
+
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // ❌ Permission nahi hai
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            // ✅ Permission mil gayi
+            getLocation()
+        }
+
+
 
         val item = AppUtil.getItem(requireContext())
 
@@ -232,6 +221,8 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
         appointmentLetterImage = view.findViewById<ImageView>(R.id.appointmentLetter)
         settlmentPhotoImage = view.findViewById<ImageView>(R.id.settlmentPhoto)
 
+        tvlattitude = view.findViewById<TextView>(R.id.tvlatlong)
+        tvlong = view.findViewById<TextView>(R.id.tvlong)
         TvRemark = view.findViewById<EditText>(R.id.TvRemark)
         val tVstatus = view.findViewById<TextView>(R.id.tVstatus)
         val tvIfscCode = view.findViewById<TextView>(R.id.tvIfscCode)
@@ -307,8 +298,11 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
 
         latitude = Bindinglatitude
         longitude = Bindinglongitutde
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         checkAndRequestStoragePermissions()
+
+
         image1 = view.findViewById<ImageView>(R.id.image1)
         image1.setOnClickListener {
 //            openCamera()
@@ -316,57 +310,55 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
         }
         btnSettledSubmit.setOnClickListener {
 
-//            reverificationSettlement
-            getCurrentLocation { location ->
-                if (location != null) {
-                    val isInside = isUserInsideGeofence(location, latitude, longitude, radius)
-                    if (isInside) {
-
-                        when {
-                            isBoardingLoadingProvided.isNullOrEmpty() -> {
-                                toastLong("Please Select All Details Correct?")
-                            }
-
-                            image1Base64.isNullOrEmpty() -> {
-                                toastLong(getString(R.string.please_capture_image_from_your_phone))
-                            }
-
-                            else -> {
-                                reverificationSettlement()
-                            }
-                        }
-
-//                        if (isBoardingLoadingProvided.isNullOrEmpty()) {
-//                            // ❌ No selection
-//                            toastLong(" Please Select All Details Correct?")
+            checkUserLocation()
+//            getCurrentLocation(requireContext()) { location ->
+//                if (location != null) {
+//                    val isInside = isUserInsideGeofence(location, latitude, longitude, radius)
+//                    if (isInside) {
 //
-//                        } else {
-//                            reverificationSettlement()
+//                        when {
+//                            isBoardingLoadingProvided.isNullOrEmpty() -> {
+//                                toastLong("Please Select All Details Correct?")
+//                            }
 //
+//                            image1Base64.isNullOrEmpty() -> {
+//                                toastLong(getString(R.string.please_capture_image_from_your_phone))
+//                            }
+//
+//                            else -> {
+//                                reverificationSettlement()
+//                            }
 //                        }
-//                        reverificationSettlement()
-                    } else {
-                        showAlertGeoFancingDialog(
-                            requireContext(),
-                            "Alert",
-                            "❌ You are outside the institute area"
-                        )
-
-                    }
-                } else {
-                    toastLong("❌ Failed to retrieve current location")
-                    showAlertGeoFancingDialog(
-                        requireContext(),
-                        "Alert",
-                        "❌ Failed to retrieve current location Kindly on your gps from settings"
-                    )
-                }
-            }
-
+//                    } else {
+//                        showAlertGeoFancingDialog(
+//                            requireContext(),
+//                            "Alert",
+//                            "❌ You are outside the institute area"
+//                        )
+//
+//                    }
+//                } else {
+//                    toastLong("❌ Failed to retrieve current location")
+//                    showAlertGeoFancingDialog(
+//                        requireContext(),
+//                        "Alert",
+//                        "❌ Failed to retrieve current location Kindly on your gps from settings"
+//                    )
+//                }
+//            }
 
 
         }
     }
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+
+            } else {
+                Toast.makeText(requireContext(), "Location permission not granted", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     private fun reverificationSettlement() {
         EditRemark = TvRemark.text.toString()
 
@@ -458,6 +450,8 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
             }
 
     }
+
+
     private fun checkAndRequestPermissions() {
         val permissions = arrayOf(
             Manifest.permission.CAMERA,
@@ -510,6 +504,44 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
                 Toast.makeText(requireContext(), "Image capture failed!", Toast.LENGTH_SHORT).show()
                 return@registerForActivityResult
             }
+            getCurrentLocation(requireContext()) { location ->
+
+                if (location != null) {
+
+                    // ✅ 1️⃣ CURRENT LOCATION se value lo
+                    val currentLat = location.latitude
+                    val currentLng = location.longitude
+
+                    // ✅ 2️⃣ GLOBAL variables me set karo (IMPORTANT)
+                    latitude = currentLat
+                    longitude = currentLng
+
+                    // ✅ 3️⃣ Geofence check (agar kisi fixed lat/long se compare karna hai)
+                    val isInside = isUserInsideGeofence(
+                        location,
+                        latitude,   // ya kisi fixed lat/long se compare karo
+                        longitude,
+                        radius
+                    )
+
+                    // ✅ 4️⃣ UI update karo
+                    tvlattitude.text =
+                        "Latitude: $currentLat\nLongitude: $currentLng"
+                    // ✅ 5️⃣ (Optional) Address bhi nikal lo
+                    getAddressFromLatLng(currentLat, currentLng)
+
+                } else {
+
+                    toastLong("❌ Failed to retrieve current location")
+
+                    showAlertGeoFancingDialog(
+                        requireContext(),
+                        "Alert",
+                        "❌ Failed to retrieve current location. Kindly turn ON your GPS from settings"
+                    )
+                }
+            }
+
 
             val compressedBitmap = compressBitmap(bitmap)
             currentImageView?.setImageBitmap(compressedBitmap)
@@ -524,12 +556,85 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
 
 
 
-
-//            binding.lllatLang.visible()
-//            binding.llAdress.visible()
         }
     }
+    private fun checkUserLocation() {
 
+        val targetLat = 28.6139   // 👉 अपनी location डालें
+        val targetLng = 77.2090   // 👉 अपनी location डालें
+
+        getCurrentLocation(requireContext()) { location ->
+
+            if (location != null) {
+
+                val currentLat = location.latitude
+                val currentLng = location.longitude
+
+                val isInside = isInsideGeofence(
+                    currentLat,
+                    currentLng,
+                    targetLat,
+                    targetLng,
+                    20f
+                )
+
+                if (isInside) {
+                    Toast.makeText(requireContext(), "✅ You are inside area", Toast.LENGTH_SHORT).show()
+
+                    // 👉 Yahan aap API call / next screen open kar sakte ho
+
+                } else {
+                    Toast.makeText(requireContext(), "❌ You are outside area", Toast.LENGTH_SHORT).show()
+                }
+
+            } else {
+                Toast.makeText(requireContext(), "❌ Location not found", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    fun isInsideGeofence(
+        currentLat: Double,
+        currentLng: Double,
+        targetLat: Double,
+        targetLng: Double,
+        radius: Float
+    ): Boolean {
+        val distance = distanceInMeters(currentLat, currentLng, targetLat, targetLng)
+        return distance <= radius
+    }
+    fun distanceInMeters(
+        lat1: Double,
+        lon1: Double,
+        lat2: Double,
+        lon2: Double
+    ): Float {
+        val result = FloatArray(1)
+        Location.distanceBetween(lat1, lon1, lat2, lon2, result)
+        return result[0]
+    }
+
+    private fun getAddressFromLatLng(lat: Double, lng: Double) {
+
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+
+        try {
+            val addresses = geocoder.getFromLocation(lat, lng, 1)
+
+            if (!addresses.isNullOrEmpty()) {
+
+                address = addresses[0].getAddressLine(0)
+
+                Log.d("ADDRESS", address ?: "No address")
+
+                // ✅ UI update after address fetched
+                tvlattitude.text =
+                    "Latitude: $lat\nLongitude: $lng\nAddress: $address"
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     private fun compressBitmap(bitmap: Bitmap): Bitmap {
         return try {
@@ -607,7 +712,10 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
         dialog.show()
     }
     @SuppressLint("MissingPermission")
-    private fun getCurrentLocation(onLocationResult: (Location?) -> Unit) {
+    private fun getCurrentLocation(
+        onLocationResult1: Context,
+        onLocationResult: (Location?) -> Unit
+    ) {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -630,6 +738,9 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
         }
         val distance = currentLocation.distanceTo(targetLocation)
         return distance <= radius
+
+
+
     }
     private fun checkAndRequestStoragePermissions() {
         if (!hasStoragePermission(requireContext())) {
