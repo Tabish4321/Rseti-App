@@ -2,8 +2,9 @@
 package com.rsetiapp.common.fragments
 
 import android.Manifest
-import android.annotation.SuppressLint
+
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -45,7 +46,9 @@ import java.util.Locale
 
 
 import android.graphics.PorterDuff
+import android.os.Looper
 import android.widget.RadioGroup
+import androidx.annotation.RequiresPermission
 import androidx.constraintlayout.motion.widget.Debug.getLocation
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.GsonBuilder
@@ -59,6 +62,10 @@ import kotlin.collections.any
 import kotlin.collections.isNotEmpty
 import kotlin.text.toDoubleOrNull
 
+
+import android.annotation.SuppressLint
+
+import com.google.android.gms.location.*
 class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
     private val commonViewModel: CommonViewModel by activityViewModels()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -80,7 +87,7 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
     private val progress: androidx.appcompat.app.AlertDialog? by lazy {
         AppUtil.getProgressDialog(context)
     }
-    
+    private val neededPermissions = arrayOf(Manifest.permission.CAMERA)
     private var settlementReason = ""
     private var accountStatus = ""
     private var statusName = ""
@@ -291,14 +298,6 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
         Log.e("settlmentPhotoImage",settlmentPhotoImage.toString() )
 
 
-
-
-
-
-
-        latitude = Bindinglatitude
-        longitude = Bindinglongitutde
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         checkAndRequestStoragePermissions()
 
@@ -310,42 +309,44 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
         }
         btnSettledSubmit.setOnClickListener {
 
-            checkUserLocation()
-//            getCurrentLocation(requireContext()) { location ->
-//                if (location != null) {
-//                    val isInside = isUserInsideGeofence(location, latitude, longitude, radius)
-//                    if (isInside) {
-//
-//                        when {
-//                            isBoardingLoadingProvided.isNullOrEmpty() -> {
-//                                toastLong("Please Select All Details Correct?")
-//                            }
-//
-//                            image1Base64.isNullOrEmpty() -> {
-//                                toastLong(getString(R.string.please_capture_image_from_your_phone))
-//                            }
-//
-//                            else -> {
-//                                reverificationSettlement()
-//                            }
-//                        }
-//                    } else {
-//                        showAlertGeoFancingDialog(
-//                            requireContext(),
-//                            "Alert",
-//                            "❌ You are outside the institute area"
-//                        )
-//
-//                    }
-//                } else {
-//                    toastLong("❌ Failed to retrieve current location")
-//                    showAlertGeoFancingDialog(
-//                        requireContext(),
-//                        "Alert",
-//                        "❌ Failed to retrieve current location Kindly on your gps from settings"
-//                    )
-//                }
-//            }
+
+
+
+
+
+            checkLocationPermission()
+
+            getCurrentLocation { location ->
+                if (location != null) {
+                    val isInside = isUserInsideGeofence(location, Bindinglatitude, Bindinglongitutde, radius)
+//                     val isInside = isUserInsideGeofence(location, 26.2153, 84.3588, radius)
+                    if (isInside) {
+
+
+                        when {
+                            isBoardingLoadingProvided.isNullOrEmpty() -> {
+                                toastLong(getString(R.string.please_select_all_details_correct))
+                            }
+
+                            image1Base64.isNullOrEmpty() -> {
+                                toastLong(getString(R.string.please_capture_image_from_your_phone))
+                            }
+
+                            else -> {
+                                reverificationSettlement()
+                            }
+                        }
+
+                    } else {
+                        showAlertGeoFancingDialog(requireContext(),"Alert","❌ You are outside the institute area")
+
+                    }
+                } else {
+                    toastLong("❌ Failed to retrieve current location")
+                    showAlertGeoFancingDialog(requireContext(),"Alert","❌ Failed to retrieve current location Kindly on your gps from settings")
+                }
+            }
+
 
 
         }
@@ -483,6 +484,7 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
         }
     }
     private fun openCamera(imageView: ImageView) {
+        tvlattitude.text =""
         checkAndRequestPermissions()
 
         currentImageView = imageView
@@ -497,121 +499,87 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         cameraLauncher.launch(intent)  // No extra output, no file
     }
-    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val bitmap = result.data?.extras?.get("data") as? Bitmap
-            if (bitmap == null || currentImageView == null) {
-                Toast.makeText(requireContext(), "Image capture failed!", Toast.LENGTH_SHORT).show()
-                return@registerForActivityResult
-            }
-            getCurrentLocation(requireContext()) { location ->
 
-                if (location != null) {
 
-                    // ✅ 1️⃣ CURRENT LOCATION se value lo
-                    val currentLat = location.latitude
-                    val currentLng = location.longitude
 
-                    // ✅ 2️⃣ GLOBAL variables me set karo (IMPORTANT)
-                    latitude = currentLat
-                    longitude = currentLng
 
-                    // ✅ 3️⃣ Geofence check (agar kisi fixed lat/long se compare karna hai)
-                    val isInside = isUserInsideGeofence(
-                        location,
-                        latitude,   // ya kisi fixed lat/long se compare karo
-                        longitude,
-                        radius
+    private val cameraLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+
+            if (result.resultCode == Activity.RESULT_OK) {
+
+                val bitmap = result.data?.extras?.get("data") as? Bitmap
+
+                if (bitmap == null || currentImageView == null) {
+                    Toast.makeText(requireContext(), "Image capture failed!", Toast.LENGTH_SHORT).show()
+                    return@registerForActivityResult
+                }
+                @SuppressLint("MissingPermission")
+                fun getCameralocation(context: Context, callback: (Location?) -> Unit) {
+
+                    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+                    val locationRequest = LocationRequest.Builder(
+                        Priority.PRIORITY_HIGH_ACCURACY, 1000
+                    ).setMaxUpdates(1) // 👉 only 1 fresh update
+                        .build()
+
+                    val locationCallback = object : LocationCallback() {
+                        override fun onLocationResult(result: LocationResult) {
+                            val location = result.lastLocation
+                            callback(location)
+
+                            // 👉 stop updates (important)
+                            fusedLocationClient.removeLocationUpdates(this)
+                        }
+                    }
+
+                    if (ActivityCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        callback(null)
+                        return
+                    }
+
+                    fusedLocationClient.requestLocationUpdates(
+                        locationRequest,
+                        locationCallback,
+                        Looper.getMainLooper()
                     )
-
-                    // ✅ 4️⃣ UI update karo
-                    tvlattitude.text =
-                        "Latitude: $currentLat\nLongitude: $currentLng"
-                    // ✅ 5️⃣ (Optional) Address bhi nikal lo
-                    getAddressFromLatLng(currentLat, currentLng)
-
-                } else {
-
-                    toastLong("❌ Failed to retrieve current location")
-
-                    showAlertGeoFancingDialog(
-                        requireContext(),
-                        "Alert",
-                        "❌ Failed to retrieve current location. Kindly turn ON your GPS from settings"
-                    )
-                }
-            }
-
-
-            val compressedBitmap = compressBitmap(bitmap)
-            currentImageView?.setImageBitmap(compressedBitmap)
-
-            val base64Image = bitmapToBase64(compressedBitmap)
-
-            when (currentImageView?.id) {
-                R.id.image1 -> {
-                    image1Base64 = base64Image
-                }
-            }
-
-
-
-        }
-    }
-    private fun checkUserLocation() {
-
-        val targetLat = 28.6139   // 👉 अपनी location डालें
-        val targetLng = 77.2090   // 👉 अपनी location डालें
-
-        getCurrentLocation(requireContext()) { location ->
-
-            if (location != null) {
-
-                val currentLat = location.latitude
-                val currentLng = location.longitude
-
-                val isInside = isInsideGeofence(
-                    currentLat,
-                    currentLng,
-                    targetLat,
-                    targetLng,
-                    20f
-                )
-
-                if (isInside) {
-                    Toast.makeText(requireContext(), "✅ You are inside area", Toast.LENGTH_SHORT).show()
-
-                    // 👉 Yahan aap API call / next screen open kar sakte ho
-
-                } else {
-                    Toast.makeText(requireContext(), "❌ You are outside area", Toast.LENGTH_SHORT).show()
                 }
 
-            } else {
-                Toast.makeText(requireContext(), "❌ Location not found", Toast.LENGTH_SHORT).show()
+
+                getCameralocation(requireContext()) { location ->
+
+                    if (location != null) {
+
+                        val currentLat = location.latitude
+                        val currentLng = location.longitude
+
+                        val address = getAddressFromLatLng(currentLat, currentLng)
+
+                        tvlattitude.text =
+                            "Latitude: $currentLat\nLongitude: $currentLng"
+
+                    } else {
+                        tvlattitude.text = "Location not found"
+                    }
+                }
+                val compressedBitmap = compressBitmap(bitmap)
+                currentImageView?.setImageBitmap(compressedBitmap)
+
+                val base64Image = bitmapToBase64(compressedBitmap)
+
+                when (currentImageView?.id) {
+                    R.id.image1 -> {
+                        image1Base64 = base64Image
+                    }
+                }
             }
         }
-    }
-    fun isInsideGeofence(
-        currentLat: Double,
-        currentLng: Double,
-        targetLat: Double,
-        targetLng: Double,
-        radius: Float
-    ): Boolean {
-        val distance = distanceInMeters(currentLat, currentLng, targetLat, targetLng)
-        return distance <= radius
-    }
-    fun distanceInMeters(
-        lat1: Double,
-        lon1: Double,
-        lat2: Double,
-        lon2: Double
-    ): Float {
-        val result = FloatArray(1)
-        Location.distanceBetween(lat1, lon1, lat2, lon2, result)
-        return result[0]
-    }
+
 
     private fun getAddressFromLatLng(lat: Double, lng: Double) {
 
@@ -628,7 +596,7 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
 
                 // ✅ UI update after address fetched
                 tvlattitude.text =
-                    "Latitude: $lat\nLongitude: $lng\nAddress: $address"
+                    "Latitude: $lat\nLongitude: $lng"
             }
 
         } catch (e: Exception) {
@@ -698,50 +666,6 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
 
 
 
-    private fun showAlertGeoFancingDialog(context: Context, title: String, message: String) {
-        val builder = androidx.appcompat.app.AlertDialog.Builder(context)
-        builder.setTitle(title)
-        builder.setMessage(message)
-        builder.setPositiveButton("OK") { dialog, _ ->
-            findNavController().navigateUp()
-        }
-
-        val dialog = builder.create()
-        dialog.setCancelable(false)  // Prevent outside touch dismissal
-        dialog.setCanceledOnTouchOutside(false) // Extra safety: disable outside clicks
-        dialog.show()
-    }
-    @SuppressLint("MissingPermission")
-    private fun getCurrentLocation(
-        onLocationResult1: Context,
-        onLocationResult: (Location?) -> Unit
-    ) {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            toastLong("❌ Location permission not granted")
-            return
-        }
-
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            onLocationResult(location)
-        }.addOnFailureListener {
-            onLocationResult(null)
-        }
-    }
-    private fun isUserInsideGeofence(currentLocation: Location, lat: Double, lng: Double, radius: Float): Boolean {
-        val targetLocation = Location("").apply {
-            latitude = lat
-            longitude = lng
-        }
-        val distance = currentLocation.distanceTo(targetLocation)
-        return distance <= radius
-
-
-
-    }
     private fun checkAndRequestStoragePermissions() {
         if (!hasStoragePermission(requireContext())) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -802,6 +726,115 @@ class VeryficationSattelementBottomSheet() : BottomSheetDialogFragment() {
         // Reset flag when bottomsheet closed
 
     }
+
+
+    private fun showAlertGeoFancingDialog(context: Context, title: String, message: String) {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(context)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton("OK") { dialog, _ ->
+            findNavController().navigateUp()
+        }
+
+        val dialog = builder.create()
+        dialog.setCancelable(false)  // Prevent outside touch dismissal
+        dialog.setCanceledOnTouchOutside(false) // Extra safety: disable outside clicks
+        dialog.show()
+    }
+    private fun checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                1001
+            )
+        }
+    }
+
+
+
+
+
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
+    private fun getCurrentLocation(onLocationResult: (Location?) -> Unit) {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            showSnackBar("❌ Location permission not granted")
+            return
+        }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            onLocationResult(location)
+        }.addOnFailureListener {
+            onLocationResult(null)
+        }
+    }
+    private fun isUserInsideGeofence(currentLocation: Location, lat: Double, lng: Double, radius: Float): Boolean {
+        val targetLocation = Location("").apply {
+            latitude = lat
+            longitude = lng
+        }
+        val distance = currentLocation.distanceTo(targetLocation)
+        return distance <= radius
+    }
+    private fun checkCameraPermission(): Boolean {
+        val permissionsNotGranted = java.util.ArrayList<String>()
+        for (permission in neededPermissions) {
+            if (ContextCompat.checkSelfPermission(
+                    requireActivity(),
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                permissionsNotGranted.add(permission)
+            }
+        }
+        if (permissionsNotGranted.isNotEmpty()) {
+            var shouldShowAlert = false
+            for (permission in permissionsNotGranted) {
+                shouldShowAlert =
+                    ActivityCompat.shouldShowRequestPermissionRationale(
+                        requireActivity(),
+                        permission
+                    )
+            }
+            if (shouldShowAlert) {
+                showPermissionAlert(permissionsNotGranted.toTypedArray())
+            } else {
+                requestPermissions(permissionsNotGranted.toTypedArray())
+            }
+            return false
+        }
+        return true
+    }
+
+    private fun showPermissionAlert(permissions: Array<String>) {
+        val alertBuilder = AlertDialog.Builder(requireActivity())
+        alertBuilder.setCancelable(true)
+        alertBuilder.setTitle("Permission Required")
+        alertBuilder.setMessage("You must grant permission to access camera to run this application")
+        alertBuilder.setPositiveButton(
+            android.R.string.yes
+        ) { _, _ -> requestPermissions(permissions) }
+        val alert = alertBuilder.create()
+        alert.show()
+    }
+
+    private fun requestPermissions(permissions: Array<String>) {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            permissions,
+            CAMERA_REQUEST
+        )
+    }
+
+
 }
 
 
