@@ -17,7 +17,7 @@ android {
         targetSdk = 35
         versionCode = 12
         versionName = "1.1"
-        versionName = "1.1"
+        versionName = "1.3"
 //        versionName = "1.3.1"
 
         //  Ensure this is correctly set for Android instrumented tests

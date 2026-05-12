@@ -1,13 +1,15 @@
 package com.rsetiapp.common.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.rsetiapp.R
+
 import com.rsetiapp.common.model.response.CandidateSettlementVerificationDetail
 import com.rsetiapp.common.model.response.SettledCandidate
 import com.rsetiapp.databinding.ItemSettletedCandidateDetailsBinding
 
+import com.rsetiapp.R
 
 class SettledCandidateAdapter(
     private val candidateList: List<SettledCandidate>,
@@ -38,7 +40,40 @@ class SettledCandidateAdapter(
             binding.tvCandidateIdValue.text = candidate.candidateId
             binding.tvguardianContactValue.text = candidate.guardianMobileNo
             binding.tvsettledOnValue.text = candidate.settledOn
-            binding.tvverificationStatusValue.text = candidate.verificationStatus
+//            binding.tvverificationStatusValue.text = candidate.verificationStatus
+
+
+            val status = candidate.verificationStatus?.trim()?.lowercase()
+
+            binding.tvverificationStatusValue.text =
+                status?.replaceFirstChar { it.uppercase() }
+
+            when (status) {
+
+                "pending" -> {
+                    binding.tvverificationStatusValue.setTextColor(
+                        ContextCompat.getColor(binding.root.context, R.color.status_pending)
+                    )
+                }
+
+                "rejected" -> {
+                    binding.tvverificationStatusValue.setTextColor(
+                        ContextCompat.getColor(binding.root.context, R.color.status_rejected)
+                    )
+                }
+
+                "verified" -> {
+                    binding.tvverificationStatusValue.setTextColor(
+                        ContextCompat.getColor(binding.root.context, R.color.status_verified)
+                    )
+                }
+
+                else -> {
+                    binding.tvverificationStatusValue.setTextColor(
+                        ContextCompat.getColor(binding.root.context, android.R.color.black)
+                    )
+                }
+            }
             binding.root.setOnClickListener {
                 onItemClick(candidate)
             }

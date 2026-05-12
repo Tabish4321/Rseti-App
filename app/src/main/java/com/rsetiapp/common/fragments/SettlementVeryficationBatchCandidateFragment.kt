@@ -110,22 +110,6 @@ class SettlementVeryficationBatchCandidateFragment :   BaseFragment<FragmentSett
         settledCandidateadapter = SettledCandidateAdapter(
             candidateSettledList
         ) { candidate ->
-
-//            if (candidate.verificationStatus != "Rejected") {
-//
-//                commonViewModel.getSettlementsLoginAPI(
-//                    SettlementVeryficationReq(
-//                        BuildConfig.VERSION_NAME,
-//                        candidate.candidateId
-//                    )
-//                )
-//                observeSettlementData()
-//
-//
-//            }
-
-
-
             if (candidate.verificationStatus != "Rejected" &&
                 candidate.verificationStatus != "Verified"
             ) {

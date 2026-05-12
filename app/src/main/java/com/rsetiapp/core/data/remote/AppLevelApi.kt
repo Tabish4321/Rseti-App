@@ -282,11 +282,7 @@ interface AppLevelApi {
     @POST("settled-batch")
     suspend fun getgetsettledbatchAPIListAPI(@Body batchListReq: SettlementVeryficationBatchReq): SettlementPercentageListResponse
 
-
-
-//    @POST("reverificationSet")
     @POST("reverificationSettlement")
-//    @POST("kgkgktytukt")
     suspend fun reverificationSettlementAPI(@Body settlementVeryficationReq: SettlementVeryficationUploadReq): SettlementVeryficationUploadInsertRes
 
 
@@ -295,10 +291,6 @@ interface AppLevelApi {
     @POST("getSettledCandidate")
     suspend fun getSettledCandidateAPI(@Header("rsetiappauth") token: String,
                                             @Body candidateListReq: GetSettledCandidateReq): GetSettledCandidateRes
-
-
-//    @POST("getSettledCandidate")
-//    suspend fun getSettledCandidateAPI(@Body settlementVeryficationReq: GetSettledCandidateReq): GetSettledCandidate
 
     @POST("instituteList")
     suspend fun instituteListAPI(

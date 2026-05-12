@@ -32,4 +32,9 @@
     <color name="grey_400">#BDBDBD</color>
     <color name="yellow">#E6E62D</color>
 
+
+    <color name="status_pending">#FFA000</color>   <!-- Orange -->
+    <color name="status_rejected">#D32F2F</color> <!-- Red -->
+    <color name="status_verified">#388E3C</color> <!-- Green -->
+
 </resources>
