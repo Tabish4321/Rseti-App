@@ -219,6 +219,7 @@
     <string name="please_capture_image_from_your_phone">Please capture image from your phone</string>
     <string name="remark">Remark</string>
     <string name="please_select_all_details_correct">Please Select All Details Correct?</string>
+    <string name="bankloan_provided">Bankloan Provided</string>
 
 
 </resources>
