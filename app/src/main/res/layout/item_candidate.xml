@@ -24,7 +24,7 @@
             android:padding="8dp" />
 
         <TextView
-            android:id="@+id/tvCandidateMobile"
+            android:id="@+id/tvCandidateDob"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"

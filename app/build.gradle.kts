@@ -15,8 +15,8 @@ android {
         applicationId = "com.rsetiapp"
         minSdk = 28
         targetSdk = 35
-        versionCode = 15
-        versionName = "1.3.2"
+        versionCode = 16
+        versionName = "1.3.3"
 
         //  Ensure this is correctly set for Android instrumented tests
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

@@ -18,13 +18,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.rsetiapp.R
-import com.rsetiapp.common.model.request.Candidate
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -57,24 +54,26 @@ import com.rsetiapp.BuildConfig
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.CourseRequest
-import com.rsetiapp.common.model.request.SdrListReq
+import com.rsetiapp.common.model.request.EapCnadidateDetail
 import com.rsetiapp.common.model.response.CandidateData
 import com.rsetiapp.common.model.response.CandidateSearchData
 import com.rsetiapp.common.model.response.CourseItem
-import com.rsetiapp.common.model.response.CourseResponse
-import com.rsetiapp.common.model.response.SalaryRange
 import com.rsetiapp.core.util.UserPreferences
 import com.rsetiapp.core.util.gone
 import com.rsetiapp.core.util.removeAllWhitespaces
 import com.rsetiapp.core.util.toastLong
+import com.rsetiapp.core.util.toastShort
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.Calendar
-
+import kotlin.String
 @AndroidEntryPoint
-class CandidateBottomSheetFragment(private val candidateList: MutableList<Candidate>, private val adapter: RecyclerView.Adapter<*>,
-                                   private val updateCandidateCount: (Int) -> Unit) :
-    BottomSheetDialogFragment() {
+class CandidateBottomSheetFragment(
+    private val stateCode: String,
+    private val eapId: Int,
+    private val orgId: Int
+) : BottomSheetDialogFragment()
+{
     var selectedDate=""
     private val commonViewModel: CommonViewModel by activityViewModels()
     private lateinit var progressBar: View
@@ -103,7 +102,9 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     private lateinit var spinnerGender: AutoCompleteTextView
     private lateinit var genderHiding: TextInputLayout
     lateinit var userPreferences: UserPreferences
-
+    private var isInsertApiCalled = false
+    private var isCandidateDetailApiCalled = false
+    private var isCandidateSearchDetailApiCalled = false
     private lateinit var photoFile: File
     private lateinit var imageUri: Uri
     private var candidateNotInImage: String = ""
@@ -165,6 +166,20 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         AddCandidate = view.findViewById(R.id.btnAddCandidate)
         notIntresCandImage = view.findViewById(R.id.notIntresCandImage)
         userPreferences = UserPreferences(requireContext())
+        hideProgressBar()
+        clearForm()
+
+        isCandidateDetailApiCalled = false
+        isInsertApiCalled = false
+        isCandidateSearchDetailApiCalled = false
+
+        collectCandidateDataResponse()
+        collectInsertCandidateDataResponse()
+        collectCandidateSearchResponse()
+        collectCourseResponse()
+
+
+
 
 
         notIntresCandImage.setOnClickListener {
@@ -188,7 +203,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
             )
         )
 
-        collectCourseResponse()
+
         //account adapter
         genderAdapterr = ArrayAdapter(
             requireContext(),
@@ -266,13 +281,15 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
 
                 val getCandidateId = s.toString()
                 if (getCandidateId.length == 10) {
+
+                    isCandidateSearchDetailApiCalled = true
+
                     commonViewModel.candidateSearchListAPI(AppUtil.getSavedTokenPreference(requireContext()),
                         CandidateSearchReq(
                             BuildConfig.VERSION_NAME,
                             getCandidateId,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()
                         )
                     )
-                    collectCandidateSearchResponse()
 
                 }
                 else   llCandidateSearch.gone()
@@ -292,17 +309,25 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
 
 
         AddCandidate.setOnClickListener {
+
             llCandidateSearch.gone()
 
-            commonViewModel.candidateDetailsAPI(AppUtil.getSavedTokenPreference(requireContext()),CandidateDetailsReq(BuildConfig.VERSION_NAME,candidateId
-            ,AppUtil.getAndroidId(requireContext()),userPreferences.getUseID()))
-            collectCandidateDataResponse()
+            isCandidateDetailApiCalled = true
 
+            commonViewModel.candidateDetailsAPI(
+                AppUtil.getSavedTokenPreference(requireContext()),
+                CandidateDetailsReq(
+                    BuildConfig.VERSION_NAME,
+                    candidateId,
+                    AppUtil.getAndroidId(requireContext()),
+                    userPreferences.getUseID()
+                )
+            )
         }
 
 
 
-
+/*
         btnAdd.setOnClickListener {
 
             candidateName = etCandidateName.text.toString()
@@ -398,6 +423,89 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
                 Toast.makeText(requireContext(), "Kindly fill all details first", Toast.LENGTH_SHORT).show()
             }
         }
+*/
+
+        btnAdd.setOnClickListener {
+
+            candidateName = etCandidateName.text.toString().trim()
+
+            if (etGender.text.toString().isNotEmpty()) {
+                candidateGender = etGender.text.toString()
+            }
+
+            candidateGuardianName = etGuardianName.text.toString().trim()
+            candidateGuardianMobile = etGuardianMobile.text.toString().trim()
+            candidateAddress = etAddress.text.toString().trim()
+            candidateMobileNo = etMobileNo.text.toString().trim()
+            candidateDob = etDob.text.toString().trim()
+
+            if (candidateName.isNotEmpty() &&
+                candidateGender.isNotEmpty() &&
+                candidateGuardianName.isNotEmpty() &&
+                candidateGuardianMobile.isNotEmpty() &&
+                candidateAddress.isNotEmpty() &&
+                candidateMobileNo.isNotEmpty() &&
+                candidateDob.isNotEmpty()
+            ) {
+
+                if (AppUtil.isValidMobileNumber(candidateMobileNo) &&
+                    AppUtil.isValidMobileNumber(candidateGuardianMobile)
+                ) {
+
+                    if (candidateId.isBlank() && candidateNotInImage.isBlank()) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Kindly Capture candidate photo",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@setOnClickListener
+                    }
+
+                    val request = EapCnadidateDetail(
+                        appVersion = BuildConfig.VERSION_NAME,
+                        login = userPreferences.getUseID(),
+                        imeiNo = AppUtil.getAndroidId(requireContext()),
+                        candidateId = candidateId,
+                        candidateName = candidateName,
+                        gender = candidateGender,
+                        guardianName = candidateGuardianName,
+                        guardianMobileNo = candidateGuardianMobile,
+                        candidateAddress = candidateAddress,
+                        mobileNo = candidateMobileNo,
+                        dob = candidateDob,
+                        candidateImage = candidateNotInImage.removeAllWhitespaces(),
+                        courseCode = selectedCourseId,
+                        orgId=orgId,
+                        hrId = AppUtil.getSavedHRIdPreference(requireContext()),
+                        entityCode = AppUtil.getSavedEntityPreference(requireContext()),
+                        stateCode = stateCode,
+                        eapId = eapId
+
+                    )
+                    isInsertApiCalled = true
+
+                    commonViewModel.insertParticipantsEap(
+                        token = AppUtil.getSavedTokenPreference(requireContext()),
+                        eapCnadidateDetail = request
+                    )
+
+
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Mobile number is invalid",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Kindly fill all details first",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
 
         btnClose.setOnClickListener {
             dismiss()
@@ -449,8 +557,9 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     private fun collectCandidateSearchResponse() {
         lifecycleScope.launch {
             commonViewModel.candidateSearchListAPI.collectLatest { it ->
+                if (!isCandidateSearchDetailApiCalled) return@collectLatest
                 when (it) {
-                    is Resource.Loading -> showProgressBar()
+                    is Resource.Loading -> hideProgressBar()
                     is Resource.Error -> {
                         hideProgressBar()
                         Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
@@ -463,7 +572,6 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
 
                                 llCandidateSearch.visible()
                                 candidateSearchList= getSearchRes.wrappedList
-
 
                                 for (x in candidateSearchList) {
                                     candidateId= x.candidateId
@@ -499,8 +607,10 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
     private fun collectCandidateDataResponse() {
         lifecycleScope.launch {
             commonViewModel.candidateDetailsAPI.collectLatest { it ->
+                if (!isCandidateDetailApiCalled) return@collectLatest
                 when (it) {
-                    is Resource.Loading -> showProgressBar()
+                    is Resource.Loading ->
+                        hideProgressBar()
                     is Resource.Error -> {
                         hideProgressBar()
                         Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
@@ -510,7 +620,7 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
                         hideProgressBar()
                         it.data?.let { getcandidateDetailsRes ->
                             if (getcandidateDetailsRes.responseCode == 200) {
-
+                                isCandidateDetailApiCalled = false
                                 candidateDetailsList= getcandidateDetailsRes.wrappedList
 
                                 for (x in candidateDetailsList) {
@@ -551,6 +661,50 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
                             }
                         } ?:   Toast.makeText(requireContext(), "Internal Server Error", Toast.LENGTH_SHORT).show()
 
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    private fun collectInsertCandidateDataResponse() {
+
+        lifecycleScope.launch {
+
+            commonViewModel.insertParticipantsEap.collectLatest {
+
+                if (!isInsertApiCalled) return@collectLatest
+
+                when (it) {
+
+                    is Resource.Loading -> {
+                        showProgressBar()
+                    }
+
+                    is Resource.Error -> {
+                        hideProgressBar()
+                    }
+
+                    is Resource.Success -> {
+
+                        hideProgressBar()
+
+                        isInsertApiCalled = false
+
+                        it.data?.let { response ->
+
+                            if (response.responseCode == 200) {
+
+                                parentFragmentManager.setFragmentResult(
+                                    "refresh_candidate_list",
+                                    Bundle()
+                                )
+
+                                dismiss()
+                            }
+                        }
                     }
                 }
             }
@@ -691,6 +845,37 @@ class CandidateBottomSheetFragment(private val candidateList: MutableList<Candid
         } else {
             Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
         }
+    }
+
+
+    private fun clearForm() {
+
+        candidateId = ""
+        candidateName = ""
+        candidateGender = ""
+        candidateGuardianName = ""
+        candidateGuardianMobile = ""
+        candidateAddress = ""
+        candidateMobileNo = ""
+        candidateDob = ""
+        selectedCourseId = ""
+        candidateNotInImage = ""
+
+        etCandidateName.setText("")
+        etGender.setText("")
+        etGuardianName.setText("")
+        etGuardianMobile.setText("")
+        etAddress.setText("")
+        etMobileNo.setText("")
+        etDob.text = ""
+        etCourse.text = ""
+        candidateNameSearch.text = ""
+
+        llCandidateSearch.gone()
+        selectedIndices.clear()
+        notIntresCandImage.setImageResource(R.drawable.person)
+        genderHiding.visible()
+        etGender.gone()
     }
 }
 

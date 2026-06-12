@@ -299,26 +299,21 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                         if (!captureResponse.isNullOrEmpty()) {
                             handleCaptureResponse(captureResponse)
                         } else {
-                            log("handleCaptureResponse", "Capture response data is null or empty.")
                             toastShort("Capture response is empty.")
                         }
                     } else {
-                        log("handleCaptureResponse", "Intent data is null.")
                         toastShort("Failed to get capture response data.")
                     }
                 } else {
                     toastLong("Failed to capture data.")
-                    log("handleCaptureResponse", "Activity result code: ${result.resultCode}")
                 }
             } catch (e: NullPointerException) {
                 e.printStackTrace()
                 toastShort("Error: Missing data in result.")
-                log("startUidaiAuthResult", "NullPointerException: ${e.message}")
 
             } catch (e: Exception) {
                 e.printStackTrace()
                 toastShort("An error occurred while processing the result.")
-                log("startUidaiAuthResult", "Exception: ${e.message}")
             }
         }
 
@@ -631,12 +626,15 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                     checkIn = x.checkIn//00:00
                                     totalHours = x.totalHours//00:00:00
                                     latitude = x.lattitude.toDouble()
+                                    longitude = x.longitude.toDouble()
                                     checkOut = x.checkOut
                                     radius = x.radius.toFloat()
+                                   // radius = 10000000f
                                     attendanceFlag = x.attendanceFlag
-                                    longitude = x.longitude.toDouble()
 
 
+
+/*
                                     getCurrentLocation { location ->
                                         if (location != null) {
                                             val isInside = isUserInsideGeofence(location, latitude, longitude, radius)
@@ -652,6 +650,49 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
                                         } else {
                                             toastLong("❌ Failed to retrieve current location")
                                             showAlertGeoFancingDialog(requireContext(),"Alert","❌ Failed to retrieve current location Kindly on your gps from settings")
+                                        }
+                                    }
+*/
+
+                                    getCurrentLocation { location ->
+
+                                        if (location != null) {
+
+                                            val distance = getDistanceInMeters(
+                                                location,
+                                                latitude,
+                                                longitude
+                                            )
+
+                                            val isInside = distance <= radius
+
+                                            if (isInside) {
+
+                                                toastLong("✅ You are inside institute area")
+
+                                                // navigate
+                                                // findNavController().navigate(...)
+
+                                            } else {
+
+                                                showAlertGeoFancingDialog(
+                                                    requireContext(),
+                                                    "Alert",
+                                                    "❌ You are outside the institute area\n\n" +
+                                                            "Current Distance: ${distance.toInt()} meters\n" +
+                                                            "Allowed Radius: ${radius.toInt()} meters"
+                                                )
+                                            }
+
+                                        } else {
+
+                                            toastLong("❌ Failed to retrieve current location")
+
+                                            showAlertGeoFancingDialog(
+                                                requireContext(),
+                                                "Alert",
+                                                "❌ Failed to retrieve current location.\nKindly enable GPS from settings."
+                                            )
                                         }
                                     }
 
@@ -808,6 +849,21 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         }
     }
 
+    private fun getDistanceInMeters(
+        currentLocation: Location,
+        lat: Double,
+        lng: Double
+    ): Float {
+
+        val targetLocation = Location("").apply {
+            latitude = lat
+            longitude = lng
+        }
+
+        return currentLocation.distanceTo(targetLocation)
+    }
+
+
     private fun getCurrentLocation(onLocationResult: (Location?) -> Unit) {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -825,17 +881,17 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
         }
     }
 
-    private fun isUserInsideGeofence(
-        currentLocation: Location,
-        lat: Double,
-        lng: Double,
-        radius: Float
-    ): Boolean {
-        val targetLocation = Location("").apply {
-            latitude = lat
-            longitude = lng
-        }
-        val distance = currentLocation.distanceTo(targetLocation)
-        return distance <= radius
-    }
+//    private fun isUserInsideGeofence(
+//        currentLocation: Location,
+//        lat: Double,
+//        lng: Double,
+//        radius: Float
+//    ): Boolean {
+//        val targetLocation = Location("").apply {
+//            latitude = lat
+//            longitude = lng
+//        }
+//        val distance = currentLocation.distanceTo(targetLocation)
+//        return distance <= radius
+//    }
 }

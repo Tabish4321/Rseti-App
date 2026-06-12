@@ -17,10 +17,13 @@ import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateListReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.CourseRequest
+import com.rsetiapp.common.model.request.DeleteParticipantsEapReq
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
+import com.rsetiapp.common.model.request.EapCnadidateDetail
 import com.rsetiapp.common.model.request.EapListReq
+import com.rsetiapp.common.model.request.EapParticipantListReq
 import com.rsetiapp.common.model.request.FaceCheckReq
 import com.rsetiapp.common.model.request.FacutlyDataReq
 import com.rsetiapp.common.model.request.FogotPaasReq
@@ -54,6 +57,7 @@ import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.EapParticipantListRes
 import com.rsetiapp.common.model.response.FaceResponse
 import com.rsetiapp.common.model.response.FacultyDetailsRes
 import com.rsetiapp.common.model.response.FollowUpInsertRes
@@ -250,6 +254,30 @@ interface AppLevelApi {
     suspend fun submitBatchVerification(
         @Body request: BatchSubmitRequest
     ): SaveResponse
+
+
+
+    @POST("insertParticipantsEap")
+    suspend fun insertParticipantsEap(
+        @Header("rsetiappauth") token: String,
+        @Body request: EapCnadidateDetail
+    ): EAPInsertResponse
+
+
+    @POST("participantsEapList")
+    suspend fun participantsEapList(
+        @Header("rsetiappauth") token: String,
+        @Body request: EapParticipantListReq
+    ): EapParticipantListRes
+
+
+
+    @POST("deleteParticipantsEap")
+    suspend fun deleteParticipantsEap(
+        @Header("rsetiappauth") token: String,
+        @Body request: DeleteParticipantsEapReq
+    ): EAPInsertResponse
+
 
 
 

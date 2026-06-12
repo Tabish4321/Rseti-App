@@ -15,10 +15,13 @@ import com.rsetiapp.common.model.request.CandidateListReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.CourseRequest
+import com.rsetiapp.common.model.request.DeleteParticipantsEapReq
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
+import com.rsetiapp.common.model.request.EapCnadidateDetail
 import com.rsetiapp.common.model.request.EapListReq
+import com.rsetiapp.common.model.request.EapParticipantListReq
 import com.rsetiapp.common.model.request.FaceCheckReq
 import com.rsetiapp.common.model.request.FacutlyDataReq
 import com.rsetiapp.common.model.request.FogotPaasReq
@@ -55,6 +58,7 @@ import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.CourseResponse
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.EapParticipantListRes
 import com.rsetiapp.common.model.response.FaceResponse
 import com.rsetiapp.common.model.response.FacultyDetailsRes
 import com.rsetiapp.common.model.response.FollowUpInsertRes
@@ -318,6 +322,27 @@ class CommonRepository @Inject constructor(
             appLevelApi.insertFacultyAttendanceApi(token,insertFacultyReq)
         }
     }
+
+
+    suspend fun insertParticipantsEap(token: String,eapCnadidateDetail: EapCnadidateDetail) : Flow<Resource<out EAPInsertResponse>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.insertParticipantsEap(token,eapCnadidateDetail)
+        }
+    }
+
+
+    suspend fun participantsEapList(token: String,eapParticipantListReq: EapParticipantListReq) : Flow<Resource<out EapParticipantListRes>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.participantsEapList(token,eapParticipantListReq)
+        }
+    }
+
+    suspend fun deleteParticipantsEap(token: String,deleteParticipantsEapReq: DeleteParticipantsEapReq) : Flow<Resource<out EAPInsertResponse>>{
+        return networkBoundResourceWithoutDb {
+            appLevelApi.deleteParticipantsEap(token,deleteParticipantsEapReq)
+        }
+    }
+
 
 
 }
