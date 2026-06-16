@@ -449,8 +449,6 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
                     putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
                     putString("selectedBankCode", selectedBankCode.toString())
                     putString("selectedBranchCode", SelectedBranchCode.toString())
-//                    putString("selectedBankCode", selectedBankName)
-//                    putString("selectedBranchCode", selectedBranchName)
                     putString("selectedLoanAcc", selectedLoanAcc)
                     putString("selectedCity", selectedCity)
                     putString("selectedReason", selectedReason)
