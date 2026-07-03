@@ -216,8 +216,8 @@ dependencies {
     implementation("com.google.android.datatransport:transport-runtime:2.2.6")
 
     // ML Kit (Vision)
-    implementation("com.google.mlkit:face-detection:16.1.7")
-    implementation("com.google.mlkit:vision-common:16.1.7")
+    implementation("com.google.mlkit:face-detection:16.1.6")
+    implementation("com.google.mlkit:vision-common:17.3.0")
 
     // CameraX
     implementation("androidx.camera:camera-camera2:1.4.1")

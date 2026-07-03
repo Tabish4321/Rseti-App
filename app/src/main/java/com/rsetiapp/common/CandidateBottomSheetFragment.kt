@@ -325,8 +325,6 @@ class CandidateBottomSheetFragment(
             )
         }
 
-
-
 /*
         btnAdd.setOnClickListener {
 
@@ -522,6 +520,7 @@ class CandidateBottomSheetFragment(
         dialog?.setCanceledOnTouchOutside(false)
         isCancelable = false
     }
+
     private fun showDatePicker(textView: TextView) {
         // Get today's time in milliseconds
         val calendar = Calendar.getInstance()
@@ -735,7 +734,6 @@ class CandidateBottomSheetFragment(
         }
     }
 
-
     private fun collectCourseResponse() {
         lifecycleScope.launch {
             commonViewModel.courseEapApi.collectLatest { it ->
@@ -759,8 +757,6 @@ class CandidateBottomSheetFragment(
                         it.data?.let { getCourseDetails ->
                             if (getCourseDetails.responseCode == 200) {
                                 courseList = getCourseDetails.wrappedList
-
-
 
                                 for (x in courseList) {
                                     courseNameList.add(x.courseName)
