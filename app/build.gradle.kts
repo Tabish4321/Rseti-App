@@ -15,7 +15,7 @@ android {
         applicationId = "com.rsetiapp"
         minSdk = 28
         targetSdk = 35
-        versionCode = 16
+        versionCode = 18
         versionName = "1.3.3"
 
         //  Ensure this is correctly set for Android instrumented tests
@@ -216,8 +216,8 @@ dependencies {
     implementation("com.google.android.datatransport:transport-runtime:2.2.6")
 
     // ML Kit (Vision)
-    implementation("com.google.mlkit:face-detection:16.1.6")
-    implementation("com.google.mlkit:vision-common:17.3.0")
+
+    implementation("com.google.mlkit:face-detection:16.1.7")
 
     // CameraX
     implementation("androidx.camera:camera-camera2:1.4.1")
@@ -234,13 +234,13 @@ dependencies {
     // Kotlin Coroutines with Play Services
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0-RC")
 
-// ✅ TensorFlow Lite (LiteRT)
+//  TensorFlow Lite (LiteRT)
     implementation("com.google.ai.edge.litert:litert:1.4.0")
     implementation("com.google.ai.edge.litert:litert-gpu:1.4.0")
     implementation("com.google.ai.edge.litert:litert-gpu-api:1.4.0")
     implementation("com.google.ai.edge.litert:litert-support:1.4.0")
 
-// ✅ MediaPipe
+//  MediaPipe
     implementation("com.google.mediapipe:tasks-vision:0.10.28")
     implementation("io.coil-kt:coil-compose:2.6.0")
 
