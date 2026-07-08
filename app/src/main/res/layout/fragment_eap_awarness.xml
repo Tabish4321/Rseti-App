@@ -589,6 +589,7 @@
             <EditText
                 android:id="@+id/etBrief"
                 style="@style/EditText"
+                android:maxLength="500"
                 android:hint="@string/enter_brief_description"
                 android:imeOptions="actionNext"
                 android:paddingHorizontal="@dimen/dp_20" />

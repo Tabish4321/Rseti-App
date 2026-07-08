@@ -1,8 +1,6 @@
 package com.rsetiapp.common.fragments
-import android.Manifest
 import android.os.Bundle
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.location.*
@@ -12,19 +10,12 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.rsetiapp.common.model.response.WrappedList
-import com.rsetiapp.common.model.response.BlockList
-import com.rsetiapp.common.model.response.DistrictList
-import com.rsetiapp.common.model.response.GrampanchayatList
-import com.rsetiapp.common.model.response.VillageList
 import com.rsetiapp.common.CommonViewModel
 import com.rsetiapp.core.basecomponent.BaseFragment
 import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.toastShort
 import com.rsetiapp.databinding.FragmentEapAwarnessBinding
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -32,10 +23,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Geocoder
-import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
@@ -49,21 +38,19 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavOptions
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.rsetiapp.BuildConfig
 import com.rsetiapp.R
 import com.rsetiapp.common.CandidateBottomSheetFragment
-import com.rsetiapp.common.CandidateUpdateListener
 import com.rsetiapp.common.adapter.CandidateAdapter
-import com.rsetiapp.common.model.request.Candidate
+import com.rsetiapp.common.model.request.DeleteParticipantsEapReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
+import com.rsetiapp.common.model.request.EapParticipantListReq
 import com.rsetiapp.common.model.response.AutoFetch
-import com.rsetiapp.common.model.response.EapList
+import com.rsetiapp.common.model.response.CandidateEapData
 import com.rsetiapp.common.model.response.Institute
-import com.rsetiapp.common.model.response.Program
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.core.util.AppUtil.getCurrentDate
 import com.rsetiapp.core.util.AppUtil.hasStoragePermission
@@ -74,8 +61,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 
 @AndroidEntryPoint
-class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(FragmentEapAwarnessBinding::inflate),
-    CandidateUpdateListener {
+class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(FragmentEapAwarnessBinding::inflate){
 
     private var formName=""
     private var eapId=""
@@ -93,7 +79,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private var eapName=""
     private var programCode=""
 
-
     private var selectedDate=""
     private var selectedTotalParticipants=""
     private var selectedNameOfNGO=""
@@ -103,11 +88,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private var image2Base64=""
     private var locationLatLang=""
     private var locationAddress=""
-    private var imageUri: Uri? = null
     private var currentImageView: ImageView? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var adapter: CandidateAdapter
-    private val candidateList = mutableListOf<Candidate>()
 
     private var institute: MutableList<Institute> = mutableListOf()
     private var eapData: MutableList<AutoFetch> = mutableListOf()
@@ -117,9 +99,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private val commonViewModel: CommonViewModel by activityViewModels()
     private lateinit var locationSettingLauncher: ActivityResultLauncher<IntentSenderRequest>
 
-
-
-    private var counts = ""
     private var latitude : Double? = null
     private var longitude : Double? = null
 
@@ -129,8 +108,8 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     private var instituteCode = ""
     private var officialName = ""
     private var designationName = ""
-
-
+    private lateinit var candidateAdapter: CandidateAdapter
+    private val candidateList = mutableListOf<CandidateEapData>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -160,11 +139,44 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         binding.eapName.text= eapName
         userPreferences = UserPreferences(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
         init()
+        collectParticipantsResponse()
+        collectDeleteParticipantResponse()
+
+        parentFragmentManager.setFragmentResultListener(
+            "refresh_candidate_list",
+            viewLifecycleOwner
+        ) { _, _ ->
+
+            loadParticipantList()
+        }
+
 
     }
 
     private fun init(){
+
+        binding.recyclerView.layoutManager =
+            LinearLayoutManager(requireContext())
+
+        candidateAdapter = CandidateAdapter { candidate ->
+
+            commonViewModel.deleteParticipantsEap(
+                AppUtil.getSavedTokenPreference(requireContext()),
+                DeleteParticipantsEapReq(
+                    appVersion = BuildConfig.VERSION_NAME,
+                    candidateEapId = candidate.candidateEapId,
+                    login = userPreferences.getUseID(),
+                    imeiNo = AppUtil.getAndroidId(requireContext())
+                )
+            )
+        }
+
+        binding.recyclerView.adapter = candidateAdapter
+
+
+        loadParticipantList()
 
 
         locationSettingLauncher = registerForActivityResult(
@@ -181,41 +193,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
         checkAndPromptGPS()
 
-        // checkAndRequestPermissions()
-        val recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerView)
-        val candidateCountTextView = view?.findViewById<TextView>(R.id.candidteCount)
-
-        @SuppressLint("SetTextI18n")
-        fun updateCandidateCount(count: Int) {
-            candidateCountTextView?.text = "Candidates: "+count.toString()
-            counts=count.toString()
-
-        }
-
-        if (recyclerView != null) {
-            recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        }
-
-        adapter = CandidateAdapter(
-            candidateList,
-            onDelete = { position ->
-                if (position in candidateList.indices) {
-                    candidateList.removeAt(position)
-                    adapter.notifyItemRemoved(position)
-                    adapter.notifyItemRangeChanged(position, candidateList.size)
-                    updateCandidateCount(candidateList.size)
-                }
-            },
-            onUpdateCount = { count ->
-                updateCandidateCount(count)
-            }
-        )
-
-// Set adapter after initializing RecyclerView
-        recyclerView?.adapter = adapter
-
-// Set initial count after adapter is set
-        updateCandidateCount(candidateList.size)
 
         commonViewModel.getStateListApi(AppUtil.getSavedTokenPreference(requireContext()),userPreferences.getUseID(),AppUtil.getAndroidId(requireContext()))
         commonViewModel.getEapAutoFetchListAPI(AppUtil.getSavedTokenPreference(requireContext()),userPreferences.getUseID(), BuildConfig.VERSION_NAME,AppUtil.getAndroidId(requireContext()))
@@ -248,31 +225,38 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                 image2Base64.isNotEmpty()){
 
 
-
-                val totalParticipant = binding.etTotalParticipant.text.toString()
-
-                if (counts != totalParticipant) {
-
-                    AppUtil.showAlertDialog(requireContext(),"Alert","Candidates should be equal to total participants")
-
-                }
-
-
-                else{
-
                     commonViewModel.insertEAPAPI(AppUtil.getSavedTokenPreference(requireContext()),
-                        EAPInsertRequest(AppUtil.getAndroidId(requireContext()),userPreferences.getUseID(),
-                            BuildConfig.VERSION_NAME,orgCode,eapId,instituteCode,selectedDate,selectedTotalParticipants,selectedNameOfNGO,officialName,designationName,
-                        programCode,stateCode,districtCode,blockCode,gpCode,villageCode,
-
-                        selectedNoOfAppExpectedNextMonth,selectedBrief,image1Base64,image2Base64,
-
-                        latitude.toString(),
-
-                        longitude.toString(),AppUtil.getSavedEntityPreference(requireContext()),AppUtil.getSavedHRIdPreference(requireContext()),candidateList))
+                        EAPInsertRequest(
+                            appVersion = BuildConfig.VERSION_NAME,
+                            login = userPreferences.getUseID(),
+                            imeiNo = AppUtil.getAndroidId(requireContext()),
+                            stateCode = stateCode,
+                            eapId = eapId.toInt(),
+                            programeDate = selectedDate,
+                            orgId = orgCode.toInt(),
+                            hrId = AppUtil.getSavedHRIdPreference(requireContext()),
+                            entityCode = AppUtil.getSavedEntityPreference(requireContext()),
+                            instituteId = instituteCode,
+                            totalParticipants = selectedTotalParticipants,
+                            nameOfOrg = selectedNameOfNGO,
+                            officialName = officialName,
+                            designation = designationName,
+                            programCode = programCode,
+                            districtCode = districtCode,
+                            blockCode = blockCode,
+                            gpCode = gpCode,
+                            villageCode = villageCode,
+                            generatedApplicationNo = selectedNoOfAppExpectedNextMonth, // verify this mapping
+                            programDesc = selectedBrief,
+                            photoPathOne = image1Base64,
+                            photoPathTwo = image2Base64,
+                            latitute = latitude.toString(),
+                            longitute = longitude.toString(),
+                            address = locationAddress
+                        ))
 
                     collectInsertResponse()
-                }
+
 
             }
 
@@ -287,21 +271,14 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
 
         binding.btnAddCandidate.setOnClickListener {
-            val bottomSheet = CandidateBottomSheetFragment(candidateList, adapter) { count ->
+            Log.e("BOTTOM_SHEET", "Button Clicked")
+            val bottomSheet = CandidateBottomSheetFragment(
+                stateCode,
+                eapId.toInt(),
+                orgCode.toInt()
+            )
 
-                 counts = count.toString()
-                view?.findViewById<TextView>(R.id.candidteCount)?.text = "Candidates: $count"
-            }
-            val totalParticipant = binding.etTotalParticipant.text.toString()
-
-            if (counts != totalParticipant) {
-                bottomSheet.show(parentFragmentManager, "CandidateBottomSheet")
-            }
-            else
-
-
-           AppUtil.showAlertDialog(requireContext(),"Limit Reached","You cannot add more candidates as the maximum number of participants has been reached.")
-
+            bottomSheet.show(parentFragmentManager, "CandidateBottomSheet")
         }
 
 
@@ -309,12 +286,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
-
-
-
-
-
-
 
 
 
@@ -361,8 +332,6 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
 
                                     instituteName= x.instituteName
                                     instituteCode= x.instituteCode.toString()
-
-
 
                                     binding.tvInstituteName.text=instituteName
 
@@ -441,7 +410,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
                                 AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
                             }
                             else {
-                                toastLong(insertApiResp.responseDesc)
+                                toastLong(insertApiResp.responseMsg)
                             }
 
                         } ?: showSnackBar("Internal Server Error")
@@ -668,15 +637,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
     }
 
 
-    override fun onCandidateAdded(count: Int) {
-        updateCandidateCount(count)    }
 
-    @SuppressLint("SetTextI18n")
-    fun updateCandidateCount(count: Int) {
-        binding.candidteCount.text = "Candidates: $count"
-        counts=count.toString()
-
-    }
     private val storagePermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -729,4 +690,113 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
         }
     }
 
+    private fun collectParticipantsResponse() {
+
+        lifecycleScope.launch {
+
+            collectLatestLifecycleFlow(
+                commonViewModel.participantsEapList
+            ) {
+
+                when (it) {
+
+                    is Resource.Loading -> {
+                        showProgressBar()
+                    }
+
+                    is Resource.Error -> {
+                        hideProgressBar()
+                    }
+
+                    is Resource.Success -> {
+
+                        hideProgressBar()
+
+                        it.data?.let { response ->
+
+                            when (response.responseCode) {
+
+                                200 -> {
+
+                                    candidateAdapter.updateList(
+                                        response.wrappedList
+                                    )
+
+                                    binding.candidteCount.text =
+                                        "Candidates: ${response.wrappedList.size}"
+                                }
+                                202 -> {
+
+                                    candidateAdapter.updateList(
+                                        emptyList()
+                                    )
+
+                                    binding.candidteCount.text =
+                                        "Candidates: 0"
+
+                                    toastShort(response.responseDesc)
+                                }
+
+                                301 -> {
+                                    toastShort("Please upgrade your app first.")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectDeleteParticipantResponse() {
+
+        lifecycleScope.launch {
+
+            collectLatestLifecycleFlow(commonViewModel.deleteParticipantsEap) {
+
+                when (it) {
+
+                    is Resource.Loading -> {
+                        showProgressBar()
+                    }
+
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        toastShort("Failed to delete candidate")
+                    }
+
+                    is Resource.Success -> {
+
+                        hideProgressBar()
+
+                        it.data?.let { response ->
+
+                            if (response.responseCode == 200) {
+
+                                toastShort("Candidate deleted successfully")
+
+                                loadParticipantList()
+
+                            } else {
+
+                                toastShort(response.responseDesc)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private fun loadParticipantList() {
+
+        commonViewModel.participantsEapList(
+            AppUtil.getSavedTokenPreference(requireContext()),
+            EapParticipantListReq(
+                appVersion = BuildConfig.VERSION_NAME,
+                login = userPreferences.getUseID(),
+                imeiNo = AppUtil.getAndroidId(requireContext()),
+                eapId = eapId.toInt()
+            )
+        )
+    }
 }

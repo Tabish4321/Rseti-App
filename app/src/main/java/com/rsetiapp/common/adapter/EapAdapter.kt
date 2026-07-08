@@ -36,7 +36,7 @@ class EapAdapter(
         holder.status.text = eap.status
 
         val context = holder.itemView.context
-        when (eap.status) {
+         when (eap.status) {
             "Completed" -> {
 
                // holder.status.setTextColor(ContextCompat.getColor(context, R.color.color_dark_light_green))

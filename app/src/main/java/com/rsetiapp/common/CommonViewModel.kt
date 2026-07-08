@@ -19,9 +19,12 @@ import com.rsetiapp.common.model.request.BankIFSCSearchReq
 import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.CourseRequest
+import com.rsetiapp.common.model.request.DeleteParticipantsEapReq
 import com.rsetiapp.common.model.request.DistrictListReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
+import com.rsetiapp.common.model.request.EapCnadidateDetail
 import com.rsetiapp.common.model.request.EapListReq
+import com.rsetiapp.common.model.request.EapParticipantListReq
 import com.rsetiapp.common.model.request.FaceCheckReq
 import com.rsetiapp.common.model.request.FacutlyDataReq
 import com.rsetiapp.common.model.request.FogotPaasReq
@@ -55,6 +58,7 @@ import com.rsetiapp.common.model.response.DistrictListResponse
 import com.rsetiapp.common.model.response.EAPInsertResponse
 import com.rsetiapp.common.model.response.EapAutoFetchRes
 import com.rsetiapp.common.model.response.EapListResponse
+import com.rsetiapp.common.model.response.EapParticipantListRes
 import com.rsetiapp.common.model.response.FaceResponse
 import com.rsetiapp.common.model.response.FacultyDetailsRes
 import com.rsetiapp.common.model.response.FollowUpInsertRes
@@ -560,6 +564,54 @@ private var _salaryDetailsState = MutableStateFlow<Resource<out SalaryRangeRes>>
 
 
     val settlementData = MutableLiveData<Bundle>()
+
+
+
+    private  var _insertParticipantsEap =  MutableStateFlow<Resource<out EAPInsertResponse>>(Resource.Loading())
+    val insertParticipantsEap = _insertParticipantsEap.asSharedFlow()
+
+
+    fun insertParticipantsEap(token: String, eapCnadidateDetail: EapCnadidateDetail){
+        viewModelScope.launch {
+            commonRepository.insertParticipantsEap(token,eapCnadidateDetail).collectLatest {
+                _insertParticipantsEap.emit(it)
+            }
+        }
+    }
+
+
+
+
+    private  var _participantsEapList =  MutableStateFlow<Resource<out EapParticipantListRes>>(Resource.Loading())
+    val participantsEapList = _participantsEapList.asSharedFlow()
+
+
+    fun participantsEapList(token: String, eapParticipantListReq: EapParticipantListReq){
+        viewModelScope.launch {
+            commonRepository.participantsEapList(token,eapParticipantListReq).collectLatest {
+                _participantsEapList.emit(it)
+            }
+        }
+    }
+
+
+    private  var _deleteParticipantsEapp=  MutableStateFlow<Resource<out EAPInsertResponse>>(Resource.Loading())
+    val deleteParticipantsEap = _deleteParticipantsEapp.asSharedFlow()
+
+
+
+
+    fun deleteParticipantsEap(token: String, deleteParticipantsEapReq: DeleteParticipantsEapReq){
+        viewModelScope.launch {
+            commonRepository.deleteParticipantsEap(token,deleteParticipantsEapReq).collectLatest {
+                _deleteParticipantsEapp.emit(it)
+            }
+        }
+    }
+
+
+
+
 
 
 

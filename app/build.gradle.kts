@@ -8,17 +8,15 @@ plugins {
 }
 
 android {
-    namespace = "com.rsetiapp"  // ✅ Ensure this matches your package name
+    namespace = "com.rsetiapp"
     compileSdk = 35
 
     defaultConfig {
         applicationId = "com.rsetiapp"
         minSdk = 28
         targetSdk = 35
-        versionCode = 12
-        versionName = "1.1"
+        versionCode = 16
         versionName = "1.3.3"
-//        versionName = "1.3.1"
 
         //  Ensure this is correctly set for Android instrumented tests
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -81,7 +79,7 @@ android {
 
     buildFeatures {
         viewBinding = true
-        buildConfig = true  // ✅ Ensure BuildConfig is enabled
+        buildConfig = true
         compose = true
     }
     composeOptions {
@@ -101,7 +99,7 @@ android {
     productFlavors {
         create("dev") {
             dimension = "app"
-            buildConfigField("String", "BASE_URL", "\"https://dev.example.com/\"")  // ✅ Add BuildConfig values
+            buildConfigField("String", "BASE_URL", "\"https://dev.example.com/\"")
         }
         create("prod") {
             dimension = "app"

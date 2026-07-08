@@ -1,19 +1,21 @@
 package com.rsetiapp.common.model.request
 
 data class EAPInsertRequest(
-    val imeiNo :String,
-     val login: String,
-     val appVersion: String,
-    val orgId: String,
-    val eapId: String,
-    val instituteId: String,
+    val appVersion: String,
+    val login: String,
+    val imeiNo: String,
+    val stateCode: String,
+    val eapId: Int,
     val programeDate: String,
+    val orgId: Int,
+    val hrId: String,
+    val entityCode: String,
+    val instituteId: String,
     val totalParticipants: String,
     val nameOfOrg: String,
     val officialName: String,
     val designation: String,
     val programCode: String,
-    val stateCode: String,
     val districtCode: String,
     val blockCode: String,
     val gpCode: String,
@@ -24,20 +26,6 @@ data class EAPInsertRequest(
     val photoPathTwo: String,
     val latitute: String,
     val longitute: String,
-    val entityCode: String,
-    val hrId: String,
-    val candidateDetails: List<Candidate>
+    val address: String
 )
 
-data class Candidate(
-    val candidateId: String,
-    val candidateName: String,
-    val gender: String,
-    val guardianName: String,
-    val guardianMobileNo: String,
-    val candidateAddress: String,
-    val mobileNo: String,
-    val dob: String,
-    val candidateImage: String,
-    val courseCode: String,
-)
