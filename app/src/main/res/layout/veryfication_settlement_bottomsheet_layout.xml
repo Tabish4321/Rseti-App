@@ -10,7 +10,6 @@
 
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -18,11 +17,55 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
 
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Back Button -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/backButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_arrow_back_ios_new"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                android:tint="@color/white" />
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tvTitleName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingStart="12dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_18"
+                android:textStyle="bold"
+                android:fontFamily="@font/avenir_next_bold" />
+
+            <!-- App Logo -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:background="@color/white"
+                android:padding="8dp"
+                android:layout_marginStart="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_rseti"
+                app:shapeAppearanceOverlay="@style/CustomRectangleShape"
+                android:visibility="gone" />
+
+        </LinearLayout>
     <LinearLayout
         android:id="@+id/llstatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_30sdp"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="@dimen/dp_30"
@@ -35,76 +78,23 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/dp_16"
-            android:fontFamily="@font/avenir_next_demi_bold"
-            android:padding="@dimen/dp_4"
-            android:text="@string/status_mandate"
-            android:textColor="@color/color_dark_green" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/avenir_next_demi_bold"
-            android:hint="@string/statush"
-            android:padding="1dp"
-            android:textColorHint="@color/color_dark_green"
-            app:boxStrokeColor="@color/color_dark_green">
-
-            <AutoCompleteTextView
-                android:id="@+id/spinnerStatusBottom"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:inputType="none"
-                android:textColor="@color/color_dark_green"
-                android:textSize="15sp"
-                tools:ignore="LabelFor" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
+            android:text="@string/settled_type_status"
+            android:textColor="@android:color/black" />
 
 
 
 
 
         <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/dp_16"
-                android:fontFamily="@font/avenir_next_demi_bold"
-                android:padding="@dimen/dp_4"
-                android:text="@string/bankloan_provided"
-                android:textColor="@color/color_dark_green" />
-
-        <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/avenir_next_demi_bold"
-                android:hint="@string/bankloan_provided"
-                android:padding="1dp"
-                android:textColorHint="@color/color_dark_green"
-                app:boxStrokeColor="@color/color_dark_green">
-
-            <AutoCompleteTextView
-                    android:id="@+id/spinnerbankloanprovidedBottom"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:inputType="none"
-                    android:textColor="@color/color_dark_green"
-                    android:textSize="15sp"
-                    tools:ignore="LabelFor" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-
-
-
-
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/dp_16"
+            android:fontFamily="@font/avenir_next_demi_bold"
+            android:padding="@dimen/dp_4"
+            style="@style/EditText"
+            android:background="@drawable/edittext_background"
+            android:id="@+id/tVstatus"
+            android:textColor="@color/color_dark_green" />
 
 
     </LinearLayout>
@@ -241,8 +231,8 @@
                     android:textSize="16sp" />
 
                 <!-- EditText with custom background -->
-                <EditText
-                    android:id="@+id/etIfscCode"
+                <TextView
+                    android:id="@+id/tvIfscCode"
                     style="@style/EditText"
                     android:background="@drawable/edittext_background"
                     android:hint="@string/enter_ifsc_code"
@@ -251,13 +241,14 @@
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
-                <TextView
-                style="@style/smallButton2"
-                    android:id="@+id/ifscBtn"
-                    android:text="@string/search"
-                    android:layout_marginTop="@dimen/dp_10"
-                    android:layout_gravity="end"
-                    tools:visibility="visible" />
+<!--                <TextView-->
+<!--                style="@style/smallButton2"-->
+<!--                    -->
+<!--                    android:id="@+id/ifscBtn"-->
+<!--                    android:text="@string/search"-->
+<!--                    android:layout_marginTop="@dimen/dp_10"-->
+<!--                    android:layout_gravity="end"-->
+<!--                    tools:visibility="visible" />-->
 
             </LinearLayout>
 
@@ -283,7 +274,7 @@
 
                 <!-- EditText with custom background -->
                 <TextView
-                    android:id="@+id/etBankName"
+                    android:id="@+id/tvBankName"
                     style="@style/EditText"
                     android:background="@drawable/edittext_background"
                     android:hint="@string/bank_name"
@@ -307,13 +298,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="@string/branch_name"
+                    android:text="Brach Name"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
                 <!-- EditText with custom background -->
                 <TextView
-                    android:id="@+id/etBranchName"
+                    android:id="@+id/tvBranchName"
                     style="@style/EditText"
                     android:background="@drawable/edittext_background"
                     android:hint="@string/branch_name"
@@ -351,12 +342,10 @@
                     android:textSize="16sp" />
 
                 <!-- EditText with custom background -->
-                <EditText
-                        android:id="@+id/etBankAcNo"
+                <TextView
+                    android:id="@+id/tvLoanBankAcNo"
                     style="@style/EditText"
                     android:background="@drawable/edittext_background"
-                    android:hint="@string/enter_loan_account_number"
-                    android:inputType="numberPassword"
                     android:padding="12dp"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
@@ -386,8 +375,8 @@
                     android:textSize="16sp" />
 
                 <!-- EditText with custom background -->
-                <EditText
-                    android:id="@+id/etCity"
+                <TextView
+                    android:id="@+id/TvCity"
                     style="@style/EditText"
                     android:background="@drawable/edittext_background"
                     android:hint="@string/Enter_City_Name"
@@ -421,8 +410,8 @@
                     android:textSize="16sp" />
 
                 <!-- EditText with custom background -->
-                <EditText
-                    android:id="@+id/etReason"
+                <TextView
+                    android:id="@+id/tvReason"
                     style="@style/EditText"
                     android:background="@drawable/edittext_background"
                     android:hint="@string/Reason"
@@ -447,33 +436,29 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/dp_16"
-                    android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
                     android:text="@string/account_status_mandate"
                     android:textColor="@color/color_dark_green" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/avenir_next_demi_bold"
-                    android:hint="@string/account_status"
-                    android:padding="1dp"
-                    android:textColorHint="@color/color_dark_green"
-                    app:boxStrokeColor="@color/color_dark_green">
 
-                    <AutoCompleteTextView
-                        android:id="@+id/spinnerAccountStatus"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:inputType="none"
-                        android:textColor="@color/color_dark_green"
-                        android:textSize="15sp"
-                        tools:ignore="LabelFor" />
+                    <TextView
+                        android:id="@+id/tvAccountStatus"
+                        style="@style/EditText"
+                        android:background="@drawable/edittext_background"
+                        android:padding="12dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+<!--                    <AutoCompleteTextView-->
+<!--                        android:id="@+id/spinnerAccountStatus"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:focusable="false"-->
+<!--                        android:focusableInTouchMode="false"-->
+<!--                        android:inputType="none"-->
+<!--                        android:textColor="@color/color_dark_green"-->
+<!--                        android:textSize="15sp"-->
+<!--                        tools:ignore="LabelFor" />-->
 
-                </com.google.android.material.textfield.TextInputLayout>
 
 
 
@@ -482,6 +467,7 @@
             <LinearLayout
                 android:id="@+id/llEarningsIncome"
                 android:layout_width="match_parent"
+
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -492,34 +478,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/dp_16"
-                    android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
                     android:text="@string/earnings_income_mandate"
                     android:textColor="@color/color_dark_green" />
+                <TextView
+                    android:id="@+id/tvEarningsIncome"
+                    style="@style/EditText"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/avenir_next_demi_bold"
-                    android:hint="@string/earnings_income_hint"
-                    android:padding="1dp"
-                    android:textColorHint="@color/color_dark_green"
-                    app:boxStrokeColor="@color/color_dark_green">
-
-                    <AutoCompleteTextView
-                        android:id="@+id/spinnerEarningsIncome"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:inputType="none"
-                        android:textColor="@color/color_dark_green"
-                        android:textSize="15sp"
-                        tools:ignore="LabelFor" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
+   </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/llEmploymentGiven"
@@ -558,12 +528,10 @@
                     android:textSize="16sp"
                     android:paddingBottom="4dp" />
 
-                <EditText
-                    android:id="@+id/etEmploymentGiven"
+                <TextView
+                    android:id="@+id/tvEmploymentGiven"
                     style="@style/EditText"
                     android:background="@drawable/edittext_background"
-                    android:inputType="number"
-                    android:hint="@string/enter_number_of_employment_given_to_others"
                     android:padding="12dp"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
@@ -589,39 +557,44 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/dp_16"
-                    android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
                     android:text="@string/family_member_part_time_job_mandate"
                     android:textColor="@color/color_dark_green" />
+                <TextView
+                    android:id="@+id/tvFamilyMemberWorksPartTime"
+                    style="@style/EditText"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/avenir_next_demi_bold"
-                    android:hint="@string/family_member_part_time_job"
-                    android:padding="1dp"
-                    android:textColorHint="@color/color_dark_green"
-                    app:boxStrokeColor="@color/color_dark_green">
+<!--                <com.google.android.material.textfield.TextInputLayout-->
+<!--                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:fontFamily="@font/avenir_next_demi_bold"-->
+<!--                    android:hint="@string/family_member_part_time_job"-->
+<!--                    android:padding="1dp"-->
+<!--                    android:textColorHint="@color/color_dark_green"-->
+<!--                    app:boxStrokeColor="@color/color_dark_green">-->
 
-                    <AutoCompleteTextView
-                        android:id="@+id/spinnerFamilyMemberPartTime"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:inputType="none"
-                        android:textColor="@color/color_dark_green"
-                        android:textSize="15sp"
-                        tools:ignore="LabelFor" />
-                </com.google.android.material.textfield.TextInputLayout>
+<!--                    <AutoCompleteTextView-->
+<!--                        android:id="@+id/spinnerFamilyMemberPartTime"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:focusable="false"-->
+<!--                        android:focusableInTouchMode="false"-->
+<!--                        android:inputType="none"-->
+<!--                        android:textColor="@color/color_dark_green"-->
+<!--                        android:textSize="15sp"-->
+<!--                        tools:ignore="LabelFor" />-->
+<!--                </com.google.android.material.textfield.TextInputLayout>-->
 
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/dp_16"
-                    android:fontFamily="@font/avenir_next_demi_bold"
                     android:padding="@dimen/dp_4"
                     android:text="@string/settlement_proof_mandate"
                     android:textColor="@color/color_dark_green" />
@@ -635,6 +608,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="@dimen/dp_3"
+
                 android:layout_marginTop="@dimen/dp_10"
                 android:weightSum="3"
                 app:layout_constraintStart_toStartOf="parent"
@@ -677,8 +651,9 @@
             </LinearLayout>
 
 
+
             <LinearLayout
-                android:id="@+id/llImageUpload"
+                android:id="@+id/llImageUpload3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -722,6 +697,187 @@
                     android:padding="@dimen/dp_5"/>
             </LinearLayout>
 
+
+
+
+
+            <LinearLayout
+                android:id="@+id/linradioLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/llImageUpload3">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:textSize="16sp"
+                    android:textAlignment="viewStart"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:text="@string/all_detail_correct"
+                    android:layout_height="wrap_content"/>
+
+
+
+                <RadioGroup
+                    android:id="@+id/radioGroupAreBoardingAandLoadingFacilitiesProvidedYesNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radioAreBoardingAandLoadingFacilitiesProvidedYes"
+                        android:layout_width="wrap_content"
+                        android:fontFamily="@font/avenir_next_regular"
+                        android:layout_height="wrap_content"
+                        android:text="@string/yes"/>
+
+                    <RadioButton
+                        android:id="@+id/radioAreBoardingAandLoadingFacilitiesProvidedNo"
+                        android:layout_width="wrap_content"
+                        android:fontFamily="@font/avenir_next_regular"
+                        android:layout_height="wrap_content"
+                        android:text="@string/no"/>
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/llProof"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linradioLayout">
+
+
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/remark"
+                    android:visibility="gone"
+                    android:id="@+id/textViewRemark"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+
+                <!-- EditText with custom background -->
+
+                <EditText
+                    android:id="@+id/TvRemark"
+                    android:visibility="gone"
+                    style="@style/EditText"
+                    android:background="@drawable/edittext_background"
+                    android:hint="@string/enter_remark"
+                    android:padding="12dp"
+                    android:inputType="textMultiLine"
+                    android:gravity="top|start"
+                    android:maxLength="500"
+                    android:minLines="3"
+                    android:maxLines="10"
+
+                    android:scrollbars="vertical"
+                    android:overScrollMode="always"
+
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+<!--                <EditText-->
+<!--                    android:id="@+id/TvRemark"-->
+<!--                    android:visibility="gone"-->
+<!--                    style="@style/EditText"-->
+<!--                    android:background="@drawable/edittext_background"-->
+<!--                    android:hint="@string/enter_remark"-->
+<!--                    android:padding="12dp"-->
+<!--                    android:inputType="text"-->
+<!--                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "-->
+<!--                    android:textColor="@android:color/black"-->
+<!--                    android:textSize="16sp" />-->
+
+
+
+
+
+
+
+
+
+
+
+                <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_15sdp"
+                android:textColor="@color/black"
+                android:text="Image Upload"/>
+
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                android:background="@drawable/captureimage"
+                android:layout_marginEnd="@dimen/dp_10"
+                android:padding="@dimen/dp_5"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lllatLang"
+
+                />
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/dp_16"
+                        android:padding="@dimen/dp_4"
+                        android:text="@string/location"
+                        android:textColor="@color/color_dark_green" />
+
+                <LinearLayout
+                        android:id="@+id/latitudetudeLin"
+                        android:layout_width="match_parent"
+                        android:background="@drawable/edittext_background"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:padding="@dimen/_10sdp"
+                            android:id="@+id/tvlatlong"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+
+
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:padding="@dimen/_10sdp"
+                            android:id="@+id/tvlong"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+
+
             <TextView
                 android:id="@+id/btnSettled"
                 style="@style/Button"
@@ -731,7 +887,7 @@
                 app:drawableEndCompat="@drawable/ic_right_arrow"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/llImageUpload"/>
+                app:layout_constraintTop_toBottomOf="@+id/llProof"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

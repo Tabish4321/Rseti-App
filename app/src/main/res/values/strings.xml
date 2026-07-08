@@ -99,7 +99,7 @@
     <string name="account_status_mandate">Account status<font color='red'>*</font></string>
     <string name="batchList">Batches</string>
     <string name="batch_name">Batch Name</string>
-    <string name="batch_id">Batch ID</string>
+    <string name="batch_id">Batch Reg No</string>
     <string name="candidate_attendance">Candidate List</string>
     <string name="contact_number">Contact Number</string>
     <string name="roll_no">Roll No.</string>
@@ -196,5 +196,30 @@
     <string name="course_list">Course List</string>
     <string name="course_list_man">Select Course List</string>
     <string name="loginId">Login Id</string>
+
+
+
+    <string name="candidate_id">Candidate Id</string>
+    <string name="settlement_veryfication_form">Settlement Verification Form</string>
+    <string name="select_institute">Select Institute</string>
+    <string name="settlement_percentage">Settlement Percentage</string>
+    <string name="enter_remark">Enter Remark</string>
+    <string name="settlement_batch">Settlement Batch</string>
+    <string name="settlement_veryfication">Settlement Veryfication</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="all_detail_correct">All Details Correct?</string>
+    <string name="settled_type_status">Settled Type </string>
+    <string name="edp_type">EDP Type</string>
+    <string name="course_name">Course</string>
+    <string name="settledon">settledOn</string>
+    <string name="guardian_ph_no">Guardian Ph No</string>
+    <string name="settled_on">Settled On</string>
+    <string name="verification_status">Verification Status</string>
+    <string name="please_capture_image_from_your_phone">Please capture image from your phone</string>
+    <string name="remark">Remark</string>
+    <string name="please_select_all_details_correct">Please Select All Details Correct?</string>
+    <string name="bankloan_provided">Bankloan Provided</string>
+
 
 </resources>

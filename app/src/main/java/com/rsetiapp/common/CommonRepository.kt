@@ -16,6 +16,7 @@ import com.rsetiapp.common.model.request.CandidateDetailsReq
 import com.rsetiapp.common.model.request.CandidateSearchReq
 import com.rsetiapp.common.model.request.CourseRequest
 import com.rsetiapp.common.model.request.DeleteParticipantsEapReq
+import com.rsetiapp.common.model.request.DistrictListReq
 import com.rsetiapp.common.model.request.DistrictReq
 import com.rsetiapp.common.model.request.EAPInsertRequest
 import com.rsetiapp.common.model.request.EapAutofetchReq
@@ -34,13 +35,18 @@ import com.rsetiapp.common.model.response.DistrictResponse
 import com.rsetiapp.common.model.response.VillageResponse
 import com.rsetiapp.common.model.response.grampanchayatResponse
 import com.rsetiapp.common.model.request.FormRequest
+import com.rsetiapp.common.model.request.GetSettledCandidateReq
 import com.rsetiapp.common.model.request.InsertFacultyReq
 import com.rsetiapp.common.model.request.InsertSdrVisitReq
+import com.rsetiapp.common.model.request.InstituteListReq
 import com.rsetiapp.common.model.request.LoginReq
 import com.rsetiapp.common.model.request.OtpGenerateRequest
 import com.rsetiapp.common.model.request.SalaryRangeReq
 import com.rsetiapp.common.model.request.SdrListReq
 import com.rsetiapp.common.model.request.SettleStatusRequest
+import com.rsetiapp.common.model.request.SettlementVeryficationBatchReq
+import com.rsetiapp.common.model.request.SettlementVeryficationReq
+import com.rsetiapp.common.model.request.SettlementVeryficationUploadReq
 import com.rsetiapp.common.model.request.TokenReq
 import com.rsetiapp.common.model.request.ValidateOtpReq
 import com.rsetiapp.common.model.response.AttendanceBatchRes
@@ -57,6 +63,7 @@ import com.rsetiapp.common.model.response.FollowUpStatus
 import com.rsetiapp.common.model.response.CandidateDetailsRes
 import com.rsetiapp.common.model.response.CandidateSearchResp
 import com.rsetiapp.common.model.response.CourseResponse
+import com.rsetiapp.common.model.response.DistrictListResponse
 import com.rsetiapp.common.model.response.EapListResponse
 import com.rsetiapp.common.model.response.EapParticipantListRes
 import com.rsetiapp.common.model.response.FaceResponse
@@ -66,7 +73,10 @@ import com.rsetiapp.common.model.response.FollowUpStatusResp
 import com.rsetiapp.common.model.response.FollowUpTypeResp
 import com.rsetiapp.common.model.response.ForgotPassresponse
 import com.rsetiapp.common.model.response.FormResponse
+//import com.rsetiapp.common.model.response.GetSettledCandidate
+import com.rsetiapp.common.model.response.GetSettledCandidateRes
 import com.rsetiapp.common.model.response.InsertFacultyRes
+import com.rsetiapp.common.model.response.InstituteResponse
 import com.rsetiapp.common.model.response.LoginRes
 import com.rsetiapp.common.model.response.OtpGenerateResponse
 import com.rsetiapp.common.model.response.ProgramResponse
@@ -74,6 +84,9 @@ import com.rsetiapp.common.model.response.SalaryRangeRes
 import com.rsetiapp.common.model.response.SdrInsertResp
 import com.rsetiapp.common.model.response.SdrListResp
 import com.rsetiapp.common.model.response.SettleStatusResponse
+import com.rsetiapp.common.model.response.SettlementPercentageListResponse
+import com.rsetiapp.common.model.response.SettlementVeryficationListResponse
+import com.rsetiapp.common.model.response.SettlementVeryficationUploadInsertRes
 import com.rsetiapp.common.model.response.TokenRes
 import com.rsetiapp.core.data.local.database.AppDatabase
 import com.rsetiapp.core.data.remote.AppLevelApi
@@ -82,6 +95,7 @@ import com.rsetiapp.core.util.Resource
 import com.rsetiapp.core.util.networkBoundResourceWithoutDb
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.Header
 import javax.inject.Inject
 
@@ -322,6 +336,79 @@ class CommonRepository @Inject constructor(
             appLevelApi.insertFacultyAttendanceApi(token,insertFacultyReq)
         }
     }
+
+
+
+
+
+    suspend fun getSettlementsLoginAPI(settlementVeryficationReq: SettlementVeryficationReq): Flow<Resource<out SettlementVeryficationListResponse>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getSettlementsLoginAPI(settlementVeryficationReq)
+        }
+    }
+
+    suspend fun getdistrictListAPI(districtrReq: DistrictListReq): Flow<Resource<out DistrictListResponse>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getdistrictListAPI(districtrReq)
+        }
+
+
+
+
+
+
+    }
+
+
+//    instituteListAPI
+
+    suspend fun instituteListAPI(
+        token: String,
+        request: InstituteListReq
+    ): Flow<Resource<InstituteResponse>> {
+
+        return networkBoundResourceWithoutDb {
+            appLevelApi.instituteListAPI(
+                token = "Bearer $token",
+                request = request
+            )
+        } as Flow<Resource<InstituteResponse>>
+    }
+    suspend fun getsettledbatchAPI(settleBatchReq: SettlementVeryficationBatchReq): Flow<Resource<out SettlementPercentageListResponse>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getgetsettledbatchAPIListAPI(settleBatchReq)
+        }
+    }
+
+
+    suspend fun reverificationSettlementAPI(settlementVeryReq: SettlementVeryficationUploadReq): Flow<Resource<out SettlementVeryficationUploadInsertRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.reverificationSettlementAPI(settlementVeryReq)
+        }
+    }
+
+
+
+
+    suspend fun getSettledCandidateAPI(header :String,
+                                appVersion: String, batchId: Int,imeiNo: String,login: String
+    ): Flow<Resource<out GetSettledCandidateRes>> {
+        return networkBoundResourceWithoutDb {
+            appLevelApi.getSettledCandidateAPI(header,GetSettledCandidateReq(login,appVersion,imeiNo,batchId))
+        }
+    }
+
+
+
+//    suspend fun getSettledCandidateAPI(getsettledcandidateReq: GetSettledCandidateReq): Flow<Resource<out GetSettledCandidate>> {
+//        return networkBoundResourceWithoutDb {
+//            appLevelApi.getSettledCandidateAPI(getsettledcandidateReq)
+//        }
+//    }
+
+
+
+
 
 
     suspend fun insertParticipantsEap(token: String,eapCnadidateDetail: EapCnadidateDetail) : Flow<Resource<out EAPInsertResponse>>{

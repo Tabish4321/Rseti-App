@@ -22,6 +22,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
@@ -53,12 +54,14 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
     private lateinit var bankName: TextView
     private lateinit var branchName: TextView
     private lateinit var accountNo: EditText
+    private lateinit var etIfscCode: EditText
     private lateinit var etCity: EditText
     private lateinit var etSelfInvestment: EditText
     private lateinit var etReason: EditText
     private lateinit var etCreditFromBank: EditText
     private lateinit var btnSettledSubmit: TextView
     private lateinit var total: TextView
+    private lateinit var nestedScrollView: NestedScrollView
     private lateinit var etEmploymentGiven: EditText
     private lateinit var ivSettlementPhoto: ImageView
     private lateinit var ivPassbookCopy: ImageView
@@ -68,6 +71,7 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
     private lateinit var spinnerAccount: AutoCompleteTextView
     private lateinit var spinnerEarning: AutoCompleteTextView
     private lateinit var spinnerFamimyMemberJob: AutoCompleteTextView
+    private lateinit var spinnerbankloanprovidedBottom: AutoCompleteTextView
     private lateinit var llselfInvestment: LinearLayout
     private lateinit var llBankinvestment: LinearLayout
     private lateinit var llTotal: LinearLayout
@@ -119,6 +123,7 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
     private var selectedRangeId = ""
     private var selectedEmploymentGiven = ""
     private var selectedFamilyMemberPartTime = ""
+    private var selectedBankloanProvidedBottom = ""
     private var selectedSettlementPhoto = ""
     private var selectedPassbookCopy = ""
     private var selectedAppointmentLetter = ""
@@ -171,15 +176,17 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
 
         val ifscEt = view.findViewById<EditText>(R.id.etIfscCode)
         val ifscBtn = view.findViewById<TextView>(R.id.ifscBtn)
+        nestedScrollView = view.findViewById<NestedScrollView>(R.id.scrollView)
         bankName = view.findViewById<TextView>(R.id.etBankName)
         branchName = view.findViewById<TextView>(R.id.etBranchName)
         total = view.findViewById<TextView>(R.id.total)
         progressBar = view.findViewById(R.id.progressBarr)
+        etIfscCode = view.findViewById(R.id.etIfscCode)
         accountNo = view.findViewById(R.id.etBankAcNo)
         spinnerSettleStatus = view.findViewById<AutoCompleteTextView>(R.id.spinnerStatusBottom)
         spinnerAccount = view.findViewById<AutoCompleteTextView>(R.id.spinnerAccountStatus)
-        spinnerFamimyMemberJob =
-            view.findViewById<AutoCompleteTextView>(R.id.spinnerFamilyMemberPartTime)
+        spinnerFamimyMemberJob = view.findViewById<AutoCompleteTextView>(R.id.spinnerFamilyMemberPartTime)
+        spinnerbankloanprovidedBottom = view.findViewById<AutoCompleteTextView>(R.id.spinnerbankloanprovidedBottom)
         llselfInvestment = view.findViewById(R.id.llselfinvestment)
         llBankinvestment = view.findViewById(R.id.llBankinvestment)
         llTotal = view.findViewById(R.id.llTotal)
@@ -223,6 +230,16 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
             selectedFamilyMemberPartTime = parent.getItemAtPosition(position).toString()
         }
 
+
+        spinnerbankloanprovidedBottom.setAdapter(familyMemberPartTimeJobAdapter)
+
+        spinnerbankloanprovidedBottom.setOnItemClickListener { parent, view, position, id ->
+            selectedBankloanProvidedBottom = parent.getItemAtPosition(position).toString()
+        }
+
+
+
+
         ivSettlementPhoto.setOnClickListener {
             openGallery(ivSettlementPhoto)
         }
@@ -258,204 +275,1100 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
 
         // submit button
         btnSettledSubmit.setOnClickListener {
-            selectedSelfInvestmentItem = etSelfInvestment.text.toString()
-            SelectedCreditFromBankItem = etCreditFromBank.text.toString()
-            selectedUpperCaseIfscText = ifscEt.text.toString()
-            selectedLoanAcc = accountNo.text.toString()
-            selectedCity = etCity.text.toString()
-            selectedReason = etReason.text.toString()
-            selectedEmploymentGiven = etEmploymentGiven.text.toString()
 
-            if (selectedStatusItem.isEmpty()) {
-                Toast.makeText(requireContext(), "Please select status.", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            else if (selectedStatusItem == "Self Settled") {
-                if (selectedSelfInvestmentItem.isNotEmpty() &&
-                    SelectedCreditFromBankItem.isNotEmpty() &&
-                    selectedUpperCaseIfscText.isNotEmpty() &&
-                    selectedLoanAcc.isNotEmpty() &&
-                    selectedCity.isNotEmpty() &&
-                    selectedReason.isNotEmpty() &&
-                    selectdeAccountStatus.isNotEmpty() &&
-                    selectedRangeId.isNotEmpty() &&
-                    selectedEmploymentGiven.isNotEmpty() &&
-                    selectedFamilyMemberPartTime.isNotEmpty() &&
-                    selectedSettlementPhoto.isNotEmpty() &&
-                    selectedPassbookCopy.isNotEmpty() &&
-                    selectedAppointmentLetter.isNotEmpty()
-                ) {
+            selectedSelfInvestmentItem = etSelfInvestment.text.toString().trim()
+            SelectedCreditFromBankItem = etCreditFromBank.text.toString().trim()
+            selectedUpperCaseIfscText = etIfscCode.text.toString().trim()
+            selectedLoanAcc = accountNo.text.toString().trim()
+            selectedCity = etCity.text.toString().trim()
+            selectedReason = etReason.text.toString().trim()
+            selectedEmploymentGiven = etEmploymentGiven.text.toString().trim()
 
-                    val result = Bundle().apply {
-                        putString("selectedStatusItem", selectedStatusId)
-                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
-                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
-                        putInt("selectedTotal", selectedTotal)
-                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
-                        putString("selectedBankCode", selectedBankCode.toString())
-                        putString("selectedBranchCode", SelectedBranchCode.toString())
-                        putString("selectedLoanAcc", selectedLoanAcc)
-                        putString("selectedCity", selectedCity)
-                        putString("selectedReason", selectedReason)
-                        putString("selectdeAccountStatus", selectdeAccountStatus)
-                        putString("selectedRangeId", selectedRangeId)
-                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
-                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
-                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
-                        putString("selectedPassbookCopy", selectedPassbookCopy)
-                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
-                    }
-                    commonViewModel.settlementData.value=result
+            val selectedBankName = bankName.text.toString().trim()
+            val selectedBranchName = branchName.text.toString().trim()
+            val isBankLoanProvided = selectedBankloanProvidedBottom.equals("Yes", ignoreCase = true)
 
-                    // ✅ Dismiss the bottom sheet
-                    dismiss()
-                } else {
-                    // Show success message when all fields are filled
-                    Toast.makeText(
-                        requireContext(),
-                        "Kindly fill all details",
-                        Toast.LENGTH_SHORT
-                    ).show()
+            fun showFieldError(editText: EditText, message: String) {
+                editText.error = message
+                editText.requestFocus()
+
+                nestedScrollView.post {
+                    nestedScrollView.smoothScrollTo(0, editText.top)
                 }
             }
-            else if (selectedStatusItem == "Settled in service") {
-                if (selectedUpperCaseIfscText.isNotEmpty() &&
-                    selectedLoanAcc.isNotEmpty() &&
-                    selectedCity.isNotEmpty() &&
-                    selectedReason.isNotEmpty() &&
-                    selectdeAccountStatus.isNotEmpty() &&
-                    selectedRangeId.isNotEmpty() &&
-                    selectedEmploymentGiven.isNotEmpty() &&
-                    selectedFamilyMemberPartTime.isNotEmpty() &&
-                    selectedPassbookCopy.isNotEmpty() &&
-                    selectedAppointmentLetter.isNotEmpty()
-                ) {
 
-                    val result = Bundle().apply {
-                        putString("selectedStatusItem", selectedStatusId)
-                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
-                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
-                        putInt("selectedTotal", selectedTotal)
-                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
-                        putString("selectedBankCode", selectedBankCode.toString())
-                        putString("selectedBranchCode", SelectedBranchCode.toString())
-                        putString("selectedLoanAcc", selectedLoanAcc)
-                        putString("selectedCity", selectedCity)
-                        putString("selectedReason", selectedReason)
-                        putString("selectdeAccountStatus", selectdeAccountStatus)
-                        putString("selectedRangeId", selectedRangeId)
-                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
-                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
-                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
-                        putString("selectedPassbookCopy", selectedPassbookCopy)
-                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
-                    }
-                    commonViewModel.settlementData.value=result
-
-                    dismiss()
-
-                } else
-                    Toast.makeText(
-                        requireContext(),
-                        "Kindly fill all details first",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
+            fun clearAllErrors() {
+                etSelfInvestment.error = null
+                etCreditFromBank.error = null
+                etIfscCode.error = null
+//                etBankName.error = null
+//                etBranchName.error = null
+                accountNo.error = null
+                etCity.error = null
+                etReason.error = null
+                etEmploymentGiven.error = null
             }
-            //validateform()
 
+            fun validateBankFieldsIfYes(): Boolean {
+                if (!isBankLoanProvided) return true
 
-            else if (selectedStatusItem == "SHG") {
-                if (selectedUpperCaseIfscText.isNotEmpty() &&
-                    selectedLoanAcc.isNotEmpty() &&
-                    selectedCity.isNotEmpty() &&
-                    selectedReason.isNotEmpty() &&
-                    selectdeAccountStatus.isNotEmpty() &&
-                    selectedRangeId.isNotEmpty() &&
-                    selectedEmploymentGiven.isNotEmpty() &&
-                    selectedFamilyMemberPartTime.isNotEmpty() &&
-                    selectedPassbookCopy.isNotEmpty() &&
-                    selectedAppointmentLetter.isNotEmpty()
-                ) {
+                if (selectedUpperCaseIfscText.isEmpty()) {
+                    showFieldError(etIfscCode, "Please enter IFSC code")
+                    return false
+                }
 
-                    val result = Bundle().apply {
-                        putString("selectedStatusItem", selectedStatusId)
-                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
-                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
-                        putInt("selectedTotal", selectedTotal)
-                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
-                        putString("selectedBankCode", selectedBankCode.toString())
-                        putString("selectedBranchCode", SelectedBranchCode.toString())
-                        putString("selectedLoanAcc", selectedLoanAcc)
-                        putString("selectedCity", selectedCity)
-                        putString("selectedReason", selectedReason)
-                        putString("selectdeAccountStatus", selectdeAccountStatus)
-                        putString("selectedRangeId", selectedRangeId)
-                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
-                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
-                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
-                        putString("selectedPassbookCopy", selectedPassbookCopy)
-                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
-                    }
-                    commonViewModel.settlementData.value=result
+//                if (selectedBankName.isEmpty()) {
+//                    showFieldError(etBankName, "Please enter bank name")
+//                    return false
+//                }
+//
+//                if (selectedBranchName.isEmpty()) {
+//                    showFieldError(etBranchName, "Please enter branch name")
+//                    return false
+//                }
 
-                    // ✅ Dismiss the bottom sheet
-                    dismiss()
+                if (selectedLoanAcc.isEmpty()) {
+                    showFieldError(accountNo, "Please enter bank account number")
+                    return false
+                }
 
-                } else
-                    Toast.makeText(
-                        requireContext(),
-                        "Kindly fill all details first",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
+                return true
             }
-            else if (selectedStatusItem == "Bank") {
-                if (selectedUpperCaseIfscText.isNotEmpty() &&
-                    selectedLoanAcc.isNotEmpty() &&
-                    selectedCity.isNotEmpty() &&
-                    selectedReason.isNotEmpty() &&
-                    selectdeAccountStatus.isNotEmpty() &&
-                    selectedRangeId.isNotEmpty() &&
-                    selectedEmploymentGiven.isNotEmpty() &&
-                    selectedFamilyMemberPartTime.isNotEmpty() &&
-                    selectedPassbookCopy.isNotEmpty() &&
-                    selectedAppointmentLetter.isNotEmpty()
-                ) {
 
-                    val result = Bundle().apply {
-                        putString("selectedStatusItem", selectedStatusId)
-                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
-                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
-                        putInt("selectedTotal", selectedTotal)
-                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
-                        putString("selectedBankCode", selectedBankCode.toString())
-                        putString("selectedBranchCode", SelectedBranchCode.toString())
-                        putString("selectedLoanAcc", selectedLoanAcc)
-                        putString("selectedCity", selectedCity)
-                        putString("selectedReason", selectedReason)
-                        putString("selectdeAccountStatus", selectdeAccountStatus)
-                        putString("selectedRangeId", selectedRangeId)
-                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
-                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
-                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
-                        putString("selectedPassbookCopy", selectedPassbookCopy)
-                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
-                    }
-                    commonViewModel.settlementData.value=result
+            fun validateCommonFields(): Boolean {
+                if (selectedCity.isEmpty()) {
+                    showFieldError(etCity, "Please enter city")
+                    return false
+                }
 
-                    // ✅ Dismiss the bottom sheet
-                    dismiss()
+                if (selectedReason.isEmpty()) {
+                    showFieldError(etReason, "Please enter reason")
+                    return false
+                }
 
-                } else
-                    Toast.makeText(
-                        requireContext(),
-                        "Kindly fill all details first",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                if (selectdeAccountStatus.isEmpty()) {
+                    Toast.makeText(requireContext(), "Please select account status", Toast.LENGTH_SHORT).show()
+                    return false
+                }
 
+                if (selectedRangeId.isEmpty()) {
+                    Toast.makeText(requireContext(), "Please select range", Toast.LENGTH_SHORT).show()
+                    return false
+                }
+
+                if (selectedEmploymentGiven.isEmpty()) {
+                    showFieldError(etEmploymentGiven, "Please enter employment given")
+                    return false
+                }
+
+                if (selectedFamilyMemberPartTime.isEmpty()) {
+                    Toast.makeText(requireContext(), "Please select family member part time", Toast.LENGTH_SHORT).show()
+                    return false
+                }
+
+                return true
             }
+
+            fun validateSelfSettledFields(): Boolean {
+                clearAllErrors()
+
+                if (selectedSelfInvestmentItem.isEmpty()) {
+                    showFieldError(etSelfInvestment, "Please enter self investment")
+                    return false
+                }
+
+                if (SelectedCreditFromBankItem.isEmpty()) {
+                    showFieldError(etCreditFromBank, "Please enter credit from bank")
+                    return false
+                }
+
+                if (!validateCommonFields()) return false
+                if (!validateBankFieldsIfYes()) return false
+
+                if (selectedSettlementPhoto.isEmpty()) {
+                    Toast.makeText(requireContext(), "Please upload settlement photo", Toast.LENGTH_SHORT).show()
+                    return false
+                }
+
+                if (isBankLoanProvided && selectedPassbookCopy.isEmpty()) {
+                    Toast.makeText(requireContext(), "Please upload passbook copy", Toast.LENGTH_SHORT).show()
+                    return false
+                }
+
+                return true
+            }
+
+            fun validateSettledInServiceFields(): Boolean {
+                clearAllErrors()
+
+                if (!validateCommonFields()) return false
+                if (!validateBankFieldsIfYes()) return false
+
+
+
+                if (isBankLoanProvided && selectedPassbookCopy.isEmpty()) {
+                    Toast.makeText(requireContext(), "Please upload passbook copy", Toast.LENGTH_SHORT).show()
+                    return false
+                }
+
+                if (selectedAppointmentLetter.isEmpty()) {
+                    Toast.makeText(requireContext(), "Please upload appointment letter", Toast.LENGTH_SHORT).show()
+                    return false
+                }
+
+                return true
+            }
+
+            fun validateShgOrBankFields(): Boolean {
+                clearAllErrors()
+
+                if (!validateCommonFields()) return false
+                if (!validateBankFieldsIfYes()) return false
+
+                if (isBankLoanProvided) {
+                    if (selectedSettlementPhoto.isEmpty()) {
+                        Toast.makeText(requireContext(), "Please upload settlement photo", Toast.LENGTH_SHORT).show()
+                        return false
+                    }
+
+                    if (selectedPassbookCopy.isEmpty()) {
+                        Toast.makeText(requireContext(), "Please upload passbook copy", Toast.LENGTH_SHORT).show()
+                        return false
+                    }
+                }
+
+                return true
+            }
+
+            fun createSettlementBundle(): Bundle {
+                return Bundle().apply {
+                    putString("selectedStatusItem", selectedStatusId)
+                    putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
+                    putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
+                    putInt("selectedTotal", selectedTotal)
+                    putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
+                    putString("selectedBankCode", selectedBankCode.toString())
+                    putString("selectedBranchCode", SelectedBranchCode.toString())
+                    putString("selectedLoanAcc", selectedLoanAcc)
+                    putString("selectedCity", selectedCity)
+                    putString("selectedReason", selectedReason)
+                    putString("selectdeAccountStatus", selectdeAccountStatus)
+                    putString("selectedRangeId", selectedRangeId)
+                    putString("selectedEmploymentGiven", selectedEmploymentGiven)
+                    putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
+                    putString("selectedSettlementPhoto", selectedSettlementPhoto)
+                    putString("selectedPassbookCopy", selectedPassbookCopy)
+                    putString("selectedAppointmentLetter", selectedAppointmentLetter)
+                }
+            }
+
+            if (selectedStatusItem.isEmpty()) {
+                Toast.makeText(requireContext(), "Please select status.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (selectedBankloanProvidedBottom.isEmpty()) {
+                Toast.makeText(requireContext(), "Please select BankLoan Provide", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val isValid = when (selectedStatusItem) {
+                "Self Settled" -> validateSelfSettledFields()
+                "Settled in service" -> validateSettledInServiceFields()
+                "SHG", "Bank" -> validateShgOrBankFields()
+                else -> false
+            }
+
+            if (!isValid) {
+                return@setOnClickListener
+            }
+
+            commonViewModel.settlementData.value = createSettlementBundle()
+            dismiss()
         }
+
+//        btnSettledSubmit.setOnClickListener {
+//
+//            selectedSelfInvestmentItem = etSelfInvestment.text.toString().trim()
+//            SelectedCreditFromBankItem = etCreditFromBank.text.toString().trim()
+//            selectedUpperCaseIfscText = etIfscCode.text.toString().trim()
+//            selectedLoanAcc = accountNo.text.toString().trim()
+//            selectedCity = etCity.text.toString().trim()
+//            selectedReason = etReason.text.toString().trim()
+//            selectedEmploymentGiven = etEmploymentGiven.text.toString().trim()
+//
+//            val selectedBankName = bankName.text.toString().trim()
+//            val selectedBranchName = branchName.text.toString().trim()
+//
+//            fun showFieldError(editText: EditText, message: String) {
+//                editText.error = message
+//                editText.requestFocus()
+//
+//                nestedScrollView.post {
+//                    nestedScrollView.smoothScrollTo(0, editText.top)
+//                }
+//            }
+//
+//            fun clearAllErrors() {
+//                etSelfInvestment.error = null
+//                etCreditFromBank.error = null
+//                etIfscCode.error = null
+//                bankName.error = null
+//                branchName.error = null
+//                accountNo.error = null
+//                etCity.error = null
+//                etReason.error = null
+//                etEmploymentGiven.error = null
+//            }
+//
+//            fun validateCommonSelfSettledFields(): Boolean {
+//                clearAllErrors()
+//
+//                if (selectedSelfInvestmentItem.isEmpty()) {
+//                    showFieldError(etSelfInvestment, "Please enter self investment")
+//                    return false
+//                }
+//
+//                if (SelectedCreditFromBankItem.isEmpty()) {
+//                    showFieldError(etCreditFromBank, "Please enter credit from bank")
+//                    return false
+//                }
+//
+//                if (selectedCity.isEmpty()) {
+//                    showFieldError(etCity, "Please enter city")
+//                    return false
+//                }
+//
+//                if (selectedReason.isEmpty()) {
+//                    showFieldError(etReason, "Please enter reason")
+//                    return false
+//                }
+//
+//                if (selectedEmploymentGiven.isEmpty()) {
+//                    showFieldError(etEmploymentGiven, "Please enter employment given")
+//                    return false
+//                }
+//
+//                if (selectdeAccountStatus.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please select account status", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                if (selectedRangeId.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please select range", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                if (selectedFamilyMemberPartTime.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please select family member part time", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                if (selectedSettlementPhoto.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please upload settlement photo", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                return true
+//            }
+//
+//            fun validateBankFields(): Boolean {
+//                if (selectedUpperCaseIfscText.isEmpty()) {
+//                    showFieldError(etIfscCode, "Please enter IFSC code")
+//                    return false
+//                }
+////                 etIfscCode.error = null
+////                bankName.error = null
+////                branchName.error = null
+////                accountNo.error = null
+//
+////                if (selectedBankName.isEmpty()) {
+////                    showFieldError(bankName, "Please enter bank name")
+////                    return false
+////                }
+//
+//
+//
+////                if (selectedBranchName.isEmpty()) {
+////                    showFieldError(etBranchName, "Please enter branch name")
+////                    return false
+////                }
+//
+//                if (selectedLoanAcc.isEmpty()) {
+//                    showFieldError(accountNo, "Please enter bank account number")
+//                    return false
+//                }
+//
+//                return true
+//            }
+//
+//            fun validateOtherStatusFields(): Boolean {
+//                clearAllErrors()
+//
+//                if (selectedUpperCaseIfscText.isEmpty()) {
+//                    showFieldError(etIfscCode, "Please enter IFSC code")
+//                    return false
+//                }
+//
+////                if (selectedBankName.isEmpty()) {
+////                    showFieldError(etBankName, "Please enter bank name")
+////                    return false
+////                }
+////
+////                if (selectedBranchName.isEmpty()) {
+////                    showFieldError(etBranchName, "Please enter branch name")
+////                    return false
+////                }
+//
+//                if (selectedLoanAcc.isEmpty()) {
+//                    showFieldError(accountNo, "Please enter bank account number")
+//                    return false
+//                }
+//
+//                if (selectedCity.isEmpty()) {
+//                    showFieldError(etCity, "Please enter city")
+//                    return false
+//                }
+//
+//                if (selectedReason.isEmpty()) {
+//                    showFieldError(etReason, "Please enter reason")
+//                    return false
+//                }
+//
+//                if (selectdeAccountStatus.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please select account status", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                if (selectedRangeId.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please select range", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                if (selectedEmploymentGiven.isEmpty()) {
+//                    showFieldError(etEmploymentGiven, "Please enter employment given")
+//                    return false
+//                }
+//
+//                if (selectedFamilyMemberPartTime.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please select family member part time", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                if (selectedPassbookCopy.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please upload passbook copy", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                if (selectedAppointmentLetter.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please upload appointment letter", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                return true
+//            }
+//
+//            fun createSettlementBundle(): Bundle {
+//                return Bundle().apply {
+//                    putString("selectedStatusItem", selectedStatusId)
+//                    putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
+//                    putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
+//                    putInt("selectedTotal", selectedTotal)
+//                    putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
+//                    putString("selectedBankCode", selectedBankName)
+//                    putString("selectedBranchCode", selectedBranchName)
+//                    putString("selectedLoanAcc", selectedLoanAcc)
+//                    putString("selectedCity", selectedCity)
+//                    putString("selectedReason", selectedReason)
+//                    putString("selectdeAccountStatus", selectdeAccountStatus)
+//                    putString("selectedRangeId", selectedRangeId)
+//                    putString("selectedEmploymentGiven", selectedEmploymentGiven)
+//                    putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
+//                    putString("selectedSettlementPhoto", selectedSettlementPhoto)
+//                    putString("selectedPassbookCopy", selectedPassbookCopy)
+//                    putString("selectedAppointmentLetter", selectedAppointmentLetter)
+//                }
+//            }
+//
+//            if (selectedStatusItem.isEmpty()) {
+//                Toast.makeText(requireContext(), "Please select status.", Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            }
+//            if (selectedBankloanProvidedBottom.isEmpty()) {
+//                Toast.makeText(requireContext(), "Please select BankLoan Provide", Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            }
+//
+//
+//
+//            if (selectedStatusItem == "Self Settled") {
+//
+//                val isBankLoanProvided =
+//                    selectedBankloanProvidedBottom.equals("Yes", ignoreCase = true)
+//
+//                if (!validateCommonSelfSettledFields()) {
+//                    return@setOnClickListener
+//                }
+//
+//                if (isBankLoanProvided && !validateBankFields()) {
+//                    return@setOnClickListener
+//                }
+//
+//                commonViewModel.settlementData.value = createSettlementBundle()
+//                dismiss()
+//
+//            } else if (
+//                selectedStatusItem == "Settled in service" ||
+//                selectedStatusItem == "SHG" ||
+//                selectedStatusItem == "Bank"
+//            ) {
+//
+//                if (!validateOtherStatusFields()) {
+//                    return@setOnClickListener
+//                }
+//
+//                commonViewModel.settlementData.value = createSettlementBundle()
+//                dismiss()
+//            }
+//        }
+
+
+
+
+//        btnSettledSubmit.setOnClickListener {
+//
+//            selectedSelfInvestmentItem = etSelfInvestment.text.toString().trim()
+//            SelectedCreditFromBankItem = etCreditFromBank.text.toString().trim()
+//            selectedUpperCaseIfscText = ifscEt.text.toString().trim()
+//            selectedLoanAcc = accountNo.text.toString().trim()
+//            selectedCity = etCity.text.toString().trim()
+//            selectedReason = etReason.text.toString().trim()
+//            selectedEmploymentGiven = etEmploymentGiven.text.toString().trim()
+//
+//            fun showFieldError(editText: EditText, message: String) {
+//                editText.error = message
+//                editText.requestFocus()
+//
+//                nestedScrollView.post {
+//                    nestedScrollView.smoothScrollTo(0, editText.top)
+//                }
+//            }
+//
+//            fun clearAllErrors() {
+//                etSelfInvestment.error = null
+//                etCreditFromBank.error = null
+//                ifscEt.error = null
+//                accountNo.error = null
+//                etCity.error = null
+//                etReason.error = null
+//                etEmploymentGiven.error = null
+//            }
+//
+//            fun validateCommonSelfSettledFields(): Boolean {
+//                clearAllErrors()
+//
+//                if (selectedSelfInvestmentItem.isEmpty()) {
+//                    showFieldError(etSelfInvestment, "Please enter self investment")
+//                    return false
+//                }
+//
+//                if (SelectedCreditFromBankItem.isEmpty()) {
+//                    showFieldError(etCreditFromBank, "Please enter credit from bank")
+//                    return false
+//                }
+//
+//                if (selectedCity.isEmpty()) {
+//                    showFieldError(etCity, "Please enter city")
+//                    return false
+//                }
+//
+//                if (selectedReason.isEmpty()) {
+//                    showFieldError(etReason, "Please enter reason")
+//                    return false
+//                }
+//
+//                if (selectedEmploymentGiven.isEmpty()) {
+//                    showFieldError(etEmploymentGiven, "Please enter employment given")
+//                    return false
+//                }
+//
+//                if (selectdeAccountStatus.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please select account status", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                if (selectedRangeId.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please select range", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                if (selectedFamilyMemberPartTime.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please select family member part time", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                if (selectedSettlementPhoto.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please upload settlement photo", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                return true
+//            }
+//
+//            fun validateBankFields(): Boolean {
+//                if (selectedUpperCaseIfscText.isEmpty()) {
+//                    showFieldError(ifscEt, "Please enter IFSC code")
+//                    return false
+//                }
+//
+//                if (selectedLoanAcc.isEmpty()) {
+//                    showFieldError(accountNo, "Please enter bank account number")
+//                    return false
+//                }
+//
+//                if (selectedPassbookCopy.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please upload passbook copy", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                if (selectedAppointmentLetter.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please upload appointment letter", Toast.LENGTH_SHORT).show()
+//                    return false
+//                }
+//
+//                return true
+//            }
+//
+//            fun createSettlementBundle(): Bundle {
+//                return Bundle().apply {
+//                    putString("selectedStatusItem", selectedStatusId)
+//                    putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
+//                    putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
+//                    putInt("selectedTotal", selectedTotal)
+//                    putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
+//                    putString("selectedBankCode", selectedBankCode.toString())
+//                    putString("selectedBranchCode", SelectedBranchCode.toString())
+//                    putString("selectedLoanAcc", selectedLoanAcc)
+//                    putString("selectedCity", selectedCity)
+//                    putString("selectedReason", selectedReason)
+//                    putString("selectdeAccountStatus", selectdeAccountStatus)
+//                    putString("selectedRangeId", selectedRangeId)
+//                    putString("selectedEmploymentGiven", selectedEmploymentGiven)
+//                    putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
+//                    putString("selectedSettlementPhoto", selectedSettlementPhoto)
+//                    putString("selectedPassbookCopy", selectedPassbookCopy)
+//                    putString("selectedAppointmentLetter", selectedAppointmentLetter)
+//                }
+//            }
+//
+//            if (selectedStatusItem.isEmpty()) {
+//                Toast.makeText(requireContext(), "Please select status.", Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            }
+//
+//            if (selectedStatusItem == "Self Settled") {
+//
+//                val isBankLoanProvided =
+//                    selectedBankloanProvidedBottom.equals("Yes", ignoreCase = true)
+//
+//                if (!validateCommonSelfSettledFields()) {
+//                    return@setOnClickListener
+//                }
+//
+//                if (isBankLoanProvided && !validateBankFields()) {
+//                    return@setOnClickListener
+//                }
+//
+//                commonViewModel.settlementData.value = createSettlementBundle()
+//                dismiss()
+//
+//            } else if (selectedStatusItem == "Settled in service" ||
+//                selectedStatusItem == "SHG" ||
+//                selectedStatusItem == "Bank"
+//            ) {
+//
+//                clearAllErrors()
+//
+//                if (selectedUpperCaseIfscText.isEmpty()) {
+//                    showFieldError(ifscEt, "Please enter IFSC code")
+//                    return@setOnClickListener
+//                }
+//
+//                if (selectedLoanAcc.isEmpty()) {
+//                    showFieldError(accountNo, "Please enter bank account number")
+//                    return@setOnClickListener
+//                }
+//
+//                if (selectedCity.isEmpty()) {
+//                    showFieldError(etCity, "Please enter city")
+//                    return@setOnClickListener
+//                }
+//
+//                if (selectedReason.isEmpty()) {
+//                    showFieldError(etReason, "Please enter reason")
+//                    return@setOnClickListener
+//                }
+//
+//                if (selectdeAccountStatus.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please select account status", Toast.LENGTH_SHORT).show()
+//                    return@setOnClickListener
+//                }
+//
+//                if (selectedRangeId.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please select range", Toast.LENGTH_SHORT).show()
+//                    return@setOnClickListener
+//                }
+//
+//                if (selectedEmploymentGiven.isEmpty()) {
+//                    showFieldError(etEmploymentGiven, "Please enter employment given")
+//                    return@setOnClickListener
+//                }
+//
+//                if (selectedFamilyMemberPartTime.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please select family member part time", Toast.LENGTH_SHORT).show()
+//                    return@setOnClickListener
+//                }
+//
+//                if (selectedPassbookCopy.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please upload passbook copy", Toast.LENGTH_SHORT).show()
+//                    return@setOnClickListener
+//                }
+//
+//                if (selectedAppointmentLetter.isEmpty()) {
+//                    Toast.makeText(requireContext(), "Please upload appointment letter", Toast.LENGTH_SHORT).show()
+//                    return@setOnClickListener
+//                }
+//
+//                commonViewModel.settlementData.value = createSettlementBundle()
+//                dismiss()
+//            }
+//        }
+
+//        btnSettledSubmit.setOnClickListener {
+//            selectedSelfInvestmentItem = etSelfInvestment.text.toString()
+//            SelectedCreditFromBankItem = etCreditFromBank.text.toString()
+//            selectedUpperCaseIfscText = ifscEt.text.toString()
+//            selectedLoanAcc = accountNo.text.toString()
+//            selectedCity = etCity.text.toString()
+//            selectedReason = etReason.text.toString()
+//            selectedEmploymentGiven = etEmploymentGiven.text.toString()
+//
+//            if (selectedStatusItem.isEmpty() && selectedBankloanProvidedBottom.isEmpty()) {
+//                Toast.makeText(requireContext(), "Please select status.", Toast.LENGTH_SHORT).show()
+//            } else if (selectedStatusItem == "Self Settled") {
+//
+//                val isBankLoanProvided =
+//                    selectedBankloanProvidedBottom.equals("Yes", ignoreCase = true)
+//
+//                val isCommonFieldsValid =
+//                    selectedSelfInvestmentItem.isNotEmpty() &&
+//                            SelectedCreditFromBankItem.isNotEmpty() &&
+//                            selectedCity.isNotEmpty() &&
+//                            selectedReason.isNotEmpty() &&
+//                            selectdeAccountStatus.isNotEmpty() &&
+//                            selectedRangeId.isNotEmpty() &&
+//                            selectedEmploymentGiven.isNotEmpty() &&
+//                            selectedFamilyMemberPartTime.isNotEmpty() &&
+//                            selectedSettlementPhoto.isNotEmpty()
+//
+//                val isBankLoanFieldsValid =
+//                    if (isBankLoanProvided) {
+//                        selectedUpperCaseIfscText.isNotEmpty() &&
+//                                selectedLoanAcc.isNotEmpty() &&
+//                                selectedPassbookCopy.isNotEmpty() &&
+//                                selectedAppointmentLetter.isNotEmpty()
+//                    } else {
+//                        true
+//                    }
+//
+//                if (isCommonFieldsValid && isBankLoanFieldsValid) {
+//
+//                    val result = Bundle().apply {
+//                        putString("selectedStatusItem", selectedStatusId)
+//                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
+//                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
+//                        putInt("selectedTotal", selectedTotal)
+//                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
+//                        putString("selectedBankCode", selectedBankCode.toString())
+//                        putString("selectedBranchCode", SelectedBranchCode.toString())
+//                        putString("selectedLoanAcc", selectedLoanAcc)
+//                        putString("selectedCity", selectedCity)
+//                        putString("selectedReason", selectedReason)
+//                        putString("selectdeAccountStatus", selectdeAccountStatus)
+//                        putString("selectedRangeId", selectedRangeId)
+//                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
+//                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
+//                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
+//                        putString("selectedPassbookCopy", selectedPassbookCopy)
+//                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
+//                    }
+//
+//                    commonViewModel.settlementData.value = result
+//                    dismiss()
+//
+//                } else {
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "Kindly fill all details",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//
+//            } else if (selectedStatusItem == "Settled in service") {
+//                if (selectedUpperCaseIfscText.isNotEmpty() &&
+//                    selectedLoanAcc.isNotEmpty() &&
+//                    selectedCity.isNotEmpty() &&
+//                    selectedReason.isNotEmpty() &&
+//                    selectdeAccountStatus.isNotEmpty() &&
+//                    selectedRangeId.isNotEmpty() &&
+//                    selectedEmploymentGiven.isNotEmpty() &&
+//                    selectedFamilyMemberPartTime.isNotEmpty() &&
+//                    selectedPassbookCopy.isNotEmpty() &&
+//                    selectedAppointmentLetter.isNotEmpty()
+//                ) {
+//
+//                    val result = Bundle().apply {
+//                        putString("selectedStatusItem", selectedStatusId)
+//                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
+//                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
+//                        putInt("selectedTotal", selectedTotal)
+//                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
+//                        putString("selectedBankCode", selectedBankCode.toString())
+//                        putString("selectedBranchCode", SelectedBranchCode.toString())
+//                        putString("selectedLoanAcc", selectedLoanAcc)
+//                        putString("selectedCity", selectedCity)
+//                        putString("selectedReason", selectedReason)
+//                        putString("selectdeAccountStatus", selectdeAccountStatus)
+//                        putString("selectedRangeId", selectedRangeId)
+//                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
+//                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
+//                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
+//                        putString("selectedPassbookCopy", selectedPassbookCopy)
+//                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
+//                    }
+//
+//                    commonViewModel.settlementData.value = result
+//                    dismiss()
+//
+//                } else {
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "Kindly fill all details first",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//
+//            } else if (selectedStatusItem == "SHG") {
+//                if (selectedUpperCaseIfscText.isNotEmpty() &&
+//                    selectedLoanAcc.isNotEmpty() &&
+//                    selectedCity.isNotEmpty() &&
+//                    selectedReason.isNotEmpty() &&
+//                    selectdeAccountStatus.isNotEmpty() &&
+//                    selectedRangeId.isNotEmpty() &&
+//                    selectedEmploymentGiven.isNotEmpty() &&
+//                    selectedFamilyMemberPartTime.isNotEmpty() &&
+//                    selectedPassbookCopy.isNotEmpty() &&
+//                    selectedAppointmentLetter.isNotEmpty()
+//                ) {
+//
+//                    val result = Bundle().apply {
+//                        putString("selectedStatusItem", selectedStatusId)
+//                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
+//                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
+//                        putInt("selectedTotal", selectedTotal)
+//                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
+//                        putString("selectedBankCode", selectedBankCode.toString())
+//                        putString("selectedBranchCode", SelectedBranchCode.toString())
+//                        putString("selectedLoanAcc", selectedLoanAcc)
+//                        putString("selectedCity", selectedCity)
+//                        putString("selectedReason", selectedReason)
+//                        putString("selectdeAccountStatus", selectdeAccountStatus)
+//                        putString("selectedRangeId", selectedRangeId)
+//                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
+//                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
+//                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
+//                        putString("selectedPassbookCopy", selectedPassbookCopy)
+//                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
+//                    }
+//
+//                    commonViewModel.settlementData.value = result
+//                    dismiss()
+//
+//                } else {
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "Kindly fill all details first",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//
+//            } else if (selectedStatusItem == "Bank") {
+//                if (selectedUpperCaseIfscText.isNotEmpty() &&
+//                    selectedLoanAcc.isNotEmpty() &&
+//                    selectedCity.isNotEmpty() &&
+//                    selectedReason.isNotEmpty() &&
+//                    selectdeAccountStatus.isNotEmpty() &&
+//                    selectedRangeId.isNotEmpty() &&
+//                    selectedEmploymentGiven.isNotEmpty() &&
+//                    selectedFamilyMemberPartTime.isNotEmpty() &&
+//                    selectedPassbookCopy.isNotEmpty() &&
+//                    selectedAppointmentLetter.isNotEmpty()
+//                ) {
+//
+//                    val result = Bundle().apply {
+//                        putString("selectedStatusItem", selectedStatusId)
+//                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
+//                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
+//                        putInt("selectedTotal", selectedTotal)
+//                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
+//                        putString("selectedBankCode", selectedBankCode.toString())
+//                        putString("selectedBranchCode", SelectedBranchCode.toString())
+//                        putString("selectedLoanAcc", selectedLoanAcc)
+//                        putString("selectedCity", selectedCity)
+//                        putString("selectedReason", selectedReason)
+//                        putString("selectdeAccountStatus", selectdeAccountStatus)
+//                        putString("selectedRangeId", selectedRangeId)
+//                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
+//                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
+//                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
+//                        putString("selectedPassbookCopy", selectedPassbookCopy)
+//                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
+//                    }
+//
+//                    commonViewModel.settlementData.value = result
+//                    dismiss()
+//
+//                } else {
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "Kindly fill all details first",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        btnSettledSubmit.setOnClickListener {
+//            selectedSelfInvestmentItem = etSelfInvestment.text.toString()
+//            SelectedCreditFromBankItem = etCreditFromBank.text.toString()
+//            selectedUpperCaseIfscText = ifscEt.text.toString()
+//            selectedLoanAcc = accountNo.text.toString()
+//            selectedCity = etCity.text.toString()
+//            selectedReason = etReason.text.toString()
+//            selectedEmploymentGiven = etEmploymentGiven.text.toString()
+//
+//            if (selectedStatusItem.isEmpty()&& selectedBankloanProvidedBottom.isEmpty()) {
+//                Toast.makeText(requireContext(), "Please select status.", Toast.LENGTH_SHORT)
+//                    .show()
+//            }
+//            else if (selectedStatusItem == "Self Settled") {
+//                if (selectedSelfInvestmentItem.isNotEmpty() &&
+//                    SelectedCreditFromBankItem.isNotEmpty() &&
+//                    selectedUpperCaseIfscText.isNotEmpty() &&
+//                    selectedLoanAcc.isNotEmpty() &&
+//                    selectedCity.isNotEmpty() &&
+//                    selectedReason.isNotEmpty() &&
+//                    selectdeAccountStatus.isNotEmpty() &&
+//                    selectedRangeId.isNotEmpty() &&
+//                    selectedEmploymentGiven.isNotEmpty() &&
+//                    selectedFamilyMemberPartTime.isNotEmpty() &&
+//                    selectedSettlementPhoto.isNotEmpty()
+////                    selectedPassbookCopy.isNotEmpty() &&
+////                    selectedAppointmentLetter.isNotEmpty()
+//                ) {
+//
+//                    val result = Bundle().apply {
+//                        putString("selectedStatusItem", selectedStatusId)
+//                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
+//                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
+//                        putInt("selectedTotal", selectedTotal)
+//                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
+//                        putString("selectedBankCode", selectedBankCode.toString())
+//                        putString("selectedBranchCode", SelectedBranchCode.toString())
+//                        putString("selectedLoanAcc", selectedLoanAcc)
+//                        putString("selectedCity", selectedCity)
+//                        putString("selectedReason", selectedReason)
+//                        putString("selectdeAccountStatus", selectdeAccountStatus)
+//                        putString("selectedRangeId", selectedRangeId)
+//                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
+//                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
+//                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
+//                        putString("selectedPassbookCopy", selectedPassbookCopy)
+//                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
+//                    }
+//                    commonViewModel.settlementData.value=result
+//
+//                    // ✅ Dismiss the bottom sheet
+//                    dismiss()
+//                } else {
+//                    // Show success message when all fields are filled
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "Kindly fill all details",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//            else if (selectedStatusItem == "Settled in service") {
+//                if (selectedUpperCaseIfscText.isNotEmpty() &&
+//                    selectedLoanAcc.isNotEmpty() &&
+//                    selectedCity.isNotEmpty() &&
+//                    selectedReason.isNotEmpty() &&
+//                    selectdeAccountStatus.isNotEmpty() &&
+//                    selectedRangeId.isNotEmpty() &&
+//                    selectedEmploymentGiven.isNotEmpty() &&
+//                    selectedFamilyMemberPartTime.isNotEmpty() &&
+//                    selectedPassbookCopy.isNotEmpty() &&
+//                    selectedAppointmentLetter.isNotEmpty()
+//                ) {
+//
+//                    val result = Bundle().apply {
+//                        putString("selectedStatusItem", selectedStatusId)
+//                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
+//                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
+//                        putInt("selectedTotal", selectedTotal)
+//                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
+//                        putString("selectedBankCode", selectedBankCode.toString())
+//                        putString("selectedBranchCode", SelectedBranchCode.toString())
+//                        putString("selectedLoanAcc", selectedLoanAcc)
+//                        putString("selectedCity", selectedCity)
+//                        putString("selectedReason", selectedReason)
+//                        putString("selectdeAccountStatus", selectdeAccountStatus)
+//                        putString("selectedRangeId", selectedRangeId)
+//                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
+//                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
+//                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
+//                        putString("selectedPassbookCopy", selectedPassbookCopy)
+//                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
+//                    }
+//                    commonViewModel.settlementData.value=result
+//
+//                    dismiss()
+//
+//                } else
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "Kindly fill all details first",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//
+//            }
+//            //validateform()
+//
+//
+//            else if (selectedStatusItem == "SHG") {
+//                if (selectedUpperCaseIfscText.isNotEmpty() &&
+//                    selectedLoanAcc.isNotEmpty() &&
+//                    selectedCity.isNotEmpty() &&
+//                    selectedReason.isNotEmpty() &&
+//                    selectdeAccountStatus.isNotEmpty() &&
+//                    selectedRangeId.isNotEmpty() &&
+//                    selectedEmploymentGiven.isNotEmpty() &&
+//                    selectedFamilyMemberPartTime.isNotEmpty() &&
+//                    selectedPassbookCopy.isNotEmpty() &&
+//                    selectedAppointmentLetter.isNotEmpty()
+//                ) {
+//
+//                    val result = Bundle().apply {
+//                        putString("selectedStatusItem", selectedStatusId)
+//                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
+//                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
+//                        putInt("selectedTotal", selectedTotal)
+//                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
+//                        putString("selectedBankCode", selectedBankCode.toString())
+//                        putString("selectedBranchCode", SelectedBranchCode.toString())
+//                        putString("selectedLoanAcc", selectedLoanAcc)
+//                        putString("selectedCity", selectedCity)
+//                        putString("selectedReason", selectedReason)
+//                        putString("selectdeAccountStatus", selectdeAccountStatus)
+//                        putString("selectedRangeId", selectedRangeId)
+//                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
+//                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
+//                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
+//                        putString("selectedPassbookCopy", selectedPassbookCopy)
+//                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
+//                    }
+//                    commonViewModel.settlementData.value=result
+//
+//                    // ✅ Dismiss the bottom sheet
+//                    dismiss()
+//
+//                } else
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "Kindly fill all details first",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//
+//            }
+//            else if (selectedStatusItem == "Bank") {
+//                if (selectedUpperCaseIfscText.isNotEmpty() &&
+//                    selectedLoanAcc.isNotEmpty() &&
+//                    selectedCity.isNotEmpty() &&
+//                    selectedReason.isNotEmpty() &&
+//                    selectdeAccountStatus.isNotEmpty() &&
+//                    selectedRangeId.isNotEmpty() &&
+//                    selectedEmploymentGiven.isNotEmpty() &&
+//                    selectedFamilyMemberPartTime.isNotEmpty() &&
+//                    selectedPassbookCopy.isNotEmpty() &&
+//                    selectedAppointmentLetter.isNotEmpty()
+//                ) {
+//
+//                    val result = Bundle().apply {
+//                        putString("selectedStatusItem", selectedStatusId)
+//                        putString("selectedSelfInvestmentItem", selectedSelfInvestmentItem)
+//                        putString("SelectedCreditFromBankItem", SelectedCreditFromBankItem)
+//                        putInt("selectedTotal", selectedTotal)
+//                        putString("selectedUpperCaseIfscText", selectedUpperCaseIfscText)
+//                        putString("selectedBankCode", selectedBankCode.toString())
+//                        putString("selectedBranchCode", SelectedBranchCode.toString())
+//                        putString("selectedLoanAcc", selectedLoanAcc)
+//                        putString("selectedCity", selectedCity)
+//                        putString("selectedReason", selectedReason)
+//                        putString("selectdeAccountStatus", selectdeAccountStatus)
+//                        putString("selectedRangeId", selectedRangeId)
+//                        putString("selectedEmploymentGiven", selectedEmploymentGiven)
+//                        putString("selectedFamilyMemberPartTime", selectedFamilyMemberPartTime)
+//                        putString("selectedSettlementPhoto", selectedSettlementPhoto)
+//                        putString("selectedPassbookCopy", selectedPassbookCopy)
+//                        putString("selectedAppointmentLetter", selectedAppointmentLetter)
+//                    }
+//                    commonViewModel.settlementData.value=result
+//
+//                    // ✅ Dismiss the bottom sheet
+//                    dismiss()
+//
+//                } else
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "Kindly fill all details first",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//
+//            }
+//        }
 
 
 
@@ -477,6 +1390,12 @@ class MySattelementBottomSheet : BottomSheetDialogFragment() {
 
 
             // Check if the selected item is "Settled In service"
+            if (selectedBankloanProvidedBottom.equals("Yes", ignoreCase = true)) {
+
+
+
+
+            }
             if (selectedStatusItem.equals("Settled In service", ignoreCase = true)) {
                 // Hide the self-investment section
                 llselfInvestment.visibility = View.GONE
