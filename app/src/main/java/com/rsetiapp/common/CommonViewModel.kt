@@ -100,7 +100,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CommonViewModel @Inject constructor(private val commonRepository: CommonRepository) :
     ViewModel() {
-    // ✅ Flags
+    //  Flags
     var batchCacheList: MutableList<SettlementPercentage> = mutableListOf()
     var isBatchLoaded: Boolean = false
 
@@ -108,9 +108,9 @@ class CommonViewModel @Inject constructor(private val commonRepository: CommonRe
     val getToken = _getToken.asSharedFlow()
 
 
-    fun getToken(imeiNo:String , appVersion:String){
+    fun getToken(loginId:String){
         viewModelScope.launch {
-            commonRepository.getToken(imeiNo,appVersion).collectLatest {
+            commonRepository.getToken(loginId).collectLatest {
                 _getToken.emit(it)
             }
         }

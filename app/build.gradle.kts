@@ -15,7 +15,8 @@ android {
         applicationId = "com.rsetiapp"
         minSdk = 28
         targetSdk = 35
-        versionCode = 18
+        versionCode = 20
+       // versionName = "1.3.4"
         versionName = "1.3.3"
 
         //  Ensure this is correctly set for Android instrumented tests
@@ -23,8 +24,6 @@ android {
 
         //  Correct Kotlin DSL syntax for keeping all language resources
         resourceConfigurations += listOf("en", "hi", "as", "bn", "gu", "kn", "ml", "mr", "or", "pa", "ta", "te", "ur")
-
-
     }
 
     //  Prevent Google Play from splitting languages (needed for in-app switching)

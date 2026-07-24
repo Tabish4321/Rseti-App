@@ -41,9 +41,8 @@ import kotlinx.coroutines.launch
 class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding :: inflate ){
     private var userName = ""
     private var password = ""
-    private var token = ""
     private var isFaceRegistered = ""
-    private var saltPassword = ""
+     var saltPassword = ""
     private var showPassword = true
     private var isApiCalled = false
 
@@ -64,11 +63,11 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
 
 
                 } else {
-                    showFaceRegDialog(requireContext(),"Alert","❌ Failure: $message")
+                    showFaceRegDialog(requireContext(),"Alert","Failure: $message")
 
                 }
             } else {
-                showFaceRegDialog(requireContext(),"Alert","❌ Try Again")
+                showFaceRegDialog(requireContext(),"Alert","Try Again")
             }
         }
 
@@ -146,12 +145,12 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
             }
 
         }
-        binding.etEmail.addTextChangedListener(object : TextWatcher {
+        binding.etPassword.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
                     if (it.isNotEmpty() && !isApiCalled) {
                         isApiCalled = true
-                        commonViewModel.getToken(AppUtil.getAndroidId(requireContext()), BuildConfig.VERSION_NAME)
+                        commonViewModel.getToken(binding.etEmail.text.toString())
                         collectTokenResponse()
 
                     }
@@ -182,7 +181,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                 password = binding.etPassword.text.toString()
 
                 val shaPass = AppUtil.sha512Hash(password)
-                val saltPass = shaPass+saltPassword
+                val saltPass = saltPassword+shaPass
                 val finalPass = AppUtil.sha512Hash(saltPass)
 
 
@@ -205,6 +204,8 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                         hideProgressBar()
                         it.error?.let { baseErrorResponse ->
                             toastShort(baseErrorResponse.message)
+                            commonViewModel.getToken(binding.etEmail.text.toString())
+
                         }
                     }
                     is Resource.Success -> {
@@ -212,14 +213,8 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                         it.data?.let { getLoginResponse ->
                             when (getLoginResponse.responseCode) {
                                 200 -> {
-                                    val token1 = AESCryptography.decryptIntoString(getLoginResponse.appCode,AppConstant.Constants.ENCRYPT_KEY,AppConstant.Constants.ENCRYPT_IV_KEY)
 
-                                   /* userPreferences.updateUserId(null)
-                                    userPreferences.updateUserId(userName)
-                                    userPreferences.saveUserName(getLoginResponse.wrappedList[0].loginId)
-                                    AppUtil.saveLoginStatus(requireContext(), true)
-*/
-                                    if (token == token1){
+
                                         AppUtil.saveTokenPreference(requireContext(),"Bearer "+getLoginResponse.appCode)
                                         userPreferences.updateUserId(null)
                                         userPreferences.updateUserId(userName)
@@ -230,8 +225,6 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                                         AppUtil.saveOrgIdPreference(requireContext(),getLoginResponse.wrappedList[0].orgId)
 
                                          isFaceRegistered = getLoginResponse.wrappedList[0].faceRegistered
-
-
 
                                         if (isFaceRegistered=="Y"){
 
@@ -246,16 +239,10 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
 
                                         }
 
-
-
-
-                                    }
-                                    else toastShort("Session expired")
-
                                 }
 
                                 203 -> {
-                                    commonViewModel.getToken(AppUtil.getAndroidId(requireContext()), BuildConfig.VERSION_NAME)
+                                    commonViewModel.getToken(binding.etEmail.text.toString())
                                     showSnackBar(getLoginResponse.responseDesc)
                                   //showSnackBar(getLoginResponse.responseMsg)
 
@@ -268,6 +255,8 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
 
                                 else -> {
                                     showSnackBar(getLoginResponse.responseDesc)
+                                    commonViewModel.getToken(binding.etEmail.text.toString())
+
                                 }
                             }
                         } ?: showSnackBar("Internal Server Error")
@@ -297,6 +286,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                 }
             })
     }
+
     private fun collectTokenResponse() {
         lifecycleScope.launch {
             collectLatestLifecycleFlow(commonViewModel.getToken) {
@@ -315,11 +305,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>(LoginFragmentBinding ::
                             when (getToken.responseCode) {
                                 200 -> {
 
-                                    token= AESCryptography.decryptIntoString(getToken.authToken,
-                                        AppConstant.Constants.ENCRYPT_KEY,AppConstant.Constants.ENCRYPT_IV_KEY)
-
-                                    saltPassword= AESCryptography.decryptIntoString(getToken.passString,
-                                        AppConstant.Constants.ENCRYPT_KEY,AppConstant.Constants.ENCRYPT_IV_KEY)
+                                    saltPassword= getToken.nonce
 
                                 }
 

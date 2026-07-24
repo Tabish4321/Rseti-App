@@ -8,7 +8,7 @@ object AppConstant {
 
         // const val baseUrl= "http://10.197.183.106:8002/rsetiapp/"             //local
           const val baseUrl= "https://kaushal.dord.gov.in/demobackend/rsetiapp/"             //demo
-          //  const val baseUrl= "https://kaushal.rural.gov.in/backend/rsetiapp/"   // live
+         //   const val baseUrl= "https://kaushal.rural.gov.in/backend/rsetiapp/"   // live
        // const val FACE_AUTH_UIADI= "https://nregarep2.nic.in/Netnrega/StateServices/Uid_Face_Auth.svc/PostOnAUA_Face_auth"
        //const val FACE_AUTH_UIADI= "https://nregarep2.nic.in/uid/stateservices/Uid_Face_Auth_DDUGKY.svc/PostOnAUA_Face_auth"
        const val FACE_AUTH_UIADI= "https://nregarep2.nic.in/uid_gramg/stateservices/Uid_Face_Auth_DDUGKY.svc/PostOnAUA_Face_auth"
@@ -17,8 +17,8 @@ object AppConstant {
 
     object Constants{
 
-        var REFRESH_TOKEN_URL = "jhbheugcy2373y379y37gydygdy";
-        var CLIENT_SECRET_KEY = "dgtbncbehkcbjebccnkec78yf37bc";
+        var REFRESH_TOKEN_URL = "jhbheugcy2373y379y37gydygdy"
+        var CLIENT_SECRET_KEY = "dgtbncbehkcbjebccnkec78yf37bc"
 
         const val CRYPT_ID = BuildConfig.CRYPT_ID
         const val CRYPT_IV = BuildConfig.CRYPT_IV

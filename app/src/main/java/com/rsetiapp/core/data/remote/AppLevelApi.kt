@@ -102,7 +102,7 @@ import retrofit2.http.Url
 
 interface AppLevelApi {
 
-    @POST("generateToken")
+    @POST("get-nonce")
     suspend fun getToken(@Body tokenReq: TokenReq): TokenRes
 
     @POST("login")

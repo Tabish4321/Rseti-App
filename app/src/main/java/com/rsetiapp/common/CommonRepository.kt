@@ -106,9 +106,9 @@ class CommonRepository @Inject constructor(
     ){
 
 
-    suspend fun getToken(imeiNo : String, appVersion :String): Flow<Resource<out TokenRes>> {
+    suspend fun getToken(loginId : String): Flow<Resource<out TokenRes>> {
         return networkBoundResourceWithoutDb {
-            appLevelApi.getToken(TokenReq(appVersion,imeiNo))
+            appLevelApi.getToken(TokenReq(loginId))
         }
     }
 
