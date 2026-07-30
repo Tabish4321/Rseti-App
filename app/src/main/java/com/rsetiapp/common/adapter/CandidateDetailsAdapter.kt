@@ -115,9 +115,9 @@ class CandidateDetailsAdapter(
 
         private fun decodeFollowUpStatus(status: String): String = when (status) {
 //            "1" -> "Settlement In Progress"   rmove this status as per discussion with Gaurav dutta 27-05-2026
-            "1" -> "Settlement In Progress"
-            "1" -> "Settled"
-            "2" -> "Unsettled"
+            "1" -> "Unsettled"
+            "2" -> "Settled"
+
             else -> "N/A"
         }
 
