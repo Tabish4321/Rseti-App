@@ -266,7 +266,7 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
                                     getCurrentLocation { location ->
                                         if (location != null) {
                                             val isInside = isUserInsideGeofence(location, latitude, longitude, radius)
-                                            // val isInside = isUserInsideGeofence(location, 26.2153, 84.3588, 5000000f)
+//                                             val isInside = isUserInsideGeofence(location, 26.2153, 84.3588, 5000000f)
                                             if (isInside) {
 
                                                 //    findNavController().navigate(SdrListFragmentDirections.actionSdrListFragmentToSdrVisitReport(formName,instituteName,finYear,instituteId))
@@ -580,7 +580,8 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
 
                 val poiType = XstreamCommonMethods.processPidBlockEkyc(
                     response.toXML(),
-                    decryptedAadhaar,
+//                    decryptedAadhaar,
+                    "456718077531",
                     false,
                     requireContext()
                 )

@@ -17,7 +17,7 @@ android {
         targetSdk = 35
         versionCode = 20
        // versionName = "1.3.4"
-        versionName = "1.3.4"
+        versionName = "1.3.3"
 
         //  Ensure this is correctly set for Android instrumented tests
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

@@ -376,7 +376,8 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                 val poiType = XstreamCommonMethods.processPidBlockEkyc(
                     response.toXML(),
-                    decryptedAadhaar,
+//                    decryptedAadhaar,
+                    "456718077531",
                     false,
                     requireContext()
                 )
@@ -660,11 +661,12 @@ class AttendanceFragment : BaseFragment<FragmentVerifyUserAttendanceBinding>(
 
                                             val distance = getDistanceInMeters(
                                                 location,
-                                                latitude,
-                                                longitude
+//                                                26.2153, 84.3588
+                                                latitude, longitude
                                             )
 
                                             val isInside = distance <= radius
+//                                            val isInside = distance <= 5000000f
 
                                             if (isInside) {
 
