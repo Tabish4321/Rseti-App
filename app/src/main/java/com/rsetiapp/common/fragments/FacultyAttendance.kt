@@ -580,8 +580,7 @@ class FacultyAttendance : BaseFragment<FacultyAttendanceFragmentBinding>(Faculty
 
                 val poiType = XstreamCommonMethods.processPidBlockEkyc(
                     response.toXML(),
-//                    decryptedAadhaar,
-                    "456718077531",
+                    decryptedAadhaar,
                     false,
                     requireContext()
                 )
