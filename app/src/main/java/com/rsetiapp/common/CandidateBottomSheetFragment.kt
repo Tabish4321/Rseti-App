@@ -325,104 +325,6 @@ class CandidateBottomSheetFragment(
             )
         }
 
-/*
-        btnAdd.setOnClickListener {
-
-            candidateName = etCandidateName.text.toString()
-
-            if (etGender.text.toString()!=""){
-                candidateGender = etGender.text.toString()
-            }
-            candidateGuardianName = etGuardianName.text.toString()
-            candidateGuardianMobile = etGuardianMobile.text.toString()
-            candidateAddress = etAddress.text.toString()
-            candidateMobileNo = etMobileNo.text.toString()
-            candidateDob = etDob.text.toString()
-
-            if (candidateName.isNotEmpty() && candidateGender.isNotEmpty() &&
-                candidateGuardianName.isNotEmpty() && candidateGuardianMobile.isNotEmpty() &&
-                candidateAddress.isNotEmpty() && candidateMobileNo.isNotEmpty() &&
-                candidateDob.isNotEmpty()
-            ) {
-                if (AppUtil.isValidMobileNumber(etMobileNo.text.toString()) &&
-                    AppUtil.isValidMobileNumber(etGuardianMobile.text.toString())
-                ) {
-                    val isDuplicate = candidateId.isNotBlank() && candidateList.any { it.candidateId == candidateId }
-
-                    if (isDuplicate) {
-                        Toast.makeText(requireContext(), "Candidate ID already added", Toast.LENGTH_SHORT).show()
-                    } else {
-
-                        if (candidateId.isNotBlank()){
-
-                            val candidate = Candidate(
-                                candidateId,
-                                candidateName,
-                                candidateGender,
-                                candidateGuardianName,
-                                candidateGuardianMobile,
-                                candidateAddress,
-                                candidateMobileNo,
-                                candidateDob,
-                                candidateNotInImage.removeAllWhitespaces(),
-                                selectedCourseId
-                            )
-
-                            candidateList.add(candidate)
-                            adapter.notifyItemInserted(candidateList.size - 1)
-
-                            // Update the candidate count in the parent fragment
-                            updateCandidateCount(candidateList.size)
-
-                            Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
-                            dismiss()
-
-                        }
-
-                        else{
-
-                            if (candidateNotInImage==""){
-                                Toast.makeText(requireContext(), "Kindly Capture candidate photo", Toast.LENGTH_SHORT).show()
-
-                            }
-                            else{
-                                val candidate = Candidate(
-                                    candidateId,
-                                    candidateName,
-                                    candidateGender,
-                                    candidateGuardianName,
-                                    candidateGuardianMobile,
-                                    candidateAddress,
-                                    candidateMobileNo,
-                                    candidateDob,
-                                    candidateNotInImage.removeAllWhitespaces(),
-                                    selectedCourseId
-                                )
-
-                                candidateList.add(candidate)
-                                adapter.notifyItemInserted(candidateList.size - 1)
-
-                                // Update the candidate count in the parent fragment
-                                updateCandidateCount(candidateList.size)
-
-                                Toast.makeText(requireContext(), "Candidate Added", Toast.LENGTH_SHORT).show()
-                                dismiss()
-                            }
-
-                        }
-
-
-                    }
-
-                } else {
-                    Toast.makeText(requireContext(), "Mobile number is invalid", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(requireContext(), "Kindly fill all details first", Toast.LENGTH_SHORT).show()
-            }
-        }
-*/
-
         btnAdd.setOnClickListener {
 
             candidateName = etCandidateName.text.toString().trim()
@@ -450,14 +352,6 @@ class CandidateBottomSheetFragment(
                     AppUtil.isValidMobileNumber(candidateGuardianMobile)
                 ) {
 
-                    if (candidateId.isBlank() && candidateNotInImage.isBlank()) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Kindly Capture candidate photo",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return@setOnClickListener
-                    }
 
                     val request = EapCnadidateDetail(
                         appVersion = BuildConfig.VERSION_NAME,
@@ -522,27 +416,27 @@ class CandidateBottomSheetFragment(
     }
 
     private fun showDatePicker(textView: TextView) {
-        // Get today's time in milliseconds
+
         val calendar = Calendar.getInstance()
 
-        val ageLimit = AppUtil.getSavedEapCanAgeLimitPreference(requireContext())
 
-        // Calculate the date 15 years ago
-        calendar.add(Calendar.YEAR, ageLimit.toInt())
-        val fifteenYearsAgoMillis = calendar.timeInMillis
+        val endDate = MaterialDatePicker.todayInUtcMilliseconds()
 
-        // Set calendar constraints: allow only dates up to 15 years ago
-        val constraintsBuilder = CalendarConstraints.Builder()
-            .setEnd(fifteenYearsAgoMillis) // 👈 Maximum selectable date
-            .setValidator(DateValidatorPointBackward.before(fifteenYearsAgoMillis)) // 👈 Only dates before or equal
+        // Start date = 01 Jan 1975
+        calendar.set(1975, Calendar.JANUARY, 1)
+        val startDate = calendar.timeInMillis
 
-        // Create Material Date Picker
-        val datePicker = MaterialDatePicker.Builder.datePicker()
-            .setTitleText("Select Date of Birth")
-            .setCalendarConstraints(constraintsBuilder.build())
+        val constraints = CalendarConstraints.Builder()
+            .setStart(startDate)
+            .setEnd(endDate)
+            .setValidator(DateValidatorPointBackward.now())
             .build()
 
-        // Show Date Picker
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Select Date of Birth")
+            .setCalendarConstraints(constraints)
+            .build()
+
         datePicker.show(parentFragmentManager, "DATE_PICKER")
 
         datePicker.addOnPositiveButtonClickListener { selection ->
@@ -552,6 +446,7 @@ class CandidateBottomSheetFragment(
             selectedDate = formattedDate
         }
     }
+
 
     private fun collectCandidateSearchResponse() {
         lifecycleScope.launch {
@@ -703,6 +598,8 @@ class CandidateBottomSheetFragment(
 
                                 dismiss()
                             }
+                            else
+                                toastShort(response.responseDesc)
                         }
                     }
                 }

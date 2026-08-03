@@ -1,10 +1,12 @@
 package com.rsetiapp.common.fragments
 
+import android.R
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -37,6 +39,8 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
 
     private lateinit var eapAdapter: EapAdapter
     private var eapList: MutableList<EapList> = mutableListOf()
+    private var originalEapList: MutableList<EapList> = mutableListOf()
+
     private var eapIdValue=""
     private var eapStatusValue=""
     private var eapDateValue=""
@@ -53,6 +57,8 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
     private var villageCode=""
     private var eapName=""
     private var programCode=""
+    private var selectedYear = ""
+    private var selectedStatus = ""
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,6 +71,48 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
     }
 
     private fun init() {
+
+        val yearAdapter = ArrayAdapter(
+            requireContext(),
+            R.layout.simple_dropdown_item_1line,
+            getAcademicYears()
+        )
+
+        binding.actAcademicYear.setAdapter(yearAdapter)
+
+        binding.actAcademicYear.setOnItemClickListener { parent, view, position, id ->
+            selectedYear = parent.getItemAtPosition(position).toString()
+            filterList()
+
+        }
+
+
+
+        val categoryList = arrayListOf(
+            "Active",
+            "Completed",
+            "Expired"
+        )
+
+        binding.actCategory.setAdapter(
+            ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                categoryList
+            )
+        )
+
+
+        binding.actCategory.setOnItemClickListener { parent, view, position, id ->
+            selectedStatus = parent.getItemAtPosition(position).toString()
+
+            filterList()
+
+        }
+
+        commonViewModel.eapDetailsAPI(AppUtil.getSavedTokenPreference(requireContext()),EapListReq(BuildConfig.VERSION_NAME, userPreferences.getUseID(),AppUtil.getAndroidId(requireContext())))
+        collectEapListResponse()
+
         formName = arguments?.getString("formName").toString()
         userPreferences = UserPreferences(requireContext())
         eapAdapter = EapAdapter(eapList) { eapItem ->
@@ -77,8 +125,7 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = eapAdapter
 
-        commonViewModel.eapDetailsAPI(AppUtil.getSavedTokenPreference(requireContext()),EapListReq(BuildConfig.VERSION_NAME, userPreferences.getUseID(),AppUtil.getAndroidId(requireContext())))
-        collectEapListResponse()
+
     }
 
     @SuppressLint("SuspiciousIndentation", "DefaultLocale")
@@ -98,8 +145,6 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
         villageCode = eapItem.villageCode
         eapName = eapItem.eapName
         programCode = eapItem.programCode.toString()
-
-
 
 
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -156,15 +201,20 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
                     is Resource.Success -> {
                         hideProgressBar()
                         it.data?.let { getEapResponse ->
-                            if (getEapResponse.responseCode == 200) {
-                                eapList.clear()  // Clear old data
-                                eapList.addAll(getEapResponse.wrappedList)  // Add new data
-                                eapAdapter.notifyDataSetChanged()  // Notify RecyclerView
-                            }  else if (getEapResponse.responseCode==401){
-                                AppUtil.showSessionExpiredDialog(findNavController(),requireContext())
-                            }
-                            else {
-                                toastLong(getEapResponse.responseDesc)
+                            when (getEapResponse.responseCode) {
+                                200 -> {
+                                    eapList.clear()
+                                    originalEapList.clear()
+                                    originalEapList.addAll(getEapResponse.wrappedList)
+                                    eapList.addAll(originalEapList)
+                                    eapAdapter.notifyDataSetChanged()
+                                }
+                                401 -> {
+                                    AppUtil.showSessionExpiredDialog(findNavController(), requireContext())
+                                }
+                                else -> {
+                                    toastLong(getEapResponse.responseDesc)
+                                }
                             }
                         } ?: showSnackBar("Internal Server Error")
                     }
@@ -173,4 +223,47 @@ class EapListFragment  : BaseFragment<EapListFragmentBinding>(EapListFragmentBin
         }
     }
 
+    private fun getAcademicYears(): ArrayList<String> {
+
+        val list = ArrayList<String>()
+        list.add("All")
+
+        val startYear = 2025
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+
+        for (year in startYear..currentYear) {
+            list.add(year.toString())
+        }
+
+        return list
+    }
+
+
+    private fun filterList() {
+
+        val filteredList = originalEapList.filter { item ->
+
+            // monthYear = "24/05/2024"
+            val year = try {
+                item.monthYear.substringAfterLast("/")
+            } catch (e: Exception) {
+                ""
+            }
+
+            val yearMatch =
+                selectedYear.isEmpty() ||
+                        selectedYear == "All" ||
+                        year == selectedYear
+
+            val statusMatch =
+                selectedStatus.isEmpty() ||
+                        item.status.equals(selectedStatus, ignoreCase = true)
+
+            yearMatch && statusMatch
+        }
+
+        eapList.clear()
+        eapList.addAll(filteredList)
+        eapAdapter.notifyDataSetChanged()
+    }
 }
