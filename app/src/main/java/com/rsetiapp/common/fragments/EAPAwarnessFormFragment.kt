@@ -646,7 +646,7 @@ class EAPAwarnessFormFragment  : BaseFragment<FragmentEapAwarnessBinding>(Fragme
             Toast.makeText(requireContext(), "Permission granted", Toast.LENGTH_SHORT).show()
             // proceed with file/media access
         } else {
-            Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+           // Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
         }
     }
     private fun checkAndRequestStoragePermissions() {
