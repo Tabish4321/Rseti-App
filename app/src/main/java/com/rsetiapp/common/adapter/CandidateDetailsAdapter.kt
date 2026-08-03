@@ -17,6 +17,8 @@ import com.rsetiapp.common.model.response.CandidateDetail
 import com.rsetiapp.core.util.AppUtil
 import com.rsetiapp.databinding.ItemCandidateDetailsBinding
 
+// merged
+
 
 class CandidateDetailsAdapter(
     private val candidateList: List<CandidateDetail>
